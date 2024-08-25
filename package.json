@@ -1,0 +1,22 @@
+{
+  "name": "dating-app",
+  "version": "1.0.0",
+  "description": "Backend part of Dating-App",
+  "main": "index.js",
+  "author": "Atom9IX9",
+  "license": "MIT",
+  "scripts": {
+    "watch": "tsc -w",
+    "dev": "yarn nodemon --inspect ./dist/index.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^22.5.0",
+    "nodemon": "^3.1.4",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.4"
+  }
+}
