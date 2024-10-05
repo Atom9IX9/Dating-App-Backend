@@ -1,4 +1,4 @@
-import { IsEmail, IsString } from 'class-validator';
+import { IsEmail, IsOptional, IsString } from 'class-validator';
 
 export class CreateUserDTO {
   @IsString()
@@ -20,5 +20,6 @@ export class CreateUserDTO {
   gender: 'male' | 'female';
 
   @IsString()
-  location: string;
+  @IsOptional()
+  location?: string;
 }
