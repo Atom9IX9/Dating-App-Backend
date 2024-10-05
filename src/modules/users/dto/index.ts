@@ -14,7 +14,7 @@ export class CreateUserDTO {
   password: string;
 
   @IsString()
-  dateOfBD: string;
+  dateOfBD: Date;
 
   @IsString()
   gender: 'male' | 'female';

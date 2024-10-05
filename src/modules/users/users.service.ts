@@ -9,7 +9,7 @@ import { ApiErrors } from 'src/common/errors';
 export class UsersService {
   constructor(@InjectModel(User) private readonly userRepo: typeof User) {}
 
-  async hashPassword(password: string) {
+  private async hashPassword(password: string) {
     return bcrypt.hash(password, 10);
   }
 
@@ -24,14 +24,24 @@ export class UsersService {
       throw new BadRequestException(ApiErrors.USER_WITH_EMAIL_ALREADY_EXISTS);
 
     dto.password = await this.hashPassword(dto.password);
+    const d1 = new Date();
+    const d2 = new Date(dto.dateOfBD);
     await this.userRepo.create({
       email: dto.email,
-      dateOfDB: dto.dateOfBD,
+      dateOfBD: dto.dateOfBD,
       firstName: dto.firstName,
       lastName: dto.lastName,
       gender: dto.gender,
       location: dto.location,
+      password: dto.password,
+      age: d1.getFullYear() - d2.getFullYear(),
     });
+
     return dto;
+  }
+
+  async getUsers() {
+    const users = await this.userRepo.findAndCountAll();
+    return users;
   }
 }
