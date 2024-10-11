@@ -1,16 +1,14 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserDTO } from './dto';
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { GetUsersResponse } from './rsponse';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Post()
-  crateUser(@Body() createUserDTO: CreateUserDTO) {
-    return this.usersService.createUser(createUserDTO);
-  }
-
+  @ApiTags('API')
+  @ApiResponse({ status: 200, type: GetUsersResponse })
   @Get()
   getUsers() {
     return this.usersService.getUsers();
