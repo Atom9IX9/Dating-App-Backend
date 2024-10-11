@@ -5,10 +5,14 @@ import { ApiErrors } from 'src/common/constants/errors';
 import { LoginDTO } from './dto';
 import * as bcrypt from 'bcrypt';
 import { AuthResponse } from './response';
+import { TokenService } from '../token/token.service';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly tokenService: TokenService,
+  ) {}
 
   async register(dto: CreateUserDTO): Promise<CreateUserDTO> {
     const userAlreadyExists = !!(await this.usersService.findUserByEmail(
@@ -36,10 +40,13 @@ export class AuthService {
       throw new BadRequestException(ApiErrors.WRONG_EMAIL_OR_PASSWORD);
     }
 
+    const token = this.tokenService.generateJwtToken({ email: dto.email });
+
     return {
       email: userAlreadyExists.email,
       firstName: userAlreadyExists.firstName,
       lastName: userAlreadyExists.lastName,
+      token,
     };
   }
 }
