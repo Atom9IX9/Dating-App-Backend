@@ -3,10 +3,21 @@ import { InjectModel } from '@nestjs/sequelize';
 import { User } from './models/user.model';
 import * as bcrypt from 'bcrypt';
 import { CreateUserDTO } from './dto';
+import { GetUsersResponse, PublicUserResponse } from './response';
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectModel(User) private readonly userRepo: typeof User) {}
+  private privateUserFieldsAttributesExclude: string[];
+
+  constructor(@InjectModel(User) private readonly userRepo: typeof User) {
+    this.privateUserFieldsAttributesExclude = [
+      'password',
+      'dateOfBD',
+      'location',
+      'createdAt',
+      'updatedAt',
+    ];
+  }
 
   private async hashPassword(password: string) {
     return bcrypt.hash(password, 10);
@@ -34,8 +45,21 @@ export class UsersService {
     return dto;
   }
 
-  async getUsers() {
-    const users = await this.userRepo.findAndCountAll();
+  async getPublicUsers(): Promise<GetUsersResponse> {
+    const users = await this.userRepo.findAndCountAll({
+      attributes: { exclude: this.privateUserFieldsAttributesExclude },
+    });
     return users;
+  }
+
+  async publicUser(email: string): Promise<PublicUserResponse> {
+    const publicUser = await this.userRepo.findOne({
+      where: { email },
+      attributes: {
+        exclude: this.privateUserFieldsAttributesExclude,
+      },
+    });
+
+    return publicUser.dataValues;
   }
 }
