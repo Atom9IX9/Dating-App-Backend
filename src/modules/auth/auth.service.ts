@@ -40,7 +40,17 @@ export class AuthService {
       throw new BadRequestException(ApiErrors.WRONG_EMAIL_OR_PASSWORD);
     }
 
-    const token = this.tokenService.generateJwtToken({ email: dto.email });
+    const userData = {
+      id: userAlreadyExists.id,
+      email: userAlreadyExists.email,
+      firstName: userAlreadyExists.firstName,
+      gender: userAlreadyExists.gender,
+      dateOfBD: new Date(userAlreadyExists.dateOfBD),
+      lastName: userAlreadyExists.lastName,
+      location: userAlreadyExists.location,
+    };
+
+    const token = this.tokenService.generateJwtToken(userData);
     const user = await this.usersService.publicUser(dto.email);
 
     return { user, token };

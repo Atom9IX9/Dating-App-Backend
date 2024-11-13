@@ -1,16 +1,26 @@
-import { Controller, Get } from '@nestjs/common';
+import { Body, Controller, Get, Patch, Req, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
-import { GetUsersResponse } from './response';
+import { GetUsersResponse, UpdateUserResponse } from './response';
+import { UpdateUserDTO } from './dto';
+import { JwtAuthGuard } from 'src/guards';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @ApiTags('API')
+  @ApiTags('USERS')
   @ApiResponse({ status: 200, type: GetUsersResponse })
   @Get()
   getUsers() {
     return this.usersService.getPublicUsers();
+  }
+
+  @ApiTags('USERS')
+  @ApiResponse({ status: 200, type: UpdateUserResponse })
+  @UseGuards(JwtAuthGuard)
+  @Patch()
+  updateUser(@Body() dto: UpdateUserDTO, @Req() req) {
+    return this.usersService.updateUser(req.user.id, dto);
   }
 }
