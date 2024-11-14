@@ -4,6 +4,7 @@ import { User } from './models/user.model';
 import * as bcrypt from 'bcrypt';
 import { CreateUserDTO, UpdateUserDTO } from './dto';
 import {
+  DeleteUserResponse,
   GetUsersResponse,
   PublicUserResponse,
   UpdateUserResponse,
@@ -84,5 +85,10 @@ export class UsersService {
       location: dto.location,
     };
     return newUser;
+  }
+
+  async deleteUser(userId: string): Promise<DeleteUserResponse> {
+    await this.usersRepo.destroy({ where: { id: userId } });
+    return { id: userId };
   }
 }

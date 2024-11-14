@@ -32,6 +32,33 @@ export class CreateUserDTO {
   location?: string;
 }
 
+export class CreateUserResponse {
+  @ApiProperty()
+  @IsString()
+  firstName: string;
+
+  @ApiProperty()
+  @IsString()
+  lastName: string;
+
+  @ApiProperty()
+  @IsEmail()
+  email: string;
+
+  @ApiProperty()
+  @IsString()
+  dateOfBD: Date;
+
+  @ApiProperty()
+  @IsString()
+  gender: 'male' | 'female';
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  location?: string;
+}
+
 export class UpdateUserDTO {
   @ApiProperty({ required: false })
   @IsString()

@@ -63,3 +63,9 @@ export class UpdateUserResponse {
   @IsOptional()
   location?: string;
 }
+
+export class DeleteUserResponse {
+  @ApiProperty()
+  @IsString()
+  id: string;
+}
