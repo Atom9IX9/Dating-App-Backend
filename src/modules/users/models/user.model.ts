@@ -1,12 +1,18 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Column, Table, Model, PrimaryKey } from 'sequelize-typescript';
+import {
+  Column,
+  Table,
+  Model,
+  PrimaryKey,
+  DataType,
+} from 'sequelize-typescript';
 
 @Table
 export class User extends Model {
   @ApiProperty()
   @PrimaryKey
-  @Column
-  id: string;
+  @Column({ type: DataType.STRING, autoIncrement: false })
+  uid: string;
 
   @ApiProperty()
   @Column

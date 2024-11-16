@@ -37,9 +37,9 @@ export class UsersService {
     dto.password = await this.hashPassword(dto.password);
     const d1 = new Date();
     const d2 = new Date(dto.dateOfBD);
-    //const id = nanoid();
+    const id = nanoid();
     await this.usersRepo.create({
-      //id: id,
+      uid: id,
       email: dto.email,
       dateOfBD: dto.dateOfBD,
       firstName: dto.firstName,

@@ -7,6 +7,7 @@ import { AuthResponse } from './response';
 import { JwtAuthGuard } from 'src/guards';
 import { DeleteUserResponse } from '../users/response';
 import { UsersService } from '../users/users.service';
+import { AuthPayloadRequest } from 'src/common/types/requests/requests';
 
 @Controller('auth')
 export class AuthController {
@@ -33,7 +34,7 @@ export class AuthController {
   @ApiResponse({ status: 200, type: DeleteUserResponse })
   @UseGuards(JwtAuthGuard)
   @Delete()
-  deleteUser(@Req() req) {
-    return this.usersService.deleteUser(req.user.id);
+  deleteUser(@Req() req: AuthPayloadRequest) {
+    return this.usersService.deleteUser(req.user.uid);
   }
 }

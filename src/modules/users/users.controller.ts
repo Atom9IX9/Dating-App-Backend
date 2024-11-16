@@ -25,6 +25,6 @@ export class UsersController {
     @Body() dto: UpdateUserDTO,
     @Req() req: AuthPayloadRequest,
   ): Promise<UpdateUserResponse> {
-    return this.usersService.updateUser(req.user.id, dto);
+    return this.usersService.updateUser(req.user.uid, dto);
   }
 }

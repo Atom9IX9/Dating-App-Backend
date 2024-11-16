@@ -54,7 +54,7 @@ export class AuthService {
     }
 
     const userData = {
-      id: userAlreadyExists.id,
+      uid: userAlreadyExists.uid,
       email: userAlreadyExists.email,
       firstName: userAlreadyExists.firstName,
       gender: userAlreadyExists.gender,

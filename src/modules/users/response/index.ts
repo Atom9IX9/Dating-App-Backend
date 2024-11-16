@@ -14,7 +14,7 @@ export class GetUsersResponse {
 export class PublicUser {
   @ApiProperty()
   @IsString()
-  id: string;
+  uid: string;
 
   @ApiProperty()
   @IsString()
