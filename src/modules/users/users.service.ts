@@ -6,9 +6,10 @@ import { CreateUserDTO, UpdateUserDTO } from './dto';
 import {
   DeleteUserResponse,
   GetUsersResponse,
-  PublicUserResponse,
+  PublicUser,
   UpdateUserResponse,
 } from './response';
+import { nanoid } from 'nanoid';
 
 @Injectable()
 export class UsersService {
@@ -36,7 +37,9 @@ export class UsersService {
     dto.password = await this.hashPassword(dto.password);
     const d1 = new Date();
     const d2 = new Date(dto.dateOfBD);
+    //const id = nanoid();
     await this.usersRepo.create({
+      //id: id,
       email: dto.email,
       dateOfBD: dto.dateOfBD,
       firstName: dto.firstName,
@@ -57,7 +60,7 @@ export class UsersService {
     return users;
   }
 
-  async publicUser(email: string): Promise<PublicUserResponse> {
+  async publicUser(email: string): Promise<PublicUser> {
     const publicUser = await this.usersRepo.findOne({
       where: { email },
       attributes: {

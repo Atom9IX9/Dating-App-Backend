@@ -4,6 +4,7 @@ import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { GetUsersResponse, UpdateUserResponse } from './response';
 import { UpdateUserDTO } from './dto';
 import { JwtAuthGuard } from 'src/guards';
+import { AuthPayloadRequest } from 'src/common/types/requests/requests';
 
 @Controller('users')
 export class UsersController {
@@ -20,7 +21,10 @@ export class UsersController {
   @ApiResponse({ status: 200, type: UpdateUserResponse })
   @UseGuards(JwtAuthGuard)
   @Patch()
-  updateUser(@Body() dto: UpdateUserDTO, @Req() req) {
+  updateUser(
+    @Body() dto: UpdateUserDTO,
+    @Req() req: AuthPayloadRequest,
+  ): Promise<UpdateUserResponse> {
     return this.usersService.updateUser(req.user.id, dto);
   }
 }

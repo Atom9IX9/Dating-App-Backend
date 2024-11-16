@@ -61,6 +61,7 @@ export class AuthService {
       dateOfBD: new Date(userAlreadyExists.dateOfBD),
       lastName: userAlreadyExists.lastName,
       location: userAlreadyExists.location,
+      age: userAlreadyExists.age,
     };
 
     const token = this.tokenService.generateJwtToken(userData);

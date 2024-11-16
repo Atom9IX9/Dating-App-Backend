@@ -4,14 +4,18 @@ import { IsArray, IsInt, IsOptional, IsString } from 'class-validator';
 export class GetUsersResponse {
   @ApiProperty()
   @IsArray()
-  rows: PublicUserResponse[];
+  rows: PublicUser[];
 
   @ApiProperty()
   @IsInt()
   count: number;
 }
 
-export class PublicUserResponse {
+export class PublicUser {
+  @ApiProperty()
+  @IsString()
+  id: string;
+
   @ApiProperty()
   @IsString()
   firstName: string;
