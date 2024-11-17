@@ -1,6 +1,10 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { UsersService } from '../users/users.service';
-import { CreateUserDTO } from '../users/dto';
+import { CreateUserDTO, CreateUserResponse } from '../users/dto';
 import { ApiErrors } from 'src/common/constants/errors';
 import { LoginDTO } from './dto';
 import * as bcrypt from 'bcrypt';
@@ -14,14 +18,23 @@ export class AuthService {
     private readonly tokenService: TokenService,
   ) {}
 
-  async register(dto: CreateUserDTO): Promise<CreateUserDTO> {
+  async register(dto: CreateUserDTO): Promise<CreateUserResponse> {
     const userAlreadyExists = !!(await this.usersService.findUserByEmail(
       dto.email,
     ));
     if (userAlreadyExists)
       throw new BadRequestException(ApiErrors.USER_WITH_EMAIL_ALREADY_EXISTS);
 
-    return this.usersService.createUser(dto);
+    await this.usersService.createUser(dto);
+
+    return {
+      dateOfBD: dto.dateOfBD,
+      email: dto.email,
+      firstName: dto.firstName,
+      gender: dto.gender,
+      lastName: dto.lastName,
+      location: dto.location,
+    };
   }
 
   async login(dto: LoginDTO): Promise<AuthResponse> {
@@ -29,7 +42,7 @@ export class AuthService {
       dto.email,
     );
     if (!userAlreadyExists) {
-      throw new BadRequestException(ApiErrors.USER_DOES_NOT_EXIST);
+      throw new NotFoundException(ApiErrors.USER_DOES_NOT_EXIST);
     }
 
     const isValidPassword = await bcrypt.compare(
@@ -40,7 +53,18 @@ export class AuthService {
       throw new BadRequestException(ApiErrors.WRONG_EMAIL_OR_PASSWORD);
     }
 
-    const token = this.tokenService.generateJwtToken({ email: dto.email });
+    const userData = {
+      uid: userAlreadyExists.uid,
+      email: userAlreadyExists.email,
+      firstName: userAlreadyExists.firstName,
+      gender: userAlreadyExists.gender,
+      dateOfBD: new Date(userAlreadyExists.dateOfBD),
+      lastName: userAlreadyExists.lastName,
+      location: userAlreadyExists.location,
+      age: userAlreadyExists.age,
+    };
+
+    const token = this.tokenService.generateJwtToken(userData);
     const user = await this.usersService.publicUser(dto.email);
 
     return { user, token };

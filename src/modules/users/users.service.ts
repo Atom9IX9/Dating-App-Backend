@@ -2,14 +2,20 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { User } from './models/user.model';
 import * as bcrypt from 'bcrypt';
-import { CreateUserDTO } from './dto';
-import { GetUsersResponse, PublicUserResponse } from './response';
+import { CreateUserDTO, UpdateUserDTO } from './dto';
+import {
+  DeleteUserResponse,
+  GetUsersResponse,
+  PublicUser,
+  UpdateUserResponse,
+} from './response';
+import { nanoid } from 'nanoid';
 
 @Injectable()
 export class UsersService {
   private privateUserFieldsAttributesExclude: string[];
 
-  constructor(@InjectModel(User) private readonly userRepo: typeof User) {
+  constructor(@InjectModel(User) private readonly usersRepo: typeof User) {
     this.privateUserFieldsAttributesExclude = [
       'password',
       'dateOfBD',
@@ -24,14 +30,16 @@ export class UsersService {
   }
 
   async findUserByEmail(email: string) {
-    return this.userRepo.findOne({ where: { email } });
+    return this.usersRepo.findOne({ where: { email } });
   }
 
   async createUser(dto: CreateUserDTO): Promise<CreateUserDTO> {
     dto.password = await this.hashPassword(dto.password);
     const d1 = new Date();
     const d2 = new Date(dto.dateOfBD);
-    await this.userRepo.create({
+    const id = nanoid();
+    await this.usersRepo.create({
+      uid: id,
       email: dto.email,
       dateOfBD: dto.dateOfBD,
       firstName: dto.firstName,
@@ -46,14 +54,14 @@ export class UsersService {
   }
 
   async getPublicUsers(): Promise<GetUsersResponse> {
-    const users = await this.userRepo.findAndCountAll({
+    const users = await this.usersRepo.findAndCountAll({
       attributes: { exclude: this.privateUserFieldsAttributesExclude },
     });
     return users;
   }
 
-  async publicUser(email: string): Promise<PublicUserResponse> {
-    const publicUser = await this.userRepo.findOne({
+  async publicUser(email: string): Promise<PublicUser> {
+    const publicUser = await this.usersRepo.findOne({
       where: { email },
       attributes: {
         exclude: this.privateUserFieldsAttributesExclude,
@@ -61,5 +69,29 @@ export class UsersService {
     });
 
     return publicUser.dataValues;
+  }
+
+  async updateUser(
+    userId: string,
+    dto: UpdateUserDTO,
+  ): Promise<UpdateUserResponse> {
+    await this.usersRepo.update(dto, {
+      where: { id: userId },
+    });
+
+    const newUser = {
+      id: userId,
+      dateOfBD: dto.dateOfBD,
+      firstName: dto.firstName,
+      gender: dto.gender,
+      lastName: dto.lastName,
+      location: dto.location,
+    };
+    return newUser;
+  }
+
+  async deleteUser(userId: string): Promise<DeleteUserResponse> {
+    await this.usersRepo.destroy({ where: { id: userId } });
+    return { id: userId };
   }
 }
