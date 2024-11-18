@@ -5,7 +5,9 @@ import {
   Model,
   PrimaryKey,
   DataType,
+  HasMany,
 } from 'sequelize-typescript';
+import { Match } from 'src/modules/matches/models/match.model';
 
 @Table
 export class User extends Model {
@@ -45,4 +47,10 @@ export class User extends Model {
   @ApiProperty()
   @Column
   location: string;
+
+  @HasMany(() => Match, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
+  matches: Match[];
 }

@@ -29,8 +29,8 @@ export class UsersService {
     return bcrypt.hash(password, 10);
   }
 
-  async findUserByEmail(email: string) {
-    return this.usersRepo.findOne({ where: { email } });
+  async findUserByEmail(email: string): Promise<User> {
+    return await this.usersRepo.findOne({ where: { email } });
   }
 
   async createUser(dto: CreateUserDTO): Promise<CreateUserDTO> {
@@ -60,15 +60,15 @@ export class UsersService {
     return users;
   }
 
-  async publicUser(email: string): Promise<PublicUser> {
+  async publicUser(uid: string): Promise<PublicUser> {
     const publicUser = await this.usersRepo.findOne({
-      where: { email },
+      where: { uid },
       attributes: {
         exclude: this.privateUserFieldsAttributesExclude,
       },
     });
 
-    return publicUser.dataValues;
+    return publicUser ? publicUser.dataValues : undefined;
   }
 
   async updateUser(

@@ -65,8 +65,7 @@ export class AuthService {
     };
 
     const token = this.tokenService.generateJwtToken(userData);
-    const user = await this.usersService.publicUser(dto.email);
 
-    return { user, token };
+    return { user: userData, token };
   }
 }

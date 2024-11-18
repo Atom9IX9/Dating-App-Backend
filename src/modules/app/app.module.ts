@@ -8,6 +8,8 @@ import configs from '../../configs';
 import { User } from '../users/models/user.model';
 import { AuthModule } from '../auth/auth.module';
 import { TokenModule } from '../token/token.module';
+import { MatchesModule } from '../matches/matches.module';
+import { Match } from '../matches/models/match.model';
 
 @Module({
   imports: [
@@ -27,12 +29,13 @@ import { TokenModule } from '../token/token.module';
         database: configService.get('dbName'),
         synchronize: true,
         autoLoadModels: true,
-        models: [User],
+        models: [User, Match],
       }),
     }),
     UserModule,
     AuthModule,
     TokenModule,
+    MatchesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
