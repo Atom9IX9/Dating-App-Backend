@@ -1,5 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNumber, IsString } from 'class-validator';
+import { Type } from 'class-transformer';
+import {
+  IsNumber,
+  IsString,
+  IsArray,
+  ValidateNested,
+  IsInt,
+} from 'class-validator';
+import { Match } from '../models/match.model';
 
 export class CreateMatchResponse {
   @ApiProperty()
@@ -17,4 +25,16 @@ export class CreateMatchResponse {
   @ApiProperty()
   @IsString()
   status: 'pending' | 'rejected' | 'accepted';
+}
+
+export class GetMatchesResponse {
+  @ApiProperty()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => Match)
+  rows: Match[];
+
+  @ApiProperty()
+  @IsInt()
+  count: number;
 }
