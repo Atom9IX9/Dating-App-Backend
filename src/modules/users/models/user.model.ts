@@ -8,6 +8,7 @@ import {
   HasMany,
 } from 'sequelize-typescript';
 import { Match } from 'src/modules/matches/models/match.model';
+import { Genders } from '../types';
 
 @Table
 export class User extends Model {
@@ -40,9 +41,9 @@ export class User extends Model {
   @Column
   age: number;
 
-  @ApiProperty()
+  @ApiProperty({ enum: Genders })
   @Column
-  gender: 'male' | 'female';
+  gender: Genders;
 
   @ApiProperty()
   @Column

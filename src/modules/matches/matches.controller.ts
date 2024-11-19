@@ -1,8 +1,10 @@
 import { MatchesService } from './matches.service';
 import {
+  Body,
   Controller,
   Get,
   Param,
+  Patch,
   Post,
   Query,
   Req,
@@ -11,8 +13,9 @@ import {
 import { ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthPayloadRequest } from 'src/common/types/requests/requests';
 import { JwtAuthGuard } from 'src/guards';
-import { CreateMatchResponse, GetMatchesResponse } from './response';
-import { UserTypes } from './types';
+import { MatchResponse, GetMatchesResponse } from './response';
+import { UserTypeEnum } from './types';
+import { ReceiveMatchDTO } from './dto';
 
 @Controller('matches')
 export class MatchesController {
@@ -20,12 +23,12 @@ export class MatchesController {
 
   @ApiTags('MATCHES')
   @UseGuards(JwtAuthGuard)
-  @ApiResponse({ type: CreateMatchResponse, status: 201 })
+  @ApiResponse({ type: MatchResponse, status: 201 })
   @Post(':receiverId')
   createMatch(
     @Req() request: AuthPayloadRequest,
     @Param('receiverId') receiverId: string,
-  ): Promise<CreateMatchResponse> {
+  ): Promise<MatchResponse> {
     return this.matchesService.createMatch({
       userId: request.user.uid,
       receiverId,
@@ -35,15 +38,30 @@ export class MatchesController {
   @ApiTags('MATCHES')
   @UseGuards(JwtAuthGuard)
   @ApiResponse({ type: GetMatchesResponse, status: 200 })
-  @ApiQuery({ name: 'user', enum: UserTypes })
+  @ApiQuery({ name: 'user', enum: UserTypeEnum })
   @Get()
   getMatches(
     @Req() request: AuthPayloadRequest,
-    @Query('user') userType: UserTypes,
+    @Query('user') userType: UserTypeEnum,
   ) {
     return this.matchesService.getMatches({
       userId: request.user.uid,
       userType,
     });
+  }
+
+  @ApiTags('MATCHES')
+  @UseGuards(JwtAuthGuard)
+  @Patch(':matchId')
+  acceptMatch(
+    @Param('matchId') matchId: number,
+    @Req() request: AuthPayloadRequest,
+    @Body() dto: ReceiveMatchDTO,
+  ): Promise<MatchResponse> {
+    return this.matchesService.acceptMatch(
+      request.user.uid,
+      matchId,
+      dto.receive,
+    );
   }
 }

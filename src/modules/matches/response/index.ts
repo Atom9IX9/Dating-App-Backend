@@ -8,8 +8,9 @@ import {
   IsInt,
 } from 'class-validator';
 import { Match } from '../models/match.model';
+import { ReceivedStatuses } from '../types';
 
-export class CreateMatchResponse {
+export class MatchResponse {
   @ApiProperty()
   @IsNumber()
   id: number;
@@ -22,13 +23,13 @@ export class CreateMatchResponse {
   @IsString()
   receiverId: string;
 
-  @ApiProperty()
+  @ApiProperty({ enum: ReceivedStatuses })
   @IsString()
-  status: 'pending' | 'rejected' | 'accepted';
+  status: ReceivedStatuses;
 }
 
 export class GetMatchesResponse {
-  @ApiProperty()
+  @ApiProperty({ isArray: true, type: Match })
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => Match)

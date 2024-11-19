@@ -10,6 +10,7 @@ import {
   BelongsTo,
 } from 'sequelize-typescript';
 import { User } from 'src/modules/users/models/user.model';
+import { ReceivedStatuses } from '../types';
 
 @Table
 export class Match extends Model {
@@ -31,10 +32,10 @@ export class Match extends Model {
   @Column
   receiverId: string;
 
-  @ApiProperty()
+  @ApiProperty({ enum: ReceivedStatuses })
   @AllowNull(false)
   @Column
-  status: 'pending' | 'rejected' | 'accepted';
+  status: ReceivedStatuses;
 
   @BelongsTo(() => User)
   user: User;

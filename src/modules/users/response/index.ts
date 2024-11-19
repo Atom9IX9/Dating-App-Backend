@@ -1,15 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsArray, IsInt, IsOptional, IsString } from 'class-validator';
-
-export class GetUsersResponse {
-  @ApiProperty()
-  @IsArray()
-  rows: PublicUser[];
-
-  @ApiProperty()
-  @IsInt()
-  count: number;
-}
+import { Genders } from '../types';
 
 export class PublicUser {
   @ApiProperty()
@@ -32,9 +23,19 @@ export class PublicUser {
   @IsInt()
   age: number;
 
-  @ApiProperty()
+  @ApiProperty({ enum: Genders })
   @IsString()
-  gender: string;
+  gender: Genders;
+}
+
+export class GetUsersResponse {
+  @ApiProperty({ isArray: true, type: PublicUser })
+  @IsArray()
+  rows: PublicUser[];
+
+  @ApiProperty()
+  @IsInt()
+  count: number;
 }
 
 export class UpdateUserResponse {
@@ -60,7 +61,7 @@ export class UpdateUserResponse {
   @ApiProperty({ required: false })
   @IsString()
   @IsOptional()
-  gender?: 'male' | 'female';
+  gender?: Genders;
 
   @ApiProperty({ required: false })
   @IsString()

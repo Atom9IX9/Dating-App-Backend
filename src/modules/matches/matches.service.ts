@@ -2,9 +2,9 @@ import { InjectModel } from '@nestjs/sequelize';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { Match } from './models/match.model';
 import { GetMatchesDTO, MatchDTO } from './dto';
-import { CreateMatchResponse, GetMatchesResponse } from './response';
+import { MatchResponse, GetMatchesResponse } from './response';
 import { UsersService } from '../users/users.service';
-import { getMatchesWhereObj, UserTypes } from './types';
+import { TGetMatchesWhereObj, UserReceives, UserTypeEnum } from './types';
 
 @Injectable()
 export class MatchesService {
@@ -13,7 +13,7 @@ export class MatchesService {
     private readonly usersService: UsersService,
   ) {}
 
-  async createMatch(dto: MatchDTO): Promise<CreateMatchResponse> {
+  async createMatch(dto: MatchDTO): Promise<MatchResponse> {
     const receiver = await this.usersService.publicUser(dto.receiverId);
     console.log(receiver);
     if (!receiver) {
@@ -28,8 +28,8 @@ export class MatchesService {
     userId,
     userType,
   }: GetMatchesDTO): Promise<GetMatchesResponse> {
-    const where: getMatchesWhereObj = {};
-    if (userType === UserTypes.Sender) {
+    const where: TGetMatchesWhereObj = {};
+    if (userType === UserTypeEnum.Sender) {
       where.userId = userId;
     } else {
       where.receiverId = userId;
@@ -39,5 +39,21 @@ export class MatchesService {
     });
 
     return matches;
+  }
+
+  async acceptMatch(
+    userId: string,
+    matchId: number,
+    receive: UserReceives,
+  ): Promise<MatchResponse> {
+    const match = await this.matchesRepo.findOne({ where: { id: matchId } });
+
+    if (match.receiverId !== userId) {
+      throw new BadRequestException('User is not receiver');
+    }
+
+    match.update({ status: receive });
+
+    return match;
   }
 }
