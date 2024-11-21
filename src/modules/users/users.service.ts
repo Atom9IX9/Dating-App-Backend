@@ -10,6 +10,7 @@ import {
   UpdateUserResponse,
 } from './response';
 import { nanoid } from 'nanoid';
+import { Op } from 'sequelize';
 
 @Injectable()
 export class UsersService {
@@ -53,10 +54,16 @@ export class UsersService {
     return dto;
   }
 
-  async getPublicUsers(): Promise<GetUsersResponse> {
+  async getPublicUsers(ids?: string[]): Promise<GetUsersResponse> {
     const users = await this.usersRepo.findAndCountAll({
       attributes: { exclude: this.privateUserFieldsAttributesExclude },
+      where: ids
+        ? {
+            uid: { [Op.in]: ids },
+          }
+        : {},
     });
+
     return users;
   }
 
