@@ -13,7 +13,11 @@ import {
 import { ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthPayloadRequest } from 'src/common/types/requests/requests';
 import { JwtAuthGuard } from 'src/guards';
-import { MatchResponse, GetMatchesResponse } from './response';
+import {
+  MatchResponse,
+  GetMatchesResponse,
+  GetIsMatchedResponse,
+} from './response';
 import { UserTypeEnum } from './types';
 import { ReceiveMatchDTO } from './dto';
 
@@ -52,6 +56,7 @@ export class MatchesController {
 
   @ApiTags('MATCHES')
   @UseGuards(JwtAuthGuard)
+  @ApiResponse({ type: MatchResponse, status: 200 })
   @Patch(':matchId')
   acceptMatch(
     @Param('matchId') matchId: number,
@@ -63,5 +68,16 @@ export class MatchesController {
       matchId,
       dto.receive,
     );
+  }
+
+  @ApiTags('MATCHES')
+  @UseGuards(JwtAuthGuard)
+  @ApiResponse({ type: GetIsMatchedResponse, status: 200 })
+  @Get(':secondUserId')
+  getIsMatched(
+    @Req() request: AuthPayloadRequest,
+    @Param('secondUserId') secondUserId: string,
+  ): Promise<GetIsMatchedResponse> {
+    return this.matchesService.getIsMatched(request.user.uid, secondUserId);
   }
 }

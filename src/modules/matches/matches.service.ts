@@ -3,6 +3,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { Match } from './models/match.model';
 import { GetMatchesDTO, MatchDTO } from './dto';
 import {
+  GetIsMatchedResponse,
   GetMatchesResponse,
   GetMatchResponse,
   MatchResponse,
@@ -52,6 +53,24 @@ export class MatchesService {
     };
 
     return response;
+  }
+
+  async getIsMatched(
+    userId: string,
+    secondUserId: string,
+  ): Promise<GetIsMatchedResponse> {
+    let match: Match;
+
+    match = await Match.findOne({
+      where: { userId, receiverId: secondUserId },
+    });
+    if (!match) {
+      match = await Match.findOne({
+        where: { userId: secondUserId, receiverId: userId },
+      });
+    }
+
+    return { status: match ? match.status : undefined, isMatched: !!match };
   }
 
   async acceptMatch(

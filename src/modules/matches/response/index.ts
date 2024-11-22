@@ -6,6 +6,8 @@ import {
   IsArray,
   ValidateNested,
   IsInt,
+  IsBoolean,
+  IsOptional,
 } from 'class-validator';
 import { ReceivedStatuses } from '../types';
 import { PublicUser } from 'src/modules/users/response';
@@ -60,4 +62,15 @@ export class GetMatchesResponse {
   @ApiProperty()
   @IsInt()
   count: number;
+}
+
+export class GetIsMatchedResponse {
+  @ApiProperty()
+  @IsBoolean()
+  isMatched: boolean;
+
+  @ApiProperty({ enum: ReceivedStatuses, required: false })
+  @IsString()
+  @IsOptional()
+  status?: ReceivedStatuses;
 }
