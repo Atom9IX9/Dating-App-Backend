@@ -10,7 +10,6 @@ import {
   IsOptional,
 } from 'class-validator';
 import { ReceivedStatuses } from '../types';
-import { PublicUser } from 'src/modules/users/response';
 
 export class MatchResponse {
   @ApiProperty()
@@ -30,34 +29,12 @@ export class MatchResponse {
   status: ReceivedStatuses;
 }
 
-export class GetMatchResponse {
-  @ApiProperty()
-  @IsNumber()
-  id: number;
-
-  @ApiProperty()
-  @IsString()
-  userId: string;
-
-  @ApiProperty()
-  @IsString()
-  receiverId: string;
-
-  @ApiProperty({ enum: ReceivedStatuses })
-  @IsString()
-  status: ReceivedStatuses;
-
-  @ApiProperty()
-  @Type(() => PublicUser)
-  secondUser: PublicUser;
-}
-
 export class GetMatchesResponse {
-  @ApiProperty({ isArray: true, type: GetMatchResponse })
+  @ApiProperty({ isArray: true, type: MatchResponse })
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => GetMatchResponse)
-  rows: GetMatchResponse[];
+  @Type(() => MatchResponse)
+  rows: MatchResponse[];
 
   @ApiProperty()
   @IsInt()

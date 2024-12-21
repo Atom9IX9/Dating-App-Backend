@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
 import { UserReceives, UserTypeEnum } from '../types';
 
 export class MatchDTO {
@@ -17,9 +17,10 @@ export class GetMatchesDTO {
   @IsString()
   userId: string;
 
-  @ApiProperty()
+  @ApiProperty({ enum: UserTypeEnum, required: false })
   @IsString()
-  userType: UserTypeEnum;
+  @IsOptional()
+  userType?: UserTypeEnum;
 }
 
 export class ReceiveMatchDTO {

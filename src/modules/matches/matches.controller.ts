@@ -6,19 +6,13 @@ import {
   Param,
   Patch,
   Post,
-  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthPayloadRequest } from 'src/common/types/requests/requests';
 import { JwtAuthGuard } from 'src/guards';
-import {
-  MatchResponse,
-  GetMatchesResponse,
-  GetIsMatchedResponse,
-} from './response';
-import { UserTypeEnum } from './types';
+import { MatchResponse, GetIsMatchedResponse } from './response';
 import { ReceiveMatchDTO } from './dto';
 
 @Controller('matches')
@@ -39,20 +33,20 @@ export class MatchesController {
     });
   }
 
-  @ApiTags('MATCHES')
-  @UseGuards(JwtAuthGuard)
-  @ApiResponse({ type: GetMatchesResponse, status: 200 })
-  @ApiQuery({ name: 'user', enum: UserTypeEnum })
-  @Get()
-  getMatches(
-    @Req() request: AuthPayloadRequest,
-    @Query('user') userType: UserTypeEnum,
-  ) {
-    return this.matchesService.getMatches({
-      userId: request.user.uid,
-      userType,
-    });
-  }
+  // @ApiTags('MATCHES')
+  // @UseGuards(JwtAuthGuard)
+  // @ApiResponse({ type: GetMatchesResponse, status: 200 })
+  // @ApiQuery({ name: 'user', enum: UserTypeEnum })
+  // @Get()
+  // getMatches(
+  //   @Req() request: AuthPayloadRequest,
+  //   @Query('user') userType: UserTypeEnum,
+  // ) {
+  //   return this.matchesService.getMatches({
+  //     userId: request.user.uid,
+  //     userType,
+  //   });
+  // }
 
   @ApiTags('MATCHES')
   @UseGuards(JwtAuthGuard)

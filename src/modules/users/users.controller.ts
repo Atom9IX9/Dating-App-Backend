@@ -12,9 +12,10 @@ export class UsersController {
 
   @ApiTags('USERS')
   @ApiResponse({ status: 200, type: GetUsersResponse })
+  @UseGuards(JwtAuthGuard)
   @Get()
-  getUsers() {
-    return this.usersService.getPublicUsers();
+  getUsers(@Req() request: AuthPayloadRequest) {
+    return this.usersService.getPublicUsers(request.user);
   }
 
   @ApiTags('USERS')

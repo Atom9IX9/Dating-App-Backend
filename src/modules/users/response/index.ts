@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsArray, IsInt, IsOptional, IsString } from 'class-validator';
 import { Genders } from '../types';
+import { ReceivedStatuses } from 'src/modules/matches/types';
 
 export class PublicUser {
   @ApiProperty()
@@ -26,6 +27,11 @@ export class PublicUser {
   @ApiProperty({ enum: Genders })
   @IsString()
   gender: Genders;
+
+  @ApiProperty({ enum: ReceivedStatuses, required: false })
+  @IsString()
+  @IsOptional()
+  matchStatus?: ReceivedStatuses;
 }
 
 export class GetUsersResponse {

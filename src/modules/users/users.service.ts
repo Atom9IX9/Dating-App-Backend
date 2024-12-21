@@ -10,13 +10,16 @@ import {
   UpdateUserResponse,
 } from './response';
 import { nanoid } from 'nanoid';
-import { Op } from 'sequelize';
+import { MatchesService } from '../matches/matches.service';
 
 @Injectable()
 export class UsersService {
   private privateUserFieldsAttributesExclude: string[];
 
-  constructor(@InjectModel(User) private readonly usersRepo: typeof User) {
+  constructor(
+    @InjectModel(User) private readonly usersRepo: typeof User,
+    private readonly matchesService: MatchesService,
+  ) {
     this.privateUserFieldsAttributesExclude = [
       'password',
       'dateOfBD',
@@ -54,17 +57,26 @@ export class UsersService {
     return dto;
   }
 
-  async getPublicUsers(ids?: string[]): Promise<GetUsersResponse> {
-    const users = await this.usersRepo.findAndCountAll({
+  async getPublicUsers(authUser: PublicUser): Promise<GetUsersResponse> {
+    const users = await this.usersRepo.findAll({
       attributes: { exclude: this.privateUserFieldsAttributesExclude },
-      where: ids
-        ? {
-            uid: { [Op.in]: ids },
-          }
-        : {},
+    });
+    const matches = await this.matchesService.getMatches({
+      userId: authUser.uid,
     });
 
-    return users;
+    const mappedUsers = users
+      .map((u) => {
+        for (const m of matches.rows) {
+          if (u.uid === m.receiverId || u.uid === m.userId) {
+            return { ...u.dataValues, matchStatus: m.status };
+          }
+        }
+        return u;
+      })
+      .filter((u) => u.uid !== authUser.uid);
+
+    return { rows: mappedUsers, count: mappedUsers.length };
   }
 
   async publicUser(uid: string): Promise<PublicUser> {

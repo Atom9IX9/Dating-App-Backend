@@ -5,54 +5,57 @@ import { GetMatchesDTO, MatchDTO } from './dto';
 import {
   GetIsMatchedResponse,
   GetMatchesResponse,
-  GetMatchResponse,
   MatchResponse,
 } from './response';
-import { UsersService } from '../users/users.service';
-import { TGetMatchesWhereObj, UserReceives, UserTypeEnum } from './types';
-import { GetUsersResponse } from '../users/response';
+import { UserReceives, UserTypeEnum } from './types';
 
 @Injectable()
 export class MatchesService {
-  constructor(
-    @InjectModel(Match) private readonly matchesRepo: typeof Match,
-    private readonly usersService: UsersService,
-  ) {}
+  constructor(@InjectModel(Match) private readonly matchesRepo: typeof Match) {}
 
   async createMatch(dto: MatchDTO): Promise<MatchResponse> {
-    const receiver = await this.usersService.publicUser(dto.receiverId);
-    console.log(receiver);
-    if (!receiver) {
-      throw new BadRequestException('User with "receiverId" does not exist');
-    }
     const match = await this.matchesRepo.create({ ...dto, status: 'pending' });
 
     return match;
   }
 
-  async getMatches({
-    userId,
-    userType,
-  }: GetMatchesDTO): Promise<GetMatchesResponse> {
-    const where: TGetMatchesWhereObj = {};
-    if (userType === UserTypeEnum.Sender) {
-      where.userId = userId;
-    } else {
-      where.receiverId = userId;
+  async getMatches(dto: GetMatchesDTO): Promise<GetMatchesResponse> {
+    let matches: GetMatchesResponse;
+    switch (dto.userType) {
+      case UserTypeEnum.Receiver: {
+        matches = await this.matchesRepo.findAndCountAll({
+          where: { receiverId: dto.userId },
+        });
+        break;
+      }
+
+      case UserTypeEnum.Sender: {
+        matches = await this.matchesRepo.findAndCountAll({
+          where: { userId: dto.userId },
+        });
+        break;
+      }
+
+      default: {
+        const asReceiverPromise = this.matchesRepo.findAndCountAll({
+          where: { receiverId: dto.userId },
+        });
+        const asSenderPromise = this.matchesRepo.findAndCountAll({
+          where: { userId: dto.userId },
+        });
+        const [asReceiver, asSender] = await Promise.all([
+          asReceiverPromise,
+          asSenderPromise,
+        ]);
+
+        matches = {
+          rows: [...asReceiver.rows, ...asSender.rows],
+          count: asReceiver.count + asSender.count,
+        };
+      }
     }
-    const matches = await this.matchesRepo.findAndCountAll({
-      where,
-    });
 
-    const response: GetMatchesResponse = {
-      count: matches.count,
-      rows: await this.getSecondUsersByUserTypeAndMatches(
-        userType,
-        matches.rows,
-      ),
-    };
-
-    return response;
+    return matches;
   }
 
   async getIsMatched(
@@ -89,36 +92,36 @@ export class MatchesService {
     return match;
   }
 
-  private async getSecondUsersByUserTypeAndMatches(
-    userType: UserTypeEnum,
-    matches: Match[],
-  ): Promise<GetMatchResponse[]> {
-    let secondUserIds: string[];
-    let secondUsers: GetUsersResponse;
-    let result: GetMatchResponse[];
+  // private async getSecondUsersByUserTypeAndMatches(
+  //   userType: UserTypeEnum,
+  //   matches: Match[],
+  // ): Promise<GetMatchResponse[]> {
+  //   let secondUserIds: string[];
+  //   let secondUsers: GetUsersResponse;
+  //   let result: GetMatchResponse[];
 
-    if (userType === UserTypeEnum.Receiver) {
-      secondUserIds = matches.map((m) => m.userId);
-      secondUsers = await this.usersService.getPublicUsers(secondUserIds);
-      result = matches.map((m) => {
-        for (const u of secondUsers.rows) {
-          if (u.uid === m.userId) {
-            return { ...m.dataValues, secondUser: u };
-          }
-        }
-      });
-    } else {
-      secondUserIds = matches.map((m) => m.receiverId);
-      secondUsers = await this.usersService.getPublicUsers(secondUserIds);
-      result = matches.map((m) => {
-        for (const u of secondUsers.rows) {
-          if (u.uid === m.receiverId) {
-            return { ...m.dataValues, secondUser: u };
-          }
-        }
-      });
-    }
+  //   if (userType === UserTypeEnum.Receiver) {
+  //     secondUserIds = matches.map((m) => m.userId);
+  //     secondUsers = await this.usersService.getPublicUsers(secondUserIds);
+  //     result = matches.map((m) => {
+  //       for (const u of secondUsers.rows) {
+  //         if (u.uid === m.userId) {
+  //           return { ...m.dataValues, secondUser: u };
+  //         }
+  //       }
+  //     });
+  //   } else {
+  //     secondUserIds = matches.map((m) => m.receiverId);
+  //     secondUsers = await this.usersService.getPublicUsers(secondUserIds);
+  //     result = matches.map((m) => {
+  //       for (const u of secondUsers.rows) {
+  //         if (u.uid === m.receiverId) {
+  //           return { ...m.dataValues, secondUser: u };
+  //         }
+  //       }
+  //     });
+  //   }
 
-    return result;
-  }
+  //   return result;
+  // }
 }
