@@ -27,37 +27,15 @@ export class CreateUserDTO {
   @IsString()
   gender: Genders;
 
-  @ApiProperty()
+  @ApiProperty({ required: false })
   @IsString()
   @IsOptional()
   location?: string;
-}
 
-export class CreateUserResponse {
-  @ApiProperty()
-  @IsString()
-  firstName: string;
-
-  @ApiProperty()
-  @IsString()
-  lastName: string;
-
-  @ApiProperty()
-  @IsEmail()
-  email: string;
-
-  @ApiProperty()
-  @IsString()
-  dateOfBD: Date;
-
-  @ApiProperty({ enum: Genders })
-  @IsString()
-  gender: Genders;
-
-  @ApiProperty()
+  @ApiProperty({ required: false, maxLength: 125 })
   @IsString()
   @IsOptional()
-  location?: string;
+  description?: string;
 }
 
 export class UpdateUserDTO {

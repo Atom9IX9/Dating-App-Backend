@@ -52,6 +52,7 @@ export class UsersService {
       location: dto.location,
       password: dto.password,
       age: d1.getFullYear() - d2.getFullYear(),
+      description: dto.description,
     });
 
     return dto;
