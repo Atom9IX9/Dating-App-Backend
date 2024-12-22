@@ -15,7 +15,7 @@ async function bootstrap() {
   // swagger
   const docConfig = new DocumentBuilder()
     .setTitle('Dating App API')
-    .setDescription('API for Dating App (pet project of ATOM9IX9 github user')
+    .setDescription('API for Dating App (pet project of ATOM9IX9 github user)')
     .setVersion('1.0')
     .addTag('API')
     .build();

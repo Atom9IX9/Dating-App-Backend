@@ -1,11 +1,11 @@
 import { Body, Controller, Delete, Post, Req, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { CreateUserDTO, CreateUserResponse } from '../users/dto';
+import { CreateUserDTO } from '../users/dto';
 import { LoginDTO } from './dto';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthResponse } from './response';
 import { JwtAuthGuard } from 'src/guards';
-import { DeleteUserResponse } from '../users/response';
+import { CreateUserResponse, DeleteUserResponse } from '../users/response';
 import { UsersService } from '../users/users.service';
 import { AuthPayloadRequest } from 'src/common/types/requests/requests';
 

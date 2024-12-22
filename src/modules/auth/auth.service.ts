@@ -4,12 +4,13 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
-import { CreateUserDTO, CreateUserResponse } from '../users/dto';
+import { CreateUserDTO } from '../users/dto';
 import { ApiErrors } from 'src/common/constants/errors';
 import { LoginDTO } from './dto';
 import * as bcrypt from 'bcrypt';
 import { AuthResponse } from './response';
 import { TokenService } from '../token/token.service';
+import { CreateUserResponse } from '../users/response';
 
 @Injectable()
 export class AuthService {
@@ -34,6 +35,7 @@ export class AuthService {
       gender: dto.gender,
       lastName: dto.lastName,
       location: dto.location,
+      description: dto.description,
     };
   }
 
@@ -58,10 +60,11 @@ export class AuthService {
       email: userAlreadyExists.email,
       firstName: userAlreadyExists.firstName,
       gender: userAlreadyExists.gender,
-      dateOfBD: new Date(userAlreadyExists.dateOfBD),
+      dateOfBD: userAlreadyExists.dateOfBD,
       lastName: userAlreadyExists.lastName,
       location: userAlreadyExists.location,
       age: userAlreadyExists.age,
+      description: userAlreadyExists.description,
     };
 
     const token = this.tokenService.generateJwtToken(userData);

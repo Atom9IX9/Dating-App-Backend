@@ -4,17 +4,18 @@ import {
   Table,
   Model,
   PrimaryKey,
-  DataType,
   HasMany,
+  AllowNull,
 } from 'sequelize-typescript';
 import { Match } from 'src/modules/matches/models/match.model';
 import { Genders } from '../types';
+import { DataTypes } from 'sequelize';
 
 @Table
 export class User extends Model {
   @ApiProperty()
   @PrimaryKey
-  @Column({ type: DataType.STRING, autoIncrement: false })
+  @Column({ type: DataTypes.STRING, autoIncrement: false })
   uid: string;
 
   @ApiProperty()
@@ -46,8 +47,14 @@ export class User extends Model {
   gender: Genders;
 
   @ApiProperty()
+  @AllowNull(true)
+  @Column({ type: DataTypes.STRING(125) })
+  description: string | null;
+
+  @ApiProperty()
+  @AllowNull(true)
   @Column
-  location: string;
+  location: string | null;
 
   @HasMany(() => Match, {
     onDelete: 'CASCADE',
