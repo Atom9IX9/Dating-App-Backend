@@ -4,6 +4,7 @@ import { User } from './models/user.model';
 import * as bcrypt from 'bcrypt';
 import { CreateUserDTO, UpdateUserDTO } from './dto';
 import {
+  CreateUserResponse,
   DeleteUserResponse,
   GetUsersResponse,
   PublicUser,
@@ -37,12 +38,12 @@ export class UsersService {
     return await this.usersRepo.findOne({ where: { email } });
   }
 
-  async createUser(dto: CreateUserDTO): Promise<CreateUserDTO> {
+  async createUser(dto: CreateUserDTO): Promise<CreateUserResponse> {
     dto.password = await this.hashPassword(dto.password);
     const d1 = new Date();
     const d2 = new Date(dto.dateOfBD);
     const id = nanoid();
-    await this.usersRepo.create({
+    const user = await this.usersRepo.create({
       uid: id,
       email: dto.email,
       dateOfBD: dto.dateOfBD,
@@ -55,7 +56,17 @@ export class UsersService {
       description: dto.description,
     });
 
-    return dto;
+    return {
+      uid: id,
+      email: dto.email,
+      firstName: dto.firstName,
+      lastName: dto.lastName,
+      gender: dto.gender,
+      age: user.age,
+      dateOfBD: dto.dateOfBD,
+      description: dto.description,
+      location: dto.location,
+    };
   }
 
   async getPublicUsers(authUser: PublicUser): Promise<GetUsersResponse> {

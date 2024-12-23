@@ -42,6 +42,10 @@ export class PublicUser {
 export class CreateUserResponse {
   @ApiProperty()
   @IsString()
+  uid: string;
+
+  @ApiProperty()
+  @IsString()
   firstName: string;
 
   @ApiProperty()
@@ -55,6 +59,10 @@ export class CreateUserResponse {
   @ApiProperty()
   @IsString()
   dateOfBD: Date;
+
+  @ApiProperty()
+  @IsInt()
+  age: number;
 
   @ApiProperty({ enum: Genders })
   @IsString()

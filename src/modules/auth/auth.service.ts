@@ -26,10 +26,12 @@ export class AuthService {
     if (userAlreadyExists)
       throw new BadRequestException(ApiErrors.USER_WITH_EMAIL_ALREADY_EXISTS);
 
-    await this.usersService.createUser(dto);
+    const user = await this.usersService.createUser(dto);
 
     return {
+      uid: user.uid,
       dateOfBD: dto.dateOfBD,
+      age: user.age,
       email: dto.email,
       firstName: dto.firstName,
       gender: dto.gender,
