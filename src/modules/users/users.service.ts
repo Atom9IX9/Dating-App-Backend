@@ -122,7 +122,7 @@ export class UsersService {
   }
 
   async deleteUser(userId: string): Promise<DeleteUserResponse> {
-    await this.usersRepo.destroy({ where: { id: userId } });
-    return { id: userId };
+    await this.usersRepo.destroy({ where: { uid: userId } });
+    return { uid: userId };
   }
 }

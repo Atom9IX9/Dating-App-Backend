@@ -123,5 +123,5 @@ export class UpdateUserResponse {
 export class DeleteUserResponse {
   @ApiProperty()
   @IsString()
-  id: string;
+  uid: string;
 }
