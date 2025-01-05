@@ -69,7 +69,7 @@ export class AuthService {
       description: userAlreadyExists.description,
     };
 
-    const token = this.tokenService.generateJwtToken(userData);
+    const token = this.tokenService.generateJwtToken(userData, dto.rememberMe);
 
     return { user: userData, token };
   }

@@ -10,12 +10,14 @@ export class TokenService {
     private readonly configService: ConfigService,
   ) {}
 
-  generateJwtToken(user: PublicUser) {
+  generateJwtToken(user: PublicUser, rememberMe?: boolean) {
     const payload = { user };
 
     return this.jwtService.sign(payload, {
       secret: this.configService.get('jwtSecret'),
-      expiresIn: this.configService.get('jwtExpire'),
+      expiresIn: rememberMe
+        ? this.configService.get('jwtRememberMeExpire')
+        : this.configService.get('jwtExpire'),
     });
   }
 }
