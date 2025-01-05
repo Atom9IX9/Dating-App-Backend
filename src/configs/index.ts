@@ -7,4 +7,5 @@ export default () => ({
   dbName: process.env.DB_NAME,
   jwtSecret: process.env.JWT_SECRET,
   jwtExpire: process.env.JWT_EXPIRE,
+  jwtRememberMeExpire: process.env.JWT_REMEMBER_ME_EXPIRE,
 });
