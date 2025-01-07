@@ -10,7 +10,8 @@ import { LoginDTO } from './dto';
 import * as bcrypt from 'bcrypt';
 import { AuthResponse } from './response';
 import { TokenService } from '../token/token.service';
-import { CreateUserResponse } from '../users/response';
+import { User } from '../users/models/user.model';
+import { CreateUserResponse, PublicUser } from '../users/response';
 
 @Injectable()
 export class AuthService {
@@ -19,7 +20,7 @@ export class AuthService {
     private readonly tokenService: TokenService,
   ) {}
 
-  async register(dto: CreateUserDTO): Promise<CreateUserResponse> {
+  public async register(dto: CreateUserDTO): Promise<AuthResponse> {
     const userAlreadyExists = !!(await this.usersService.findUserByEmail(
       dto.email,
     ));
@@ -28,48 +29,44 @@ export class AuthService {
 
     const user = await this.usersService.createUser(dto);
 
-    return {
-      uid: user.uid,
-      dateOfBD: dto.dateOfBD,
-      age: user.age,
-      email: dto.email,
-      firstName: dto.firstName,
-      gender: dto.gender,
-      lastName: dto.lastName,
-      location: dto.location,
-      description: dto.description,
-    };
+    return this.generateAuthResponse(user, false);
   }
 
-  async login(dto: LoginDTO): Promise<AuthResponse> {
-    const userAlreadyExists = await this.usersService.findUserByEmail(
-      dto.email,
-    );
-    if (!userAlreadyExists) {
+  public async login(dto: LoginDTO): Promise<AuthResponse> {
+    const user = await this.usersService.findUserByEmail(dto.email);
+    if (!user) {
       throw new NotFoundException(ApiErrors.USER_DOES_NOT_EXIST);
     }
 
-    const isValidPassword = await bcrypt.compare(
-      dto.password,
-      userAlreadyExists.password,
-    );
+    const isValidPassword = await bcrypt.compare(dto.password, user.password);
     if (!isValidPassword) {
       throw new BadRequestException(ApiErrors.WRONG_EMAIL_OR_PASSWORD);
     }
 
+    return this.generateAuthResponse(user, dto.rememberMe);
+  }
+
+  public async checkAuth(user: PublicUser): Promise<PublicUser> {
+    return user;
+  }
+
+  private generateAuthResponse(
+    user: User | CreateUserResponse,
+    rememberUser: boolean,
+  ): AuthResponse {
     const userData = {
-      uid: userAlreadyExists.uid,
-      email: userAlreadyExists.email,
-      firstName: userAlreadyExists.firstName,
-      gender: userAlreadyExists.gender,
-      dateOfBD: userAlreadyExists.dateOfBD,
-      lastName: userAlreadyExists.lastName,
-      location: userAlreadyExists.location,
-      age: userAlreadyExists.age,
-      description: userAlreadyExists.description,
+      uid: user.uid,
+      email: user.email,
+      firstName: user.firstName,
+      gender: user.gender,
+      dateOfBD: user.dateOfBD,
+      lastName: user.lastName,
+      location: user.location,
+      age: user.age,
+      description: user.description,
     };
 
-    const token = this.tokenService.generateJwtToken(userData, dto.rememberMe);
+    const token = this.tokenService.generateJwtToken(userData, rememberUser);
 
     return { user: userData, token };
   }
