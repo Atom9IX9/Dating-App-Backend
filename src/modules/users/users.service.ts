@@ -4,7 +4,7 @@ import { User } from './models/user.model';
 import * as bcrypt from 'bcrypt';
 import { CreateUserDTO, UpdateUserDTO } from './dto';
 import {
-  CreateUserResponse,
+  UserResponse,
   DeleteUserResponse,
   GetUsersResponse,
   PublicUser,
@@ -15,30 +15,22 @@ import { MatchesService } from '../matches/matches.service';
 
 @Injectable()
 export class UsersService {
-  private privateUserFieldsAttributesExclude: string[];
-
   constructor(
     @InjectModel(User) private readonly usersRepo: typeof User,
     private readonly matchesService: MatchesService,
-  ) {
-    this.privateUserFieldsAttributesExclude = [
-      'password',
-      'dateOfBD',
-      'location',
-      'createdAt',
-      'updatedAt',
-    ];
-  }
+  ) {}
 
   private async hashPassword(password: string) {
     return bcrypt.hash(password, 10);
   }
 
-  async findUserByEmail(email: string): Promise<User> {
-    return await this.usersRepo.findOne({ where: { email } });
+  public async findUserByEmail(
+    email: string,
+  ): Promise<User & { password: string }> {
+    return await this.usersRepo.scope('login').findOne({ where: { email } });
   }
 
-  async createUser(dto: CreateUserDTO): Promise<CreateUserResponse> {
+  public async createUser(dto: CreateUserDTO): Promise<UserResponse> {
     dto.password = await this.hashPassword(dto.password);
     const d1 = new Date();
     const d2 = new Date(dto.dateOfBD);
@@ -69,9 +61,11 @@ export class UsersService {
     };
   }
 
-  async getPublicUsers(authUser: PublicUser): Promise<GetUsersResponse> {
+  public async getPublicUsers(authUser: PublicUser): Promise<GetUsersResponse> {
     const users = await this.usersRepo.findAll({
-      attributes: { exclude: this.privateUserFieldsAttributesExclude },
+      attributes: {
+        exclude: ['dateOfBD', 'location'],
+      },
     });
     const matches = await this.matchesService.getMatches({
       userId: authUser.uid,
@@ -91,18 +85,15 @@ export class UsersService {
     return { rows: mappedUsers, count: mappedUsers.length };
   }
 
-  async publicUser(uid: string): Promise<PublicUser> {
-    const publicUser = await this.usersRepo.findOne({
+  public async getFullUserInfoById(uid: string): Promise<UserResponse> {
+    const user = await this.usersRepo.findOne({
       where: { uid },
-      attributes: {
-        exclude: this.privateUserFieldsAttributesExclude,
-      },
     });
 
-    return publicUser ? publicUser.dataValues : undefined;
+    return user;
   }
 
-  async updateUser(
+  public async updateUser(
     userId: string,
     dto: UpdateUserDTO,
   ): Promise<UpdateUserResponse> {
@@ -121,7 +112,7 @@ export class UsersService {
     return newUser;
   }
 
-  async deleteUser(userId: string): Promise<DeleteUserResponse> {
+  public async deleteUser(userId: string): Promise<DeleteUserResponse> {
     await this.usersRepo.destroy({ where: { uid: userId } });
     return { uid: userId };
   }

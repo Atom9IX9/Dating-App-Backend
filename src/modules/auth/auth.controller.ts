@@ -13,7 +13,7 @@ import { LoginDTO } from './dto';
 import { ApiBearerAuth, ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthResponse } from './response';
 import { JwtAuthGuard } from 'src/guards';
-import { DeleteUserResponse, PublicUser } from '../users/response';
+import { DeleteUserResponse, UserResponse } from '../users/response';
 import { UsersService } from '../users/users.service';
 import { AuthPayloadRequest } from 'src/common/types/requests/requests';
 
@@ -52,7 +52,7 @@ export class AuthController {
   @ApiTags('AUTHORIZATION')
   @ApiResponse({
     status: 200,
-    type: PublicUser,
+    type: UserResponse,
     description: 'Auth info has been successfully received.',
   })
   @ApiBearerAuth()

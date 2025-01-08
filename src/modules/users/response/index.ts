@@ -1,5 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsEmail, IsInt, IsOptional, IsString } from 'class-validator';
+import {
+  IsArray,
+  IsDateString,
+  IsEmail,
+  IsInt,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 import { Genders } from '../types';
 import { ReceivedStatuses } from 'src/modules/matches/types';
 
@@ -37,9 +44,14 @@ export class PublicUser {
   @IsString()
   @IsOptional()
   description?: string;
+
+  @ApiProperty({ required: false })
+  @IsString()
+  @IsOptional()
+  location?: string;
 }
 
-export class CreateUserResponse {
+export class UserResponse {
   @ApiProperty()
   @IsString()
   uid: string;
@@ -56,9 +68,9 @@ export class CreateUserResponse {
   @IsEmail()
   email: string;
 
-  @ApiProperty()
-  @IsString()
-  dateOfBD: Date;
+  @ApiProperty({ type: Date })
+  @IsDateString()
+  dateOfBD: string;
 
   @ApiProperty()
   @IsInt()
@@ -104,10 +116,10 @@ export class UpdateUserResponse {
   @IsOptional()
   lastName?: string;
 
-  @ApiProperty({ required: false })
-  @IsString()
+  @ApiProperty({ required: false, type: Date })
+  @IsDateString()
   @IsOptional()
-  dateOfBD?: Date;
+  dateOfBD?: string;
 
   @ApiProperty({ required: false })
   @IsString()

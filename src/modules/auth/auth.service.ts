@@ -10,8 +10,7 @@ import { LoginDTO } from './dto';
 import * as bcrypt from 'bcrypt';
 import { AuthResponse } from './response';
 import { TokenService } from '../token/token.service';
-import { User } from '../users/models/user.model';
-import { CreateUserResponse, PublicUser } from '../users/response';
+import { UserResponse } from '../users/response';
 
 @Injectable()
 export class AuthService {
@@ -29,7 +28,7 @@ export class AuthService {
 
     const user = await this.usersService.createUser(dto);
 
-    return this.generateAuthResponse(user, false);
+    return this.generateAuthResponseWithToken(user, false);
   }
 
   public async login(dto: LoginDTO): Promise<AuthResponse> {
@@ -43,31 +42,22 @@ export class AuthService {
       throw new BadRequestException(ApiErrors.WRONG_EMAIL_OR_PASSWORD);
     }
 
-    return this.generateAuthResponse(user, dto.rememberMe);
+    return this.generateAuthResponseWithToken(
+      { ...user.dataValues, password: undefined },
+      dto.rememberMe,
+    );
   }
 
-  public async checkAuth(user: PublicUser): Promise<PublicUser> {
+  public async checkAuth(user: UserResponse): Promise<UserResponse> {
     return user;
   }
 
-  private generateAuthResponse(
-    user: User | CreateUserResponse,
+  private generateAuthResponseWithToken(
+    user: UserResponse,
     rememberUser: boolean,
   ): AuthResponse {
-    const userData = {
-      uid: user.uid,
-      email: user.email,
-      firstName: user.firstName,
-      gender: user.gender,
-      dateOfBD: user.dateOfBD,
-      lastName: user.lastName,
-      location: user.location,
-      age: user.age,
-      description: user.description,
-    };
+    const token = this.tokenService.generateJwtToken(user, rememberUser);
 
-    const token = this.tokenService.generateJwtToken(userData, rememberUser);
-
-    return { user: userData, token };
+    return { user, token };
   }
 }
