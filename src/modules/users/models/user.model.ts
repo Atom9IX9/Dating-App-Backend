@@ -6,12 +6,22 @@ import {
   PrimaryKey,
   HasMany,
   AllowNull,
+  DefaultScope,
+  Scopes,
 } from 'sequelize-typescript';
 import { Match } from 'src/modules/matches/models/match.model';
 import { Genders } from '../types';
 import { DataTypes } from 'sequelize';
 
 @Table
+@DefaultScope(() => ({
+  attributes: {
+    exclude: ['password', 'createdAt', 'updatedAt'],
+  },
+}))
+@Scopes(() => ({
+  login: () => ({ attributes: { exclude: ['createdAt', 'updatedAt'] } }),
+}))
 export class User extends Model {
   @ApiProperty()
   @PrimaryKey

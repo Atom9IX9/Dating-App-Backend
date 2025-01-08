@@ -1,4 +1,4 @@
 import { Request } from 'express';
-import { PublicUser } from 'src/modules/users/response';
+import { UserResponse } from 'src/modules/users/response';
 
-export type AuthPayloadRequest = Request & { user: PublicUser };
+export type AuthPayloadRequest = Request & { user: UserResponse };
