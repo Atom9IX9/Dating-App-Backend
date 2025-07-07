@@ -8,10 +8,13 @@ import {
   AllowNull,
   DefaultScope,
   Scopes,
+  BelongsToMany,
 } from 'sequelize-typescript';
 import { Match } from 'src/modules/matches/models/match.model';
 import { Genders } from '../types';
 import { DataTypes } from 'sequelize';
+import { Chat } from 'src/modules/chats/models/chat.model';
+import { ChatUser } from 'src/modules/chats/models/chatUser.model';
 
 @Table
 @DefaultScope(() => ({
@@ -71,4 +74,7 @@ export class User extends Model {
     onUpdate: 'CASCADE',
   })
   matches: Match[];
+
+  @BelongsToMany(() => Chat, () => ChatUser)
+  chats: Chat[];
 }

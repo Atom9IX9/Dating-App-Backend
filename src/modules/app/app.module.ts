@@ -10,6 +10,10 @@ import { AuthModule } from '../auth/auth.module';
 import { TokenModule } from '../token/token.module';
 import { MatchesModule } from '../matches/matches.module';
 import { Match } from '../matches/models/match.model';
+import { GatewayModule } from '../gateway/gateway.module';
+import { ChatsModule } from '../chats/chats.module';
+import { Chat } from '../chats/models/chat.model';
+import { ChatUser } from '../chats/models/chatUser.model';
 
 @Module({
   imports: [
@@ -30,13 +34,15 @@ import { Match } from '../matches/models/match.model';
         synchronize: true,
         //sync: { force: true },
         autoLoadModels: true,
-        models: [User, Match],
+        models: [User, Match, Chat, ChatUser],
       }),
     }),
     UserModule,
     AuthModule,
     TokenModule,
     MatchesModule,
+    GatewayModule,
+    ChatsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
