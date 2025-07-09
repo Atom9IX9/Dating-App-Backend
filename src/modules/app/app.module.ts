@@ -14,6 +14,7 @@ import { GatewayModule } from '../gateway/gateway.module';
 import { ChatsModule } from '../chats/chats.module';
 import { Chat } from '../chats/models/chat.model';
 import { ChatUser } from '../chats/models/chatUser.model';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { ChatUser } from '../chats/models/chatUser.model';
     MatchesModule,
     GatewayModule,
     ChatsModule,
+    JwtModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -9,5 +9,6 @@ import { ChatsController } from './chats.controller';
   imports: [SequelizeModule.forFeature([Chat, ChatUser])],
   providers: [ChatsService],
   controllers: [ChatsController],
+  exports: [ChatsService],
 })
 export class ChatsModule {}
