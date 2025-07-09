@@ -24,13 +24,16 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     for (let i = 0; i < clientChatRooms.length; i++) {
       client.join(`r-${clientChatRooms[i]}`);
+      this.server
+        .to(`r-${clientChatRooms[i]}`)
+        .emit('setUserOnline', { email: client.user.email, isOnline: true });
     }
   }
 
-  handleDisconnect(client: any) {
-    this.server.emit('updateOnlineStatus', {
-      status: false,
-      client: client.id,
+  handleDisconnect(client: AuthPayloadSocket) {
+    this.server.emit('setUserOnline', {
+      email: client.user.email,
+      isOnline: true,
     });
   }
 }
