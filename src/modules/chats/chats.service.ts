@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/sequelize';
 import { ChatUser } from './models/chatUser.model';
 import { Chat } from './models/chat.model';
 import { CreatePrivatChatResponse } from './response';
+import { nanoid } from 'nanoid';
 
 @Injectable()
 export class ChatsService {
@@ -39,7 +40,7 @@ export class ChatsService {
       throw new BadRequestException('Chat has already created.');
     }
 
-    const chat = await Chat.create();
+    const chat = await this.chatsRepo.create({ room: nanoid() });
 
     await chat.$set('chatUsers', [user1, user2]);
 

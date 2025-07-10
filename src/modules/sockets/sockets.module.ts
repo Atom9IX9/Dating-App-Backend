@@ -7,4 +7,4 @@ import { ChatsModule } from '../chats/chats.module';
   imports: [JwtModule, ChatsModule],
   providers: [Gateway],
 })
-export class GatewayModule {}
+export class SocketsModule {}

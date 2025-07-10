@@ -5,7 +5,7 @@ import { User } from 'src/modules/users/models/user.model';
 @Table
 export class ChatUser extends Model {
   @ForeignKey(() => Chat)
-  room: number;
+  room: string;
 
   @ForeignKey(() => User)
   userId: string;

@@ -10,7 +10,7 @@ import { AuthModule } from '../auth/auth.module';
 import { TokenModule } from '../token/token.module';
 import { MatchesModule } from '../matches/matches.module';
 import { Match } from '../matches/models/match.model';
-import { GatewayModule } from '../gateway/gateway.module';
+import { SocketsModule } from '../sockets/sockets.module';
 import { ChatsModule } from '../chats/chats.module';
 import { Chat } from '../chats/models/chat.model';
 import { ChatUser } from '../chats/models/chatUser.model';
@@ -42,7 +42,7 @@ import { JwtModule } from '@nestjs/jwt';
     AuthModule,
     TokenModule,
     MatchesModule,
-    GatewayModule,
+    SocketsModule,
     ChatsModule,
     JwtModule,
   ],
