@@ -46,4 +46,8 @@ export class ChatsService {
 
     return chat;
   }
+
+  public async isUserInRoom(userId: string, room: string) {
+    return !!(await this.chatUsersRepo.findOne({ where: { userId, room } }));
+  }
 }

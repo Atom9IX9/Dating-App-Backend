@@ -1,12 +1,9 @@
-import { IsString } from 'class-validator';
+import z from 'zod';
 
-export class CreateMessageDTO {
-  @IsString()
-  room: string;
+export const createMessageDTO = z.object({
+  room: z.string(),
+  userId: z.string(),
+  text: z.string().trim().min(1),
+});
 
-  @IsString()
-  userId: string;
-
-  @IsString()
-  text: string;
-}
+export type CreateMessageDTO = z.infer<typeof createMessageDTO>;
