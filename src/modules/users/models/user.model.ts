@@ -15,6 +15,7 @@ import { Genders } from '../types';
 import { DataTypes } from 'sequelize';
 import { Chat } from 'src/modules/chats/models/chat.model';
 import { ChatUser } from 'src/modules/chats/models/chatUser.model';
+import { Message } from 'src/modules/messages/models/message.model';
 
 @Table
 @DefaultScope(() => ({
@@ -74,6 +75,9 @@ export class User extends Model {
     onUpdate: 'CASCADE',
   })
   matches: Match[];
+
+  @HasMany(() => Message)
+  messages: Message[];
 
   @BelongsToMany(() => Chat, () => ChatUser)
   chats: Chat[];

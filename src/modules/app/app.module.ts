@@ -15,6 +15,8 @@ import { ChatsModule } from '../chats/chats.module';
 import { Chat } from '../chats/models/chat.model';
 import { ChatUser } from '../chats/models/chatUser.model';
 import { JwtModule } from '@nestjs/jwt';
+import { MessagesModule } from '../messages/messages.module';
+import { Message } from '../messages/models/message.model';
 
 @Module({
   imports: [
@@ -35,7 +37,7 @@ import { JwtModule } from '@nestjs/jwt';
         synchronize: true,
         //sync: { force: true },
         autoLoadModels: true,
-        models: [User, Match, Chat, ChatUser],
+        models: [User, Match, Chat, ChatUser, Message],
       }),
     }),
     UserModule,
@@ -45,6 +47,7 @@ import { JwtModule } from '@nestjs/jwt';
     SocketsModule,
     ChatsModule,
     JwtModule,
+    MessagesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -11,13 +11,16 @@ import { Server } from 'socket.io';
 import { ChatsService } from '../chats/chats.service';
 import { AuthPayloadSocket } from 'src/common/types/requests/requests';
 import { processClientChatRooms } from './helpers/processClientChatRooms';
-import { createMessageDTO, CreateMessageDTO } from './dto';
 import z from 'zod';
-import { UserHasNotJoinedToRoomError } from './errors/userHasNotJoinedToRoomError';
+import { MessagesService } from '../messages/messages.service';
+import { CreateSocketMessage } from './dto';
 
 @WebSocketGateway(5001, { transports: 'websocket' })
 export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
-  constructor(private readonly chatsService: ChatsService) {}
+  constructor(
+    private readonly chatsService: ChatsService,
+    private readonly messagesService: MessagesService,
+  ) {}
   @WebSocketServer()
   server: Server;
 
@@ -42,28 +45,23 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   @SubscribeMessage('createMessage')
   async createMessageHandler(
-    @MessageBody() body: unknown,
+    @MessageBody() body: CreateSocketMessage,
     @ConnectedSocket() client: AuthPayloadSocket,
   ) {
     try {
-      const parsedMessage = createMessageDTO.parse(body);
-
-      const isUserInRoom = await this.chatsService.isUserInRoom(
-        client.user.uid,
-        parsedMessage.room,
-      );
-
-      if (isUserInRoom) {
-        client.broadcast
-          .to(parsedMessage.room)
-          .emit('newMessage', parsedMessage);
-      } else {
-        throw new UserHasNotJoinedToRoomError();
-      }
-    } catch (e) {
+      const createdMessage = await this.messagesService.createMessage({
+        chatRoom: body.chatRoom,
+        text: body.text,
+        authorId: client.user.uid,
+      });
+      client.broadcast.to(body.chatRoom).emit('newMessage', createdMessage);
+    } catch (e: unknown) {
       if (e instanceof z.ZodError) {
-        client.emit('messageError', { name: "InvalidDataError", error: e.issues });
-      } else if (e instanceof UserHasNotJoinedToRoomError) {
+        client.emit('messageError', {
+          name: 'InvalidDataError',
+          error: e.issues,
+        });
+      } else {
         client.emit('messageError', e);
       }
     }

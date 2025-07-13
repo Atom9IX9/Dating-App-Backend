@@ -6,9 +6,11 @@ import {
   Table,
   Model,
   DataType,
+  HasMany,
 } from 'sequelize-typescript';
 import { User } from 'src/modules/users/models/user.model';
 import { ChatUser } from './chatUser.model';
+import { Message } from 'src/modules/messages/models/message.model';
 
 @Table
 export class Chat extends Model {
@@ -19,4 +21,7 @@ export class Chat extends Model {
 
   @BelongsToMany(() => User, () => ChatUser)
   chatUsers: User[];
+
+  @HasMany(() => Message)
+  messages: Message[];
 }
