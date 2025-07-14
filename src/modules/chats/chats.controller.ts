@@ -1,9 +1,9 @@
-import { Controller, Param, Post, Req, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, Post, Req, UseGuards } from '@nestjs/common';
 import { ChatsService } from './chats.service';
-import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/guards';
 import { AuthPayloadRequest } from 'src/common/types/requests/requests';
-import { CreatePrivatChatResponse } from './response';
+import { CreatePrivatChatResponse, GetUserChatsResponse } from './response';
 
 @Controller('chats')
 export class ChatsController {
@@ -11,6 +11,7 @@ export class ChatsController {
 
   @ApiTags('CHATS')
   @ApiResponse({ status: 201, type: CreatePrivatChatResponse })
+  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Post(':createWithUserId')
   createPrivatChat(
@@ -18,5 +19,16 @@ export class ChatsController {
     @Req() req: AuthPayloadRequest,
   ): Promise<CreatePrivatChatResponse> {
     return this.chatsService.createPrivatChat(req.user.uid, createWithUserId);
+  }
+
+  @ApiTags('CHATS')
+  @ApiResponse({ status: 200, type: GetUserChatsResponse })
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @Get()
+  getAllUserChats(
+    @Req() req: AuthPayloadRequest,
+  ): Promise<GetUserChatsResponse> {
+    return this.chatsService.getUserChats(req.user.uid);
   }
 }

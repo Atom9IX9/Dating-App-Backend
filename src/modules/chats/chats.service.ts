@@ -2,8 +2,10 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { ChatUser } from './models/chatUser.model';
 import { Chat } from './models/chat.model';
-import { CreatePrivatChatResponse } from './response';
+import { CreatePrivatChatResponse, GetUserChatsResponse } from './response';
 import { nanoid } from 'nanoid';
+import { User } from '../users/models/user.model';
+import { Op } from 'sequelize';
 
 @Injectable()
 export class ChatsService {
@@ -12,7 +14,7 @@ export class ChatsService {
     @InjectModel(Chat) private readonly chatsRepo: typeof Chat,
   ) {}
 
-  public async findAllUserChats(userId: string) {
+  public async getUserChatRooms(userId: string) {
     const chats = await this.chatUsersRepo.findAll({ where: { userId } });
 
     const chatRooms = chats.map((c) => c.room);
@@ -49,5 +51,26 @@ export class ChatsService {
 
   public async isUserInRoom(userId: string, room: string) {
     return !!(await this.chatUsersRepo.findOne({ where: { userId, room } }));
+  }
+
+  public async getUserChats(userId: string): Promise<GetUserChatsResponse> {
+    const chatRooms = await this.getUserChatRooms(userId);
+
+    const chats = await this.chatsRepo.findAll({
+      where: { room: chatRooms },
+      include: {
+        model: User,
+        where: { uid: { [Op.not]: userId } },
+        attributes: ['uid', 'firstName', 'lastName'],
+        through: { attributes: [] },
+      },
+    });
+
+    return {
+      chats: chats.map((c) => ({
+        room: c.room,
+        chatUser: c.chatUsers[0],
+      })),
+    };
   }
 }

@@ -5,7 +5,7 @@ export const processClientChatRooms = async (
   chatsService: ChatsService,
   cb: (room: string) => void,
 ) => {
-  const clientChatRooms = await chatsService.findAllUserChats(clientId);
+  const clientChatRooms = await chatsService.getUserChatRooms(clientId);
   for (const room of clientChatRooms) {
     cb(room);
   }

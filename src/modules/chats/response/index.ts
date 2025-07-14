@@ -1,8 +1,40 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNumber } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsArray, IsNumber, IsString } from 'class-validator';
 
 export class CreatePrivatChatResponse {
   @ApiProperty()
   @IsNumber()
   room: string;
+}
+
+export class ChatUserResponse {
+  @ApiProperty()
+  @IsString()
+  uid: string;
+
+  @ApiProperty()
+  @IsString()
+  firstName: string;
+
+  @ApiProperty()
+  @IsString()
+  lastName: string;
+}
+
+export class ChatResponse {
+  @ApiProperty()
+  @IsString()
+  room: string;
+
+  @ApiProperty()
+  @Type(() => ChatUserResponse)
+  chatUser: ChatUserResponse;
+}
+
+export class GetUserChatsResponse {
+  @ApiProperty({ type: ChatResponse, isArray: true })
+  @IsArray()
+  @Type(() => ChatResponse)
+  chats: ChatResponse[];
 }
