@@ -28,7 +28,7 @@ import { Match } from '../matches/models/match.model';
         password: configService.get('dbPassword'),
         database: configService.get('dbName'),
         synchronize: true,
-        //sync: { force: true },
+        // sync: { force: true },
         autoLoadModels: true,
         models: [User, Match],
       }),
