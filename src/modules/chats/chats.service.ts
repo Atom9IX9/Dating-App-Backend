@@ -2,7 +2,11 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { ChatUser } from './models/chatUser.model';
 import { Chat } from './models/chat.model';
-import { CreatePrivatChatResponse, GetUserChatsResponse } from './response';
+import {
+  ChatResponse,
+  ChatUserResponse,
+  GetUserChatsResponse,
+} from './response';
 import { nanoid } from 'nanoid';
 import { User } from '../users/models/user.model';
 import { Op } from 'sequelize';
@@ -23,18 +27,18 @@ export class ChatsService {
   }
 
   public async createPrivatChat(
-    user1: string,
-    user2: string,
-  ): Promise<CreatePrivatChatResponse> {
+    senderUserId: string,
+    receiverUserId: string,
+  ): Promise<ChatResponse> {
     const [chats1, chats2] = await Promise.all([
-      this.chatUsersRepo.findAll({ where: { userId: user1 } }),
-      this.chatUsersRepo.findAll({ where: { userId: user2 } }),
+      this.chatUsersRepo.findAll({ where: { userId: senderUserId } }),
+      this.chatUsersRepo.findAll({ where: { userId: receiverUserId } }),
     ]);
 
     const allChatRoomsOfUsers = [...chats1, ...chats2].map((c) => c.room);
     const uniqueChatRoomsOfUser = new Set(allChatRoomsOfUsers);
 
-    if (user1 === user2) {
+    if (senderUserId === receiverUserId) {
       throw new BadRequestException("User can't create chat with himself");
     }
 
@@ -44,13 +48,16 @@ export class ChatsService {
 
     const chat = await this.chatsRepo.create({ room: nanoid() });
 
-    await chat.$set('chatUsers', [user1, user2]);
+    await chat.$set('chatUsers', [senderUserId, receiverUserId]);
 
-    return chat;
-  }
+    const chatUser = (
+      await chat.$get('chatUsers', {
+        where: { uid: receiverUserId },
+        attributes: ['uid', 'firstName', 'lastName'],
+      })
+    )[0].dataValues;
 
-  public async isUserInRoom(userId: string, room: string) {
-    return !!(await this.chatUsersRepo.findOne({ where: { userId, room } }));
+    return { room: chat.room, chatUser: { ...chatUser, ChatUser: undefined } };
   }
 
   public async getUserChats(userId: string): Promise<GetUserChatsResponse> {
@@ -72,5 +79,9 @@ export class ChatsService {
         chatUser: c.chatUsers[0],
       })),
     };
+  }
+
+  public async isUserInRoom(userId: string, room: string) {
+    return !!(await this.chatUsersRepo.findOne({ where: { userId, room } }));
   }
 }
