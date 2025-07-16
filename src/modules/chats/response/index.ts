@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsArray, IsString } from 'class-validator';
+import { IsArray, IsDateString, IsInt, IsString } from 'class-validator';
+import { Message } from 'src/modules/messages/models/message.model';
 
 export class ChatUserResponse {
   @ApiProperty()
@@ -27,7 +28,7 @@ export class ChatResponse {
 }
 
 export class GetUserChatsResponse {
-  @ApiProperty({ type: ChatResponse, isArray: true })
+  @ApiProperty({ type: ChatResponse })
   @IsArray()
   @Type(() => ChatResponse)
   chats: ChatResponse[];
