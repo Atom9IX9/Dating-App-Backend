@@ -14,12 +14,14 @@ import { processClientChatRooms } from './helpers/processClientChatRooms';
 import z from 'zod';
 import { MessagesService } from '../messages/messages.service';
 import { CreateSocketMessage } from './dto';
+import { UserActivityService } from '../usersActivity/usersActivity.service';
 
 @WebSocketGateway(5001, { transports: 'websocket' })
 export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(
     private readonly chatsService: ChatsService,
     private readonly messagesService: MessagesService,
+    private readonly usersActivityService: UserActivityService,
   ) {}
   @WebSocketServer()
   server: Server;
@@ -31,6 +33,8 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
         .to(room)
         .emit('setUserOnline', { email: client.user.email, isOnline: true });
     });
+
+    await this.usersActivityService.setUserOnlineStatus(client.user.uid, true)
   }
 
   async handleDisconnect(client: AuthPayloadSocket) {
@@ -41,6 +45,8 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
       });
       client.leave(room);
     });
+
+    await this.usersActivityService.setUserOnlineStatus(client.user.uid, false)
   }
 
   @SubscribeMessage('createMessage')

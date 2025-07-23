@@ -9,6 +9,8 @@ import {
 } from 'class-validator';
 import { Genders } from '../types';
 import { ReceivedStatuses } from 'src/modules/matches/types';
+import { Type } from 'class-transformer';
+import { UserActivityResponse } from 'src/modules/usersActivity/respoonse';
 
 export class PublicUser {
   @ApiProperty()
@@ -49,6 +51,10 @@ export class PublicUser {
   @IsString()
   @IsOptional()
   location?: string;
+
+  @ApiProperty({ type: UserActivityResponse })
+  @Type(() => UserActivityResponse)
+  activity: UserActivityResponse;
 }
 
 export class UserResponse {

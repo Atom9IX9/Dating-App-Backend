@@ -9,6 +9,7 @@ import {
   DefaultScope,
   Scopes,
   BelongsToMany,
+  HasOne,
 } from 'sequelize-typescript';
 import { Match } from 'src/modules/matches/models/match.model';
 import { Genders } from '../types';
@@ -16,6 +17,7 @@ import { DataTypes } from 'sequelize';
 import { Chat } from 'src/modules/chats/models/chat.model';
 import { ChatUser } from 'src/modules/chats/models/chatUser.model';
 import { Message } from 'src/modules/messages/models/message.model';
+import { UserActivity } from 'src/modules/usersActivity/models/userActivity.model';
 
 @Table
 @DefaultScope(() => ({
@@ -69,6 +71,9 @@ export class User extends Model {
   @AllowNull(true)
   @Column
   location: string | null;
+
+  @HasOne(() => UserActivity)
+  activity: UserActivity;
 
   @HasMany(() => Match, {
     onDelete: 'CASCADE',

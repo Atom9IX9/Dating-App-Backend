@@ -17,6 +17,7 @@ import { ChatUser } from '../chats/models/chatUser.model';
 import { JwtModule } from '@nestjs/jwt';
 import { MessagesModule } from '../messages/messages.module';
 import { Message } from '../messages/models/message.model';
+import { UserActivity } from '../usersActivity/models/userActivity.model';
 
 @Module({
   imports: [
@@ -35,9 +36,9 @@ import { Message } from '../messages/models/message.model';
         password: configService.get('dbPassword'),
         database: configService.get('dbName'),
         synchronize: true,
-        //sync: { force: true },
+        // sync: { force: true },
         autoLoadModels: true,
-        models: [User, Match, Chat, ChatUser, Message],
+        models: [User, Match, Chat, ChatUser, Message, UserActivity],
       }),
     }),
     UserModule,
