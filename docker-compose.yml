@@ -1,0 +1,43 @@
+services:
+  app:
+    container_name: app
+    build:
+      context: .
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+      - /app/node_modules
+    ports:
+      - 5000:5000
+      - 5001:5001
+    command: npm run start:dev
+    depends_on:
+      - db
+    restart: always
+
+  db:
+    container_name: db
+    image: postgres:12
+    ports:
+      - 5432:5432
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - postres-data:/var/lib/postgresql/data
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - 8080:80
+    depends_on:
+      - db
+
+volumes:
+  postres-data: {}
