@@ -8,4 +8,8 @@ RUN npm install
 
 COPY . .
 
-CMD ['npm', 'run', 'start:dev']
+ENV NODE_ENV=development
+
+EXPOSE 5000 5001
+
+CMD ["npm", "run", "start:dev"]
