@@ -29,7 +29,7 @@ export class AuthController {
   @ApiResponse({
     status: 201,
     type: AuthResponse,
-    description: 'User has been succesfully created.',
+    description: 'User registration and token generation',
   })
   @ApiBody({ type: CreateUserDTO })
   register(@Body() dto: CreateUserDTO) {
@@ -41,7 +41,7 @@ export class AuthController {
   @ApiResponse({
     status: 200,
     type: AuthResponse,
-    description: 'User has been succesfully logged in.',
+    description: 'User login and token generation',
   })
   login(@Body() dto: LoginDTO) {
     return this.authService.login(dto);
@@ -53,7 +53,7 @@ export class AuthController {
   @ApiResponse({
     status: 200,
     type: UserResponse,
-    description: 'Auth info has been successfully received.',
+    description: 'Check user authentication status',
   })
   @ApiBearerAuth()
   checkAuth(@Req() req: AuthPayloadRequest) {
@@ -66,7 +66,7 @@ export class AuthController {
   @ApiResponse({
     status: 204,
     type: DeleteUserResponse,
-    description: 'User has been deleted successfuly.',
+    description: 'Delete user account',
   })
   @ApiBearerAuth()
   deleteUser(@Req() req: AuthPayloadRequest) {

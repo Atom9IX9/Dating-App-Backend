@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Patch, Req, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { GetUsersResponse, UpdateUserResponse } from './response';
 import { UpdateUserDTO } from './dto';
 import { JwtAuthGuard } from 'src/guards';
@@ -11,7 +11,13 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @ApiTags('USERS')
-  @ApiResponse({ status: 200, type: GetUsersResponse })
+  @ApiResponse({
+    status: 200,
+    type: GetUsersResponse,
+    description:
+      'Sends all users who are not "matched" with the authenticated user.',
+  })
+  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Get()
   getUsers(@Req() request: AuthPayloadRequest) {
@@ -19,7 +25,12 @@ export class UsersController {
   }
 
   @ApiTags('USERS')
-  @ApiResponse({ status: 200, type: UpdateUserResponse })
+  @ApiResponse({
+    status: 200,
+    type: UpdateUserResponse,
+    description: 'Updates the profile of the authenticated user.',
+  })
+  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Patch()
   updateUser(

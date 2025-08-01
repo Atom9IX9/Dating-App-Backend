@@ -9,7 +9,11 @@ export class MessagesController {
   constructor(private readonly messagesService: MessagesService) {}
 
   @ApiTags('MESSAGES')
-  @ApiResponse({ status: 201, type: GetUserMessagesFromRoomResponse })
+  @ApiResponse({
+    status: 201,
+    type: GetUserMessagesFromRoomResponse,
+    description: 'Get all messages from a specific chat room',
+  })
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Get(':room')

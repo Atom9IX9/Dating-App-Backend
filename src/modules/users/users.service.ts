@@ -85,8 +85,7 @@ export class UsersService {
           if (u.uid === m.receiverId || u.uid === m.userId) {
             return {
               ...u.dataValues,
-              matchStatus: m.status,
-              
+              matchStatus: m.status, 
             };
           }
         }
