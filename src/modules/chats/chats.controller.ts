@@ -3,19 +3,18 @@ import { ChatsService } from './chats.service';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/guards';
 import { AuthPayloadRequest } from 'src/common/types/requests/requests';
-import {
-  ChatResponse,
-  GetUserChatsResponse,
-} from './response';
+import { ChatResponse, GetUserChatsResponse } from './response';
 
 @Controller('chats')
 export class ChatsController {
-  constructor(
-    private readonly chatsService: ChatsService,
-  ) {}
+  constructor(private readonly chatsService: ChatsService) {}
 
   @ApiTags('CHATS')
-  @ApiResponse({ status: 201, type: ChatResponse })
+  @ApiResponse({
+    status: 201,
+    type: ChatResponse,
+    description: 'Create a private chat with another user',
+  })
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Post(':createWithUserId')
@@ -27,7 +26,7 @@ export class ChatsController {
   }
 
   @ApiTags('CHATS')
-  @ApiResponse({ status: 200, type: GetUserChatsResponse })
+  @ApiResponse({ status: 200, type: GetUserChatsResponse, description: 'Get all user chats' })
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Get()

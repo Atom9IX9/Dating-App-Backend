@@ -9,7 +9,7 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthPayloadRequest } from 'src/common/types/requests/requests';
 import { JwtAuthGuard } from 'src/guards';
 import { MatchResponse, GetIsMatchedResponse } from './response';
@@ -20,8 +20,13 @@ export class MatchesController {
   constructor(private readonly matchesService: MatchesService) {}
 
   @ApiTags('MATCHES')
+  @ApiBearerAuth()
+  @ApiResponse({
+    type: MatchResponse,
+    status: 201,
+    description: 'Creates a match.',
+  })
   @UseGuards(JwtAuthGuard)
-  @ApiResponse({ type: MatchResponse, status: 201 })
   @Post(':receiverId')
   createMatch(
     @Req() request: AuthPayloadRequest,
@@ -49,10 +54,15 @@ export class MatchesController {
   // }
 
   @ApiTags('MATCHES')
+  @ApiResponse({
+    type: MatchResponse,
+    status: 200,
+    description: 'Sets the match status by matchId.',
+  })
+  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
-  @ApiResponse({ type: MatchResponse, status: 200 })
   @Patch(':matchId')
-  acceptMatch(
+  setMatchStatus(
     @Param('matchId') matchId: number,
     @Req() request: AuthPayloadRequest,
     @Body() dto: ReceiveMatchDTO,
@@ -66,7 +76,11 @@ export class MatchesController {
 
   @ApiTags('MATCHES')
   @UseGuards(JwtAuthGuard)
-  @ApiResponse({ type: GetIsMatchedResponse, status: 200 })
+  @ApiResponse({
+    type: GetIsMatchedResponse,
+    status: 200,
+    description: 'Checks if the user is matched with another user.',
+  })
   @Get(':secondUserId')
   getIsMatched(
     @Req() request: AuthPayloadRequest,
