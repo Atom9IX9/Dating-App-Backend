@@ -48,7 +48,9 @@ The project follows a **modular architecture**.
 
 ## Useful commands
 # development
+```bash
 npm run start:dev
+```
 
 # production build
 ```bash
@@ -66,7 +68,7 @@ npm run lint
 npm run test
 ```
 
-## or with Docker (starts all project in one command - recommended)
+# or with Docker (starts all project in one command - recommended)
 ```bash
 docker compose up
 ```
@@ -78,10 +80,10 @@ PORT=5000
 POSTGRES_HOST=db
 POSTGRES_PORT=5432
 POSTGRES_USER=root
-POSTGRES_PASSWORD=777646
+POSTGRES_PASSWORD=your_password
 POSTGRES_DB=dating_app_db
 
-JWT_SECRET=secret_key123
+JWT_SECRET=your_secret_key
 JWT_EXPIRE=36000
 JWT_REMEMBER_ME_EXPIRE=2829300
 ```
