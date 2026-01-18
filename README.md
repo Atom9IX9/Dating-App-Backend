@@ -47,28 +47,28 @@ The project follows a **modular architecture**.
 - Allows testing endpoints directly from the browser.
 
 ## Useful commands
-# development
+### development
 ```bash
 npm run start:dev
 ```
 
-# production build
+### production build
 ```bash
 npm run build
 npm run start:prod
 ```
 
-# linting
+### linting
 ```bash
 npm run lint
 ```
 
-# tests
+### tests
 ```bash
 npm run test
 ```
 
-# or with Docker (starts all project in one command - recommended)
+### or with Docker (starts all project in one command - recommended)
 ```bash
 docker compose up
 ```
