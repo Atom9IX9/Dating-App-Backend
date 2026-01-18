@@ -72,19 +72,19 @@ docker compose up
 ```
 
 ## Enviroment variables
+```env
 PORT=5000
 
-# PostgreSQL
 POSTGRES_HOST=db
 POSTGRES_PORT=5432
 POSTGRES_USER=root
 POSTGRES_PASSWORD=777646
 POSTGRES_DB=dating_app_db
 
-# JWT
 JWT_SECRET=secret_key123
 JWT_EXPIRE=36000
 JWT_REMEMBER_ME_EXPIRE=2829300
+```
 
 ### Prerequisites
 - **Node.js** v18.x or higher  
