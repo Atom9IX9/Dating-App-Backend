@@ -44,14 +44,6 @@ export class User extends Model {
 
   @ApiProperty()
   @Column
-  email: string;
-
-  @ApiProperty()
-  @Column
-  password: string;
-
-  @ApiProperty()
-  @Column
   dateOfBD: string;
 
   @ApiProperty()

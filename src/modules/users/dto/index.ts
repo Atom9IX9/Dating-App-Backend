@@ -11,14 +11,6 @@ export class CreateUserDTO {
   @IsString()
   lastName: string;
 
-  @ApiProperty()
-  @IsEmail()
-  email: string;
-
-  @ApiProperty()
-  @IsString()
-  password: string;
-
   @ApiProperty({ type: Date })
   @IsDateString()
   dateOfBD: string;

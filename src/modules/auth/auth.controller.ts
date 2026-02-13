@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDTO } from '../users/dto';
-import { LoginDTO } from './dto';
+import { LoginDTO, RegisterAuthCredentialsDTO } from './dto';
 import { ApiBearerAuth, ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthResponse } from './response';
 import { JwtAuthGuard } from 'src/guards';
@@ -24,17 +24,27 @@ export class AuthController {
     private readonly usersService: UsersService,
   ) {}
 
-  @Post('register')
+  @Post('register-credentials')
   @ApiTags('AUTHORIZATION')
   @ApiResponse({
-    status: 201,
+    status: 200,
     type: AuthResponse,
-    description: 'User registration and token generation',
+    description: 'User login and token generation',
   })
-  @ApiBody({ type: CreateUserDTO })
-  register(@Body() dto: CreateUserDTO) {
-    return this.authService.register(dto);
+  registerAuthCredentials(@Body() dto: RegisterAuthCredentialsDTO) {
+    return this.authService.registerAuthCredentials(dto);
   }
+  // @Post('register')
+  // @ApiTags('AUTHORIZATION')
+  // @ApiResponse({
+  //   status: 201,
+  //   type: AuthResponse,
+  //   description: 'User registration and token generation',
+  // })
+  // @ApiBody({ type: CreateUserDTO })
+  // register(@Body() dto: CreateUserDTO) {
+  //   return this.authService.register(dto);
+  // }
 
   @Post('login')
   @ApiTags('AUTHORIZATION')

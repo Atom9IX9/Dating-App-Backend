@@ -18,6 +18,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { MessagesModule } from '../messages/messages.module';
 import { Message } from '../messages/models/message.model';
 import { UserActivity } from '../usersActivity/models/userActivity.model';
+import { Auth } from '../auth/model/auth.model';
 
 @Module({
   imports: [
@@ -38,7 +39,7 @@ import { UserActivity } from '../usersActivity/models/userActivity.model';
         synchronize: true,
         // sync: { force: true },
         autoLoadModels: true,
-        models: [User, Match, Chat, ChatUser, Message, UserActivity],
+        models: [User, Match, Chat, ChatUser, Message, UserActivity, Auth],
       }),
     }),
     UserModule,

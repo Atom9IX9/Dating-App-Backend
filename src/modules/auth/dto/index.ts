@@ -14,3 +14,13 @@ export class LoginDTO {
   @IsBoolean()
   rememberMe?: boolean;
 }
+
+export class RegisterAuthCredentialsDTO {
+  @ApiProperty()
+  @IsString()
+  email: string; 
+
+  @ApiProperty()
+  @IsString()
+  password: string;
+}

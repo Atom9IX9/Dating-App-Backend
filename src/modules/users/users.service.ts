@@ -22,31 +22,19 @@ export class UsersService {
     private readonly matchesService: MatchesService,
     private readonly activitiesService: UserActivityService,
   ) {}
-
-  private async hashPassword(password: string) {
-    return bcrypt.hash(password, 10);
-  }
-
-  public async findUserByEmail(
-    email: string,
-  ): Promise<User & { password: string }> {
-    return await this.usersRepo.scope('login').findOne({ where: { email } });
-  }
-
+  
   public async createUser(dto: CreateUserDTO): Promise<UserResponse> {
-    dto.password = await this.hashPassword(dto.password);
+    
     const d1 = new Date();
     const d2 = new Date(dto.dateOfBD);
     const id = nanoid();
     const user = await this.usersRepo.create({
       uid: id,
-      email: dto.email,
       dateOfBD: dto.dateOfBD,
       firstName: dto.firstName,
       lastName: dto.lastName,
       gender: dto.gender,
       location: dto.location,
-      password: dto.password,
       age: d1.getFullYear() - d2.getFullYear(),
       description: dto.description,
     });
@@ -55,7 +43,6 @@ export class UsersService {
 
     return {
       uid: id,
-      email: dto.email,
       firstName: dto.firstName,
       lastName: dto.lastName,
       gender: dto.gender,
