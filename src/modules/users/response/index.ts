@@ -70,10 +70,6 @@ export class UserResponse {
   @IsString()
   lastName: string;
 
-  @ApiProperty()
-  @IsEmail()
-  email: string;
-
   @ApiProperty({ type: Date })
   @IsDateString()
   dateOfBD: string;

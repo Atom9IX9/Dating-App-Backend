@@ -31,7 +31,7 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
       client.join(room);
       client
         .to(room)
-        .emit('setUserOnline', { email: client.user.email, isOnline: true });
+        .emit('setUserOnline', { isOnline: true });
     });
 
     await this.usersActivityService.setUserOnlineStatus(client.user.uid, true)
@@ -40,7 +40,6 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
   async handleDisconnect(client: AuthPayloadSocket) {
     await processClientChatRooms(client.user.uid, this.chatsService, (room) => {
       client.to(room).emit('setUserOnline', {
-        email: client.user.email,
         isOnline: false,
       });
       client.leave(room);

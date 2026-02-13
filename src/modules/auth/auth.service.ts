@@ -6,33 +6,52 @@ import {
 import { UsersService } from '../users/users.service';
 import { CreateUserDTO } from '../users/dto';
 import { ApiErrors } from 'src/common/constants/errors';
-import { LoginDTO } from './dto';
+import { LoginDTO, RegisterAuthCredentialsDTO } from './dto';
 import * as bcrypt from 'bcrypt';
-import { AuthResponse } from './response';
+import { AuthResponse, RegisterAuthCredentialsResponse } from './response';
 import { TokenService } from '../token/token.service';
 import { UserResponse } from '../users/response';
+import { Auth } from './model/auth.model';
+import { InjectModel } from '@nestjs/sequelize';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly usersService: UsersService,
     private readonly tokenService: TokenService,
+    @InjectModel(Auth) private readonly authRepo: typeof Auth,
   ) {}
 
-  public async register(dto: CreateUserDTO): Promise<AuthResponse> {
-    const userAlreadyExists = !!(await this.usersService.findUserByEmail(
-      dto.email,
-    ));
+  public async registerAuthCredentials(
+    dto: RegisterAuthCredentialsDTO,
+  ): Promise<RegisterAuthCredentialsResponse> {
+    const userAlreadyExists = !!(await this.findAuthByEmail(dto.email));
+
     if (userAlreadyExists)
       throw new BadRequestException(ApiErrors.USER_WITH_EMAIL_ALREADY_EXISTS);
 
-    const user = await this.usersService.createUser(dto);
+    const hashedPassword = await this.hashPassword(dto.password);
+    const authCredentials = await this.authRepo.create({ email: dto.email, password: hashedPassword });
 
-    return this.generateAuthResponseWithToken(user, false);
+    return authCredentials;
   }
 
+  private async hashPassword(password: string) {
+    return bcrypt.hash(password, 10);
+  }
+
+  // public async register(dto: CreateUserDTO): Promise<AuthResponse> {
+  //   const userAlreadyExists = !!(await this.findAuthByEmail(dto.email));
+  //   if (userAlreadyExists)
+  //     throw new BadRequestException(ApiErrors.USER_WITH_EMAIL_ALREADY_EXISTS);
+
+  //   const user = await this.usersService.createUser(dto);
+
+  //   return this.generateAuthResponseWithToken(user, false);
+  // }
+
   public async login(dto: LoginDTO): Promise<AuthResponse> {
-    const user = await this.usersService.findUserByEmail(dto.email);
+    const user = await this.findAuthByEmail(dto.email);
     if (!user) {
       throw new NotFoundException(ApiErrors.USER_DOES_NOT_EXIST);
     }
@@ -46,6 +65,10 @@ export class AuthService {
       { ...user.dataValues, password: undefined },
       dto.rememberMe,
     );
+  }
+
+  private async findAuthByEmail(email: string): Promise<Auth> {
+    return await this.authRepo.findOne({ where: { email } });
   }
 
   public async checkAuth(user: UserResponse): Promise<UserResponse> {
