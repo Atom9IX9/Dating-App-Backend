@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { UserResponse } from '../users/response';
+import { JwtPayload } from 'src/common/types/requests/requests';
 
 @Injectable()
 export class TokenService {
@@ -10,14 +10,18 @@ export class TokenService {
     private readonly configService: ConfigService,
   ) {}
 
-  generateJwtToken(user: UserResponse, rememberMe?: boolean) {
-    const payload = { user };
+  generateJwtToken(authId: number, type: 'access' | 'refresh'): string {
+    const payload: JwtPayload = { authId };
 
     return this.jwtService.sign(payload, {
-      secret: this.configService.get('jwtSecret'),
-      expiresIn: rememberMe
-        ? this.configService.get('jwtRememberMeExpire')
-        : this.configService.get('jwtExpire'),
+      secret:
+        type === 'refresh'
+          ? this.configService.get('refreshTokenSecret')
+          : this.configService.get('accessTokenSecret'),
+      expiresIn:
+        type === 'refresh'
+          ? this.configService.get('refreshTokenExpire')
+          : this.configService.get('accessTokenExpire'),
     });
   }
 }

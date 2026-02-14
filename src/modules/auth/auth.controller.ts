@@ -11,7 +11,7 @@ import { AuthService } from './auth.service';
 import { CreateUserDTO } from '../users/dto';
 import { LoginDTO, RegisterAuthCredentialsDTO } from './dto';
 import { ApiBearerAuth, ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { AuthResponse } from './response';
+import { AuthResponse, RegisterAuthCredentialsResponse } from './response';
 import { JwtAuthGuard } from 'src/guards';
 import { DeleteUserResponse, UserResponse } from '../users/response';
 import { UsersService } from '../users/users.service';
@@ -24,38 +24,27 @@ export class AuthController {
     private readonly usersService: UsersService,
   ) {}
 
-  @Post('register-credentials')
+  @Post('register-credentials') // todo: refresh tockens
   @ApiTags('AUTHORIZATION')
   @ApiResponse({
-    status: 200,
-    type: AuthResponse,
-    description: 'User login and token generation',
+    status: 201,
+    type:  RegisterAuthCredentialsResponse,
+    description: 'User registration with email and password, and token generation',
   })
   registerAuthCredentials(@Body() dto: RegisterAuthCredentialsDTO) {
     return this.authService.registerAuthCredentials(dto);
   }
-  // @Post('register')
+
+  // @Post('login')
   // @ApiTags('AUTHORIZATION')
   // @ApiResponse({
-  //   status: 201,
+  //   status: 200,
   //   type: AuthResponse,
-  //   description: 'User registration and token generation',
+  //   description: 'User login and token generation',
   // })
-  // @ApiBody({ type: CreateUserDTO })
-  // register(@Body() dto: CreateUserDTO) {
-  //   return this.authService.register(dto);
+  // login(@Body() dto: LoginDTO) {
+  //   return this.authService.login(dto);
   // }
-
-  @Post('login')
-  @ApiTags('AUTHORIZATION')
-  @ApiResponse({
-    status: 200,
-    type: AuthResponse,
-    description: 'User login and token generation',
-  })
-  login(@Body() dto: LoginDTO) {
-    return this.authService.login(dto);
-  }
 
   @Get()
   @UseGuards(JwtAuthGuard)
