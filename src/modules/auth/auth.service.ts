@@ -31,9 +31,29 @@ export class AuthService {
       throw new BadRequestException(ApiErrors.USER_WITH_EMAIL_ALREADY_EXISTS);
 
     const hashedPassword = await this.hashPassword(dto.password);
-    const authCredentials = await this.authRepo.create({ email: dto.email, password: hashedPassword });
+    const authCredentials = await this.authRepo.create({
+      email: dto.email,
+      password: hashedPassword,
+    });
 
-    return authCredentials;
+    const accessToken = this.tokenService.generateJwtToken(
+      authCredentials.authId,
+      'access',
+    );
+
+    const refreshToken = this.tokenService.generateJwtToken(
+      authCredentials.authId,
+      'refresh',
+    );
+
+    return {
+      accessToken,
+      refreshToken,
+      auth: {
+        authId: authCredentials.authId,
+        email: authCredentials.email,
+      },
+    };
   }
 
   private async hashPassword(password: string) {
@@ -50,22 +70,22 @@ export class AuthService {
   //   return this.generateAuthResponseWithToken(user, false);
   // }
 
-  public async login(dto: LoginDTO): Promise<AuthResponse> {
-    const user = await this.findAuthByEmail(dto.email);
-    if (!user) {
-      throw new NotFoundException(ApiErrors.USER_DOES_NOT_EXIST);
-    }
+  // public async login(dto: LoginDTO): Promise<AuthResponse> {
+  //   const user = await this.findAuthByEmail(dto.email);
+  //   if (!user) {
+  //     throw new NotFoundException(ApiErrors.USER_DOES_NOT_EXIST);
+  //   }
 
-    const isValidPassword = await bcrypt.compare(dto.password, user.password);
-    if (!isValidPassword) {
-      throw new BadRequestException(ApiErrors.WRONG_EMAIL_OR_PASSWORD);
-    }
+  //   const isValidPassword = await bcrypt.compare(dto.password, user.password);
+  //   if (!isValidPassword) {
+  //     throw new BadRequestException(ApiErrors.WRONG_EMAIL_OR_PASSWORD);
+  //   }
 
-    return this.generateAuthResponseWithToken(
-      { ...user.dataValues, password: undefined },
-      dto.rememberMe,
-    );
-  }
+  //   return this.generateAuthResponseWithToken(
+  //     { ...user.dataValues, password: undefined },
+  //     dto.rememberMe,
+  //   );
+  // }
 
   private async findAuthByEmail(email: string): Promise<Auth> {
     return await this.authRepo.findOne({ where: { email } });
@@ -75,12 +95,12 @@ export class AuthService {
     return user;
   }
 
-  private generateAuthResponseWithToken(
-    user: UserResponse,
-    rememberUser: boolean,
-  ): AuthResponse {
-    const token = this.tokenService.generateJwtToken(user, rememberUser);
+  // private generateAuthResponseWithToken(
+  //   user: UserResponse,
+  //   rememberUser: boolean,
+  // ): AuthResponse {
+  //   const token = this.tokenService.generateJwtToken(user, rememberUser);
 
-    return { user, token };
-  }
+  //   return { user, token };
+  // }
 }

@@ -1,8 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { DataTypes } from 'sequelize';
-import { Column, Model, PrimaryKey, Table } from 'sequelize-typescript';
+import { Column, DefaultScope, Model, PrimaryKey, Table } from 'sequelize-typescript';
 
 @Table
+@DefaultScope(() => ({
+  attributes: {
+    exclude: ['password'],
+  },
+}))
 export class Auth extends Model {
   @ApiProperty()
   @PrimaryKey

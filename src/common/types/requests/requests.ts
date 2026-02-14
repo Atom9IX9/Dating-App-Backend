@@ -4,3 +4,6 @@ import { Socket } from 'socket.io';
 
 export type AuthPayloadRequest = Request & { user: UserResponse };
 export type AuthPayloadSocket = Socket & { user: UserResponse };
+export type JwtPayload = {
+  authId: number;
+};

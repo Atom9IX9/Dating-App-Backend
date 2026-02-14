@@ -2,6 +2,16 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsNumber, IsObject, IsString } from 'class-validator';
 import { UserResponse } from 'src/modules/users/response';
 
+export class AuthCredentials {
+  @ApiProperty()
+  @IsNumber()
+  authId: number;
+
+  @ApiProperty()
+  @IsString()
+  email: string;
+}
+
 export class AuthResponse {
   @ApiProperty()
   @IsObject()
@@ -14,14 +24,14 @@ export class AuthResponse {
 
 export class RegisterAuthCredentialsResponse {
   @ApiProperty()
-  @IsNumber()
-  authId: number;
+  @IsString()
+  accessToken: string;
 
   @ApiProperty()
   @IsString()
-  email: string;
+  refreshToken: string;
 
   @ApiProperty()
-  @IsString()
-  password: string;
+  @IsObject()
+  auth: AuthCredentials;
 }
