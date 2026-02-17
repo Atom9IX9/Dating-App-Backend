@@ -22,6 +22,22 @@ export class AuthResponse {
   token: string;
 }
 
+export class RefreshedTokens {
+  @ApiProperty()
+  @IsString()
+  accessToken: string;
+
+  @ApiProperty()
+  @IsString()
+  refreshToken: string;
+}
+
+export class RefreshTokensResponse {
+  @ApiProperty()
+  @IsString()
+  accessToken: string;
+}
+
 export class RegisterAuthCredentialsResponse {
   @ApiProperty()
   @IsString()

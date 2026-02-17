@@ -6,10 +6,11 @@ import { TokenModule } from '../token/token.module';
 import { AccessTokenStrategy } from 'src/strategy/accessTokenStrategy';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { Auth } from './model/auth.model';
+import { RefreshTokenStrategy } from 'src/strategy/refreshTokenStrategy';
 
 @Module({
   imports: [UserModule, TokenModule, SequelizeModule.forFeature([Auth])],
-  providers: [AuthService, AccessTokenStrategy],
+  providers: [AuthService, AccessTokenStrategy, RefreshTokenStrategy],
   controllers: [AuthController],
 })
 export class AuthModule {}

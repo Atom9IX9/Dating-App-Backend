@@ -3,7 +3,7 @@ import { UsersService } from './users.service';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { GetUsersResponse, UpdateUserResponse } from './response';
 import { UpdateUserDTO } from './dto';
-import { JwtAuthGuard } from 'src/guards';
+import { AccessAuthGuard } from 'src/guards';
 import { AuthPayloadRequest } from 'src/common/types/requests/requests';
 
 @Controller('users')
@@ -18,10 +18,10 @@ export class UsersController {
       'Sends all users who are not "matched" with the authenticated user.',
   })
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(AccessAuthGuard)
   @Get()
   getUsers(@Req() request: AuthPayloadRequest) {
-    return this.usersService.getPublicUsers(request.user);
+    return this.usersService.getPublicUsers(request.uid);
   }
 
   @ApiTags('USERS')
@@ -31,12 +31,12 @@ export class UsersController {
     description: 'Updates the profile of the authenticated user.',
   })
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(AccessAuthGuard)
   @Patch()
   updateUser(
     @Body() dto: UpdateUserDTO,
     @Req() req: AuthPayloadRequest,
   ): Promise<UpdateUserResponse> {
-    return this.usersService.updateUser(req.user.uid, dto);
+    return this.usersService.updateUser(req.uid, dto);
   }
 }

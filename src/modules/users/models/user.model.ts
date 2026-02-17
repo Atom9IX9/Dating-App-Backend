@@ -10,6 +10,8 @@ import {
   Scopes,
   BelongsToMany,
   HasOne,
+  ForeignKey,
+  BelongsTo,
 } from 'sequelize-typescript';
 import { Match } from 'src/modules/matches/models/match.model';
 import { Genders } from '../types';
@@ -18,6 +20,7 @@ import { Chat } from 'src/modules/chats/models/chat.model';
 import { ChatUser } from 'src/modules/chats/models/chatUser.model';
 import { Message } from 'src/modules/messages/models/message.model';
 import { UserActivity } from 'src/modules/usersActivity/models/userActivity.model';
+import { Auth } from 'src/modules/auth/model/auth.model';
 
 @Table
 @DefaultScope(() => ({
@@ -33,6 +36,11 @@ export class User extends Model {
   @PrimaryKey
   @Column({ type: DataTypes.STRING, autoIncrement: false })
   uid: string;
+
+  
+  @ForeignKey(() => Auth)
+  @Column({ type: DataTypes.INTEGER })
+  authId: number;
 
   @ApiProperty()
   @Column
@@ -78,4 +86,7 @@ export class User extends Model {
 
   @BelongsToMany(() => Chat, () => ChatUser)
   chats: Chat[];
+
+  @BelongsTo(() => Auth)
+  auth: Auth;
 }

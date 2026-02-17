@@ -4,6 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { WebSocketAuthAdapter } from './modules/sockets/socketAdapter';
+import * as cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -12,6 +13,8 @@ async function bootstrap() {
   const port = configService.get('port') || 4000;
   app.useGlobalPipes(new ValidationPipe());
   app.setGlobalPrefix('api');
+
+  app.use(cookieParser());
 
   const webSocketAuthAdapter = new WebSocketAuthAdapter(app);
   app.useWebSocketAdapter(webSocketAuthAdapter);
