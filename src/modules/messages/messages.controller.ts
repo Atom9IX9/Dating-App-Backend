@@ -2,7 +2,7 @@ import { Controller, Get, Param, UseGuards } from '@nestjs/common';
 import { MessagesService } from './messages.service';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { GetUserMessagesFromRoomResponse } from './response';
-import { JwtAuthGuard } from 'src/guards';
+import { AccessAuthGuard } from 'src/guards';
 
 @Controller('messages')
 export class MessagesController {
@@ -15,7 +15,7 @@ export class MessagesController {
     description: 'Get all messages from a specific chat room',
   })
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(AccessAuthGuard)
   @Get(':room')
   getMessagesFromRoom(
     @Param('room') room: string,

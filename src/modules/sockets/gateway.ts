@@ -27,25 +27,25 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
   server: Server;
 
   async handleConnection(client: AuthPayloadSocket) {
-    await processClientChatRooms(client.user.uid, this.chatsService, (room) => {
+    await processClientChatRooms(client.uid, this.chatsService, (room) => {
       client.join(room);
       client
         .to(room)
         .emit('setUserOnline', { isOnline: true });
     });
 
-    await this.usersActivityService.setUserOnlineStatus(client.user.uid, true)
+    await this.usersActivityService.setUserOnlineStatus(client.uid, true)
   }
 
   async handleDisconnect(client: AuthPayloadSocket) {
-    await processClientChatRooms(client.user.uid, this.chatsService, (room) => {
+    await processClientChatRooms(client.uid, this.chatsService, (room) => {
       client.to(room).emit('setUserOnline', {
         isOnline: false,
       });
       client.leave(room);
     });
 
-    await this.usersActivityService.setUserOnlineStatus(client.user.uid, false)
+    await this.usersActivityService.setUserOnlineStatus(client.uid, false)
   }
 
   @SubscribeMessage('createMessage')
@@ -57,7 +57,7 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
       const createdMessage = await this.messagesService.createMessage({
         chatRoom: body.chatRoom,
         text: body.text,
-        authorId: client.user.uid,
+        authorId: client.uid,
       });
       client.broadcast.to(body.chatRoom).emit('newMessage', createdMessage);
     } catch (e: unknown) {

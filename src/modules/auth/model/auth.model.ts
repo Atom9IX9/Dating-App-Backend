@@ -1,6 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { DataTypes } from 'sequelize';
-import { Column, DefaultScope, Model, PrimaryKey, Table } from 'sequelize-typescript';
+import {
+  Column,
+  DefaultScope,
+  HasOne,
+  Model,
+  PrimaryKey,
+  Table,
+} from 'sequelize-typescript';
+import { User } from 'src/modules/users/models/user.model';
 
 @Table
 @DefaultScope(() => ({
@@ -21,4 +29,7 @@ export class Auth extends Model {
   @ApiProperty()
   @Column({ type: DataTypes.STRING })
   password: string;
+
+  @HasOne(() => User)
+  user: User;
 }

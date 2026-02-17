@@ -22,9 +22,8 @@ export class UsersService {
     private readonly matchesService: MatchesService,
     private readonly activitiesService: UserActivityService,
   ) {}
-  
+
   public async createUser(dto: CreateUserDTO): Promise<UserResponse> {
-    
     const d1 = new Date();
     const d2 = new Date(dto.dateOfBD);
     const id = nanoid();
@@ -54,7 +53,7 @@ export class UsersService {
   }
 
   public async getPublicUsers(
-    authUser: UserResponse,
+    authUserId: string,
   ): Promise<GetUsersResponse> {
     const users = await this.usersRepo.findAll({
       attributes: {
@@ -63,7 +62,7 @@ export class UsersService {
       include: { model: UserActivity, attributes: ['isOnline', 'updatedAt'] },
     });
     const matches = await this.matchesService.getMatches({
-      userId: authUser.uid,
+      userId: authUserId,
     });
 
     const mappedUsers = users
@@ -72,13 +71,13 @@ export class UsersService {
           if (u.uid === m.receiverId || u.uid === m.userId) {
             return {
               ...u.dataValues,
-              matchStatus: m.status, 
+              matchStatus: m.status,
             };
           }
         }
         return u;
       })
-      .filter((u) => u.uid !== authUser.uid);
+      .filter((u) => u.uid !== authUserId);
 
     return { rows: mappedUsers, count: mappedUsers.length };
   }
@@ -113,5 +112,12 @@ export class UsersService {
   public async deleteUser(userId: string): Promise<DeleteUserResponse> {
     await this.usersRepo.destroy({ where: { uid: userId } });
     return { uid: userId };
+  }
+
+  public async getUserByAuthId(authId: number): Promise<User> {
+    return await this.usersRepo.findOne({
+      where: { authId },
+      attributes: { exclude: ['createdAt', 'updatedAt'], include: ['uid', 'firstName', 'lastName'] },
+    });
   }
 }

@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthPayloadRequest } from 'src/common/types/requests/requests';
-import { JwtAuthGuard } from 'src/guards';
+import { AccessAuthGuard } from 'src/guards';
 import { MatchResponse, GetIsMatchedResponse } from './response';
 import { ReceiveMatchDTO } from './dto';
 
@@ -26,20 +26,20 @@ export class MatchesController {
     status: 201,
     description: 'Creates a match.',
   })
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(AccessAuthGuard)
   @Post(':receiverId')
   createMatch(
     @Req() request: AuthPayloadRequest,
     @Param('receiverId') receiverId: string,
   ): Promise<MatchResponse> {
     return this.matchesService.createMatch({
-      userId: request.user.uid,
+      userId: request.uid,
       receiverId,
     });
   }
 
   // @ApiTags('MATCHES')
-  // @UseGuards(JwtAuthGuard)
+  // @UseGuards(AccessAuthGuard)
   // @ApiResponse({ type: GetMatchesResponse, status: 200 })
   // @ApiQuery({ name: 'user', enum: UserTypeEnum })
   // @Get()
@@ -60,7 +60,7 @@ export class MatchesController {
     description: 'Sets the match status by matchId.',
   })
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(AccessAuthGuard)
   @Patch(':matchId')
   setMatchStatus(
     @Param('matchId') matchId: number,
@@ -68,14 +68,14 @@ export class MatchesController {
     @Body() dto: ReceiveMatchDTO,
   ): Promise<MatchResponse> {
     return this.matchesService.acceptMatch(
-      request.user.uid,
+      request.uid,
       matchId,
       dto.receive,
     );
   }
 
   @ApiTags('MATCHES')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(AccessAuthGuard)
   @ApiResponse({
     type: GetIsMatchedResponse,
     status: 200,
@@ -86,6 +86,6 @@ export class MatchesController {
     @Req() request: AuthPayloadRequest,
     @Param('secondUserId') secondUserId: string,
   ): Promise<GetIsMatchedResponse> {
-    return this.matchesService.getIsMatched(request.user.uid, secondUserId);
+    return this.matchesService.getIsMatched(request.uid, secondUserId);
   }
 }
