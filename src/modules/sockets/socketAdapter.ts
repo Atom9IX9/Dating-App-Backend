@@ -18,7 +18,7 @@ export class WebSocketAuthAdapter extends IoAdapter {
 
     const jwtService = this.app.get(JwtService);
     const config = this.app.get(ConfigService);
-    const secret = config.get('jwtSecret');
+    const secret = config.get('jwtSecret'); //todo: refactor (not valid)
 
     server.use(tockenMiddleware(jwtService, secret));
 
