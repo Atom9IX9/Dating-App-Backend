@@ -19,6 +19,7 @@ import { MessagesModule } from '../messages/messages.module';
 import { Message } from '../messages/models/message.model';
 import { UserActivity } from '../usersActivity/models/userActivity.model';
 import { Auth } from '../auth/model/auth.model';
+import { RefreshToken } from '../token/model/refreshToken.model';
 
 @Module({
   imports: [
@@ -39,7 +40,16 @@ import { Auth } from '../auth/model/auth.model';
         synchronize: true,
         // sync: { force: true },
         autoLoadModels: true,
-        models: [User, Match, Chat, ChatUser, Message, UserActivity, Auth],
+        models: [
+          User,
+          Match,
+          Chat,
+          ChatUser,
+          Message,
+          UserActivity,
+          Auth,
+          RefreshToken,
+        ],
       }),
     }),
     UserModule,

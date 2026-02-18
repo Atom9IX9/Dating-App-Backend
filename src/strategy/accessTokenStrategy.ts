@@ -23,10 +23,12 @@ export class AccessTokenStrategy extends PassportStrategy(Strategy) {
   async validate(payload: JwtPayload): Promise<AuthPayload> {
     const auth = await this.authRepository.findOne({
       where: { authId: payload.authId },
-      include: [{
-        model: User,
-        attributes: ['uid'],
-      }],
+      include: [
+        {
+          model: User,
+          attributes: ['uid'],
+        },
+      ],
     });
 
     return { authId: payload.authId, uid: auth?.user?.uid || null };

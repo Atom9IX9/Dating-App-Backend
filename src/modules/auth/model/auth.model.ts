@@ -8,6 +8,7 @@ import {
   PrimaryKey,
   Table,
 } from 'sequelize-typescript';
+import { RefreshToken } from 'src/modules/token/model/refreshToken.model';
 import { User } from 'src/modules/users/models/user.model';
 
 @Table
@@ -32,4 +33,7 @@ export class Auth extends Model {
 
   @HasOne(() => User)
   user: User;
+
+  @HasOne(() => RefreshToken)
+  refreshToken: RefreshToken;
 }

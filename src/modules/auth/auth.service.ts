@@ -8,7 +8,11 @@ import { CreateUserDTO } from '../users/dto';
 import { ApiErrors } from 'src/common/constants/errors';
 import { LoginDTO, RegisterAuthCredentialsDTO } from './dto';
 import * as bcrypt from 'bcrypt';
-import { AuthResponse, RefreshedTokens, RegisterAuthCredentialsResponse } from './response';
+import {
+  AuthResponse,
+  RefreshedTokens,
+  RegisterAuthCredentialsResponse,
+} from './response';
 import { TokenService } from '../token/token.service';
 import { UserResponse } from '../users/response';
 import { Auth } from './model/auth.model';
@@ -23,8 +27,6 @@ export class AuthService {
   ) {}
 
   public async refreshTokens(authId: number): Promise<RefreshedTokens> {
-    // !!! todo: resresh in db
-
     const accessToken = this.tokenService.generateJwtToken(authId, 'access');
     const refreshToken = this.tokenService.generateJwtToken(authId, 'refresh');
 
@@ -100,7 +102,9 @@ export class AuthService {
     return await this.authRepo.findOne({ where: { email } });
   }
 
-  public async checkAuth(user: UserResponse): Promise<UserResponse> {
+  public async checkAuth(userId: string): Promise<UserResponse> {
+    const user = await this.usersService.getFullUserInfoById(userId);
+
     return user;
   }
 
