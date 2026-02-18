@@ -12,7 +12,11 @@ import { AuthService } from './auth.service';
 import { CreateUserDTO } from '../users/dto';
 import { LoginDTO, RegisterAuthCredentialsDTO } from './dto';
 import { ApiBearerAuth, ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { AuthResponse, RefreshTokensResponse, RegisterAuthCredentialsResponse } from './response';
+import {
+  AuthResponse,
+  RefreshTokensResponse,
+  RegisterAuthCredentialsResponse,
+} from './response';
 import { AccessAuthGuard, RefreshAuthGuard } from 'src/guards';
 import { DeleteUserResponse, UserResponse } from '../users/response';
 import { UsersService } from '../users/users.service';
@@ -35,8 +39,13 @@ export class AuthController {
     description:
       'Refresh access and refresh tokens using refresh token from cookies',
   })
-  async refreshTokens(@Req() req: AuthPayloadRequest, @Res({ passthrough: true }) res: Response): Promise<RefreshTokensResponse> {
-    const { accessToken, refreshToken } = await this.authService.refreshTokens(req.authId);
+  async refreshTokens(
+    @Req() req: AuthPayloadRequest,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<RefreshTokensResponse> {
+    const { accessToken, refreshToken } = await this.authService.refreshTokens(
+      req.authId,
+    );
 
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
@@ -70,29 +79,29 @@ export class AuthController {
   //   return this.authService.login(dto);
   // }
 
-  // @Get()
-  // @UseGuards(AccessAuthGuard)
-  // @ApiTags('AUTHORIZATION')
-  // @ApiResponse({
-  //   status: 200,
-  //   type: UserResponse,
-  //   description: 'Check user authentication status',
-  // })
-  // @ApiBearerAuth()
-  // checkAuth(@Req() req: AuthPayloadRequest) {
-  //   return this.authService.checkAuth(req.user);
-  // }
+  @Get()
+  @UseGuards(AccessAuthGuard)
+  @ApiTags('AUTHORIZATION')
+  @ApiResponse({
+    status: 200,
+    type: UserResponse,
+    description: 'Check user authentication status',
+  })
+  @ApiBearerAuth()
+  checkAuth(@Req() req: AuthPayloadRequest) {
+    return this.authService.checkAuth(req.uid);
+  }
 
-  // @Delete()
-  // @UseGuards(AccessAuthGuard)
-  // @ApiTags('AUTHORIZATION')
-  // @ApiResponse({
-  //   status: 204,
-  //   type: DeleteUserResponse,
-  //   description: 'Delete user account',
-  // })
-  // @ApiBearerAuth()
-  // deleteUser(@Req() req: AuthPayloadRequest) {
-  //   return this.usersService.deleteUser(req.user.uid);
-  // }
+  @Delete()
+  @UseGuards(AccessAuthGuard)
+  @ApiTags('AUTHORIZATION')
+  @ApiResponse({
+    status: 204,
+    type: DeleteUserResponse,
+    description: 'Delete user account',
+  })
+  @ApiBearerAuth()
+  deleteUser(@Req() req: AuthPayloadRequest) {
+    return this.usersService.deleteUser(req.uid);
+  }
 }
