@@ -16,7 +16,7 @@ import { MessagesService } from '../messages/messages.service';
 import { CreateSocketMessage } from './dto';
 import { UserActivityService } from '../usersActivity/usersActivity.service';
 
-@WebSocketGateway(5001, { transports: 'websocket' })
+@WebSocketGateway({ transports: 'websocket' })
 export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(
     private readonly chatsService: ChatsService,
