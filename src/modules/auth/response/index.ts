@@ -44,10 +44,6 @@ export class RegisterAuthCredentialsResponse {
   accessToken: string;
 
   @ApiProperty()
-  @IsString()
-  refreshToken: string;
-
-  @ApiProperty()
   @IsObject()
   auth: AuthCredentials;
 }

@@ -7,9 +7,16 @@ import { AccessTokenStrategy } from 'src/strategy/accessTokenStrategy';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { Auth } from './model/auth.model';
 import { RefreshTokenStrategy } from 'src/strategy/refreshTokenStrategy';
+import { RefreshToken } from './model/refreshToken.model';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
-  imports: [UserModule, TokenModule, SequelizeModule.forFeature([Auth])],
+  imports: [
+    UserModule,
+    TokenModule,
+    SequelizeModule.forFeature([Auth, RefreshToken]),
+    JwtModule,
+  ],
   providers: [AuthService, AccessTokenStrategy, RefreshTokenStrategy],
   controllers: [AuthController],
 })

@@ -20,7 +20,10 @@ import {
 import { AccessAuthGuard, RefreshAuthGuard } from 'src/guards';
 import { DeleteUserResponse, UserResponse } from '../users/response';
 import { UsersService } from '../users/users.service';
-import { AuthPayloadRequest } from 'src/common/types/requests/requests';
+import {
+  AuthPayloadRequest,
+  RefreshAuthPayloadRequest,
+} from 'src/common/types/requests/requests';
 import { Response } from 'express';
 
 @Controller('auth')
@@ -40,11 +43,13 @@ export class AuthController {
       'Refresh access and refresh tokens using refresh token from cookies',
   })
   async refreshTokens(
-    @Req() req: AuthPayloadRequest,
+    @Req() req: RefreshAuthPayloadRequest,
     @Res({ passthrough: true }) res: Response,
   ): Promise<RefreshTokensResponse> {
+    console.log(req.user.authId)
     const { accessToken, refreshToken } = await this.authService.refreshTokens(
-      req.authId,
+      req.user.authId,
+      req.user.jti
     );
 
     res.cookie('refreshToken', refreshToken, {
@@ -64,8 +69,22 @@ export class AuthController {
     description:
       'User registration with email and password, and token generation',
   })
-  registerAuthCredentials(@Body() dto: RegisterAuthCredentialsDTO) {
-    return this.authService.registerAuthCredentials(dto);
+  async registerAuthCredentials(
+    @Body() dto: RegisterAuthCredentialsDTO,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<RegisterAuthCredentialsResponse> {
+    const credentials = await this.authService.registerAuthCredentials(dto);
+
+    res.cookie('refreshToken', credentials.refreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'strict',
+    });
+
+    return {
+      accessToken: credentials.accessToken,
+      auth: credentials.auth,
+    };
   }
 
   // @Post('login')
@@ -89,7 +108,7 @@ export class AuthController {
   })
   @ApiBearerAuth()
   checkAuth(@Req() req: AuthPayloadRequest) {
-    return this.authService.checkAuth(req.uid);
+    return this.authService.checkAuth(req.user.uid);
   }
 
   @Delete()
@@ -102,6 +121,6 @@ export class AuthController {
   })
   @ApiBearerAuth()
   deleteUser(@Req() req: AuthPayloadRequest) {
-    return this.usersService.deleteUser(req.uid);
+    return this.usersService.deleteUser(req.user.uid);
   }
 }
