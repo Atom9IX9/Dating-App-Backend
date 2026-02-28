@@ -19,7 +19,7 @@ import { MessagesModule } from '../messages/messages.module';
 import { Message } from '../messages/models/message.model';
 import { UserActivity } from '../usersActivity/models/userActivity.model';
 import { Auth } from '../auth/model/auth.model';
-import { RefreshToken } from '../token/model/refreshToken.model';
+import { RefreshToken } from '../auth/model/refreshToken.model';
 
 @Module({
   imports: [

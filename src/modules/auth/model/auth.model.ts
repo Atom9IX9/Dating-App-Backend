@@ -8,7 +8,7 @@ import {
   PrimaryKey,
   Table,
 } from 'sequelize-typescript';
-import { RefreshToken } from 'src/modules/token/model/refreshToken.model';
+import { RefreshToken } from 'src/modules/auth/model/refreshToken.model';
 import { User } from 'src/modules/users/models/user.model';
 
 @Table

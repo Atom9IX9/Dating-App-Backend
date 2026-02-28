@@ -20,7 +20,7 @@ export class AccessTokenStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: JwtPayload): Promise<AuthPayload> {
+  async validate(payload: JwtPayload) {
     const auth = await this.authRepository.findOne({
       where: { authId: payload.authId },
       include: [

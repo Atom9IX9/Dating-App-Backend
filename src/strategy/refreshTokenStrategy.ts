@@ -22,9 +22,7 @@ export class RefreshTokenStrategy extends PassportStrategy(
     });
   }
 
-  async validate(payload: JwtPayload) {
-    // !!! todo: save hashed refresh token in db + documentation docker and env ports diff
-
-    return { authId: payload.authId };
+  validate(payload: JwtPayload) {
+    return { authId: payload.authId, jti: payload.jti };
   }
 }

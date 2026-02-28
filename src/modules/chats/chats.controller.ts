@@ -22,7 +22,7 @@ export class ChatsController {
     @Param('createWithUserId') createWithUserId: string,
     @Req() req: AuthPayloadRequest,
   ): Promise<ChatResponse> {
-    return this.chatsService.createPrivatChat(req.uid, createWithUserId);
+    return this.chatsService.createPrivatChat(req.user.uid, createWithUserId);
   }
 
   @ApiTags('CHATS')
@@ -37,6 +37,6 @@ export class ChatsController {
   getAllUserChats(
     @Req() req: AuthPayloadRequest,
   ): Promise<GetUserChatsResponse> {
-    return this.chatsService.getUserChats(req.uid);
+    return this.chatsService.getUserChats(req.user.uid);
   }
 }

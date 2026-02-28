@@ -6,8 +6,18 @@ export type AuthPayloadRequest = Request & AuthPayload;
 export type AuthPayloadSocket = Socket & AuthPayload;
 export type JwtPayload = {
   authId: number;
+  jti?: string;
 };
 export type AuthPayload = {
-  authId: number;
-  uid: string | null;
+  user: {
+    authId: number;
+    uid: string | null;
+  };
 };
+export type RefreshAuthPayload = {
+  user: {
+    authId: number;
+    jti: string;
+  };
+};
+export type RefreshAuthPayloadRequest = Request & RefreshAuthPayload;

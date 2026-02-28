@@ -21,7 +21,7 @@ export class UsersController {
   @UseGuards(AccessAuthGuard)
   @Get()
   getUsers(@Req() request: AuthPayloadRequest) {
-    return this.usersService.getPublicUsers(request.uid);
+    return this.usersService.getPublicUsers(request.user.uid);
   }
 
   @ApiTags('USERS')
@@ -37,6 +37,6 @@ export class UsersController {
     @Body() dto: UpdateUserDTO,
     @Req() req: AuthPayloadRequest,
   ): Promise<UpdateUserResponse> {
-    return this.usersService.updateUser(req.uid, dto);
+    return this.usersService.updateUser(req.user.uid, dto);
   }
 }

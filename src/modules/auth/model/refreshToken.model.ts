@@ -17,9 +17,8 @@ export class RefreshToken extends Model {
   @Column({ type: DataTypes.INTEGER, autoIncrement: true })
   refreshTokenId: number;
 
-  @ApiProperty()
-  @Column({ type: DataTypes.STRING })
-  refreshToken: string;
+  @Column({ type: DataTypes.STRING, allowNull: false })
+  jti: string;
 
   @ForeignKey(() => Auth)
   @Column({ type: DataTypes.INTEGER, allowNull: false })
