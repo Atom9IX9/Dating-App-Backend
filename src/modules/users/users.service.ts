@@ -51,9 +51,7 @@ export class UsersService {
     };
   }
 
-  public async getPublicUsers(
-    authUserId: string,
-  ): Promise<GetUsersResponse> {
+  public async getPublicUsers(authUserId: string): Promise<GetUsersResponse> {
     const users = await this.usersRepo.findAll({
       attributes: {
         exclude: ['dateOfBD', 'location'],
@@ -116,7 +114,10 @@ export class UsersService {
   public async getUserByAuthId(authId: number): Promise<User> {
     return await this.usersRepo.findOne({
       where: { authId },
-      attributes: { exclude: ['createdAt', 'updatedAt'], include: ['uid', 'firstName', 'lastName'] },
+      attributes: {
+        exclude: ['createdAt', 'updatedAt'],
+        include: ['uid', 'firstName', 'lastName'],
+      },
     });
   }
 }

@@ -18,7 +18,7 @@ export class LoginDTO {
 export class RegisterAuthCredentialsDTO {
   @ApiProperty()
   @IsString()
-  email: string; 
+  email: string;
 
   @ApiProperty()
   @IsString()

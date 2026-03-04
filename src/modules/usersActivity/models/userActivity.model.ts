@@ -31,5 +31,5 @@ export class UserActivity extends Model {
   userId: string;
 
   @BelongsTo(() => User, 'userId')
-  user: User
+  user: User;
 }

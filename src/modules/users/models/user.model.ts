@@ -37,7 +37,6 @@ export class User extends Model {
   @Column({ type: DataTypes.STRING, autoIncrement: false })
   uid: string;
 
-  
   @ForeignKey(() => Auth)
   @Column({ type: DataTypes.INTEGER })
   authId: number;

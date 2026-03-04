@@ -26,7 +26,7 @@ import { RefreshToken } from '../auth/model/refreshToken.model';
     ConfigModule.forRoot({
       isGlobal: true,
       load: [configs],
-      envFilePath: `.env.${process.env.NODE_ENV || 'development'}`
+      envFilePath: `.env.${process.env.NODE_ENV || 'development'}`,
     }),
     SequelizeModule.forRootAsync({
       imports: [ConfigModule],

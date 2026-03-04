@@ -46,10 +46,10 @@ export class AuthController {
     @Req() req: RefreshAuthPayloadRequest,
     @Res({ passthrough: true }) res: Response,
   ): Promise<RefreshTokensResponse> {
-    console.log(req.user.authId)
+    console.log(req.user.authId);
     const { accessToken, refreshToken } = await this.authService.refreshTokens(
       req.user.authId,
-      req.user.jti
+      req.user.jti,
     );
 
     res.cookie('refreshToken', refreshToken, {
