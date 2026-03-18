@@ -46,10 +46,17 @@ export class AuthController {
     @Req() req: RefreshAuthPayloadRequest,
     @Res({ passthrough: true }) res: Response,
   ): Promise<RefreshTokensResponse> {
+<<<<<<< HEAD
     console.log(req.user.authId)
     const { accessToken, refreshToken } = await this.authService.refreshTokens(
       req.user.authId,
       req.user.jti
+=======
+    console.log(req.user.authId);
+    const { accessToken, refreshToken } = await this.authService.refreshTokens(
+      req.user.authId,
+      req.user.jti,
+>>>>>>> 0e04e2a2ca4c380b47525dc4f9f8b87d6de8545a
     );
 
     res.cookie('refreshToken', refreshToken, {

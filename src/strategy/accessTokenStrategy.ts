@@ -1,9 +1,17 @@
+<<<<<<< HEAD
 import { Injectable } from '@nestjs/common';
+=======
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+>>>>>>> 0e04e2a2ca4c380b47525dc4f9f8b87d6de8545a
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { InjectModel } from '@nestjs/sequelize';
 import { ExtractJwt, Strategy } from 'passport-jwt';
+<<<<<<< HEAD
 import { AuthPayload, JwtPayload } from 'src/common/types/requests/requests';
+=======
+import { JwtPayload } from 'src/common/types/requests/requests';
+>>>>>>> 0e04e2a2ca4c380b47525dc4f9f8b87d6de8545a
 import { Auth } from 'src/modules/auth/model/auth.model';
 import { User } from 'src/modules/users/models/user.model';
 
@@ -31,6 +39,14 @@ export class AccessTokenStrategy extends PassportStrategy(Strategy) {
       ],
     });
 
+<<<<<<< HEAD
     return { authId: payload.authId, uid: auth?.user?.uid || null };
+=======
+    if (!auth) {
+      throw new UnauthorizedException();
+    }
+
+    return { authId: payload.authId, uid: auth.user.uid };
+>>>>>>> 0e04e2a2ca4c380b47525dc4f9f8b87d6de8545a
   }
 }

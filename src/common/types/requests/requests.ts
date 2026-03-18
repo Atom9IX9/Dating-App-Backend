@@ -1,5 +1,4 @@
 import { Request } from 'express';
-import { UserResponse } from 'src/modules/users/response';
 import { Socket } from 'socket.io';
 
 export type AuthPayloadRequest = Request & AuthPayload;
@@ -11,7 +10,11 @@ export type JwtPayload = {
 export type AuthPayload = {
   user: {
     authId: number;
+<<<<<<< HEAD
     uid: string | null;
+=======
+    uid: string;
+>>>>>>> 0e04e2a2ca4c380b47525dc4f9f8b87d6de8545a
   };
 };
 export type RefreshAuthPayload = {

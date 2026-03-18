@@ -3,7 +3,17 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { IoAdapter } from '@nestjs/platform-socket.io';
 import { Server } from 'socket.io';
+<<<<<<< HEAD
 import { AuthPayload, AuthPayloadSocket, JwtPayload } from 'src/common/types/requests/requests';
+=======
+import {
+  AuthPayload,
+  AuthPayloadSocket,
+  JwtPayload,
+} from 'src/common/types/requests/requests';
+
+// todo: fix sockets
+>>>>>>> 0e04e2a2ca4c380b47525dc4f9f8b87d6de8545a
 
 export class WebSocketAuthAdapter extends IoAdapter {
   constructor(private app: INestApplication) {
@@ -35,7 +45,11 @@ const tockenMiddleware =
       const payload: AuthPayload = jwtService.verify(token, {
         secret,
       });
+<<<<<<< HEAD
       client.uid = payload.uid;
+=======
+      client.user.uid = payload.user.uid;
+>>>>>>> 0e04e2a2ca4c380b47525dc4f9f8b87d6de8545a
       next();
     } catch (e) {
       next(new UnauthorizedException(e));
