@@ -37,10 +37,6 @@ export class User extends Model {
   @Column({ type: DataTypes.STRING, autoIncrement: false })
   uid: string;
 
-<<<<<<< HEAD
-  
-=======
->>>>>>> 0e04e2a2ca4c380b47525dc4f9f8b87d6de8545a
   @ForeignKey(() => Auth)
   @Column({ type: DataTypes.INTEGER })
   authId: number;

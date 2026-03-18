@@ -18,11 +18,7 @@ export class LoginDTO {
 export class RegisterAuthCredentialsDTO {
   @ApiProperty()
   @IsString()
-<<<<<<< HEAD
-  email: string; 
-=======
   email: string;
->>>>>>> 0e04e2a2ca4c380b47525dc4f9f8b87d6de8545a
 
   @ApiProperty()
   @IsString()
