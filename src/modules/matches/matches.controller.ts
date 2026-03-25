@@ -33,7 +33,7 @@ export class MatchesController {
     @Param('receiverId') receiverId: string,
   ): Promise<MatchResponse> {
     return this.matchesService.createMatch({
-      userId: request.uid,
+      userId: request.user.uid,
       receiverId,
     });
   }
@@ -68,7 +68,7 @@ export class MatchesController {
     @Body() dto: ReceiveMatchDTO,
   ): Promise<MatchResponse> {
     return this.matchesService.acceptMatch(
-      request.uid,
+      request.user.uid,
       matchId,
       dto.receive,
     );
@@ -86,6 +86,6 @@ export class MatchesController {
     @Req() request: AuthPayloadRequest,
     @Param('secondUserId') secondUserId: string,
   ): Promise<GetIsMatchedResponse> {
-    return this.matchesService.getIsMatched(request.uid, secondUserId);
+    return this.matchesService.getIsMatched(request.user.uid, secondUserId);
   }
 }

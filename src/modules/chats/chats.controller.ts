@@ -1,7 +1,7 @@
 import { Controller, Get, Param, Post, Req, UseGuards } from '@nestjs/common';
 import { ChatsService } from './chats.service';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { AccessAuthGuard } from 'src/guards';
+import { AccessAuthGuard, ProfileGuard } from 'src/guards';
 import { AuthPayloadRequest } from 'src/common/types/requests/requests';
 import { ChatResponse, GetUserChatsResponse } from './response';
 
@@ -16,7 +16,7 @@ export class ChatsController {
     description: 'Create a private chat with another user',
   })
   @ApiBearerAuth()
-  @UseGuards(AccessAuthGuard)
+  @UseGuards(AccessAuthGuard, ProfileGuard)
   @Post(':createWithUserId')
   createPrivatChat(
     @Param('createWithUserId') createWithUserId: string,
@@ -32,7 +32,7 @@ export class ChatsController {
     description: 'Get all user chats',
   })
   @ApiBearerAuth()
-  @UseGuards(AccessAuthGuard)
+  @UseGuards(AccessAuthGuard, ProfileGuard)
   @Get()
   getAllUserChats(
     @Req() req: AuthPayloadRequest,

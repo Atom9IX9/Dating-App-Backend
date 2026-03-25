@@ -34,7 +34,7 @@ import { Auth } from 'src/modules/auth/model/auth.model';
 export class User extends Model {
   @ApiProperty()
   @PrimaryKey
-  @Column({ type: DataTypes.STRING, autoIncrement: false })
+  @Column({ type: DataTypes.STRING })
   uid: string;
 
   @ForeignKey(() => Auth)
@@ -42,29 +42,31 @@ export class User extends Model {
   authId: number;
 
   @ApiProperty()
-  @Column
+  @Column({ type: DataTypes.STRING, allowNull: false })
   firstName: string;
 
   @ApiProperty()
-  @Column
+  @Column({ type: DataTypes.STRING, allowNull: false })
   lastName: string;
 
   @ApiProperty()
-  @Column
+  @Column({ type: DataTypes.DATEONLY, allowNull: false })
   dateOfBD: string;
 
-  @ApiProperty()
-  @Column
-  age: number;
-
   @ApiProperty({ enum: Genders })
-  @Column
+  @Column({ type: DataTypes.STRING, allowNull: false })
   gender: Genders;
 
   @ApiProperty()
+  @Column({ type: DataTypes.TEXT, allowNull: true })
+  genderInfo?: string;
+
+  @ApiProperty()
   @AllowNull(true)
-  @Column({ type: DataTypes.STRING(125) })
-  description: string | null;
+  @Column({ type: DataTypes.STRING(300) })
+  description?: string;
+
+  // todo: hobbies list
 
   @ApiProperty()
   @AllowNull(true)

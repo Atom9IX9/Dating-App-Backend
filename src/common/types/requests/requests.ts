@@ -10,7 +10,7 @@ export type JwtPayload = {
 export type AuthPayload = {
   user: {
     authId: number;
-    uid: string;
+    uid: string | null;
   };
 };
 export type RefreshAuthPayload = {

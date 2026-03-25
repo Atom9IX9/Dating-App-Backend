@@ -4,6 +4,7 @@ import {
   IsDateString,
   IsEmail,
   IsInt,
+  IsNumber,
   IsOptional,
   IsString,
 } from 'class-validator';
@@ -63,6 +64,10 @@ export class UserResponse {
   uid: string;
 
   @ApiProperty()
+  @IsNumber()
+  authId: number;
+
+  @ApiProperty()
   @IsString()
   firstName: string;
 
@@ -82,15 +87,16 @@ export class UserResponse {
   @IsString()
   gender: Genders;
 
-  @ApiProperty({ required: false })
-  @IsString()
+  @ApiProperty()
   @IsOptional()
-  location?: string;
+  @IsString()
+  genderInfo?: string;
 
-  @ApiProperty({ required: false, maxLength: 125 })
-  @IsString()
-  @IsOptional()
-  description?: string;
+
+  // @ApiProperty({ required: false, maxLength: 300 })
+  // @IsString()
+  // @IsOptional()
+  // description?: string;
 }
 
 export class GetUsersResponse {

@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { InjectModel } from '@nestjs/sequelize';
@@ -8,7 +12,10 @@ import { Auth } from 'src/modules/auth/model/auth.model';
 import { User } from 'src/modules/users/models/user.model';
 
 @Injectable()
-export class AccessTokenStrategy extends PassportStrategy(Strategy) {
+export class AccessTokenStrategy extends PassportStrategy(
+  Strategy,
+  'jwt-access',
+) {
   constructor(
     private readonly configService: ConfigService,
     @InjectModel(Auth) private readonly authRepository: typeof Auth,
@@ -31,10 +38,10 @@ export class AccessTokenStrategy extends PassportStrategy(Strategy) {
       ],
     });
 
-    if (!auth || !auth.user.uid) {
+    if (!auth) {
       throw new UnauthorizedException();
     }
 
-    return { authId: payload.authId, uid: auth.user.uid };
+    return { authId: payload.authId, uid: auth.user?.uid || null };
   }
 }

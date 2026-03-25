@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -12,6 +13,7 @@ import * as bcrypt from 'bcrypt';
 import {
   AuthCredentials,
   AuthResponse,
+  CheckAuthResponse,
   RefreshedTokens,
   RegisterAuthCredentialsResponse,
 } from './response';
@@ -139,10 +141,27 @@ export class AuthService {
     return await this.authRepo.findOne({ where: { email } });
   }
 
-  public async checkAuth(userId: string): Promise<UserResponse> {
-    const user = await this.usersService.getFullUserInfoById(userId);
+  public async checkAuth(authId: number): Promise<CheckAuthResponse> {
+    const user = await this.usersService.getUserByAuthId(authId);
 
-    return user;
+    const auth = await this.authRepo.findOne({
+      where: { authId: user.authId },
+    });
+
+    let onboardingStep = 3; // todo: the other steps check
+
+    return {
+      authCredentials: {
+        authId: user.authId,
+        email: auth.email,
+      },
+      user: {
+        firstName: user.firstName,
+        lastName: user.lastName,
+        uid: user.uid,
+      },
+      onboardingStep,
+    };
   }
 
   // private generateAuthResponseWithToken(

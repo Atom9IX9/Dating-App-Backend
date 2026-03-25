@@ -59,7 +59,6 @@ import { RefreshToken } from '../auth/model/refreshToken.model';
     MatchesModule,
     SocketsModule,
     ChatsModule,
-    JwtModule,
     MessagesModule,
   ],
   controllers: [AppController],

@@ -29,8 +29,8 @@ export class TokenService {
             : this.configService.get('accessTokenSecret'),
         expiresIn:
           type === 'refresh'
-            ? this.configService.get('refreshTokenExpire')
-            : this.configService.get('accessTokenExpire'),
+            ? `${this.configService.get('refreshTokenExpire')}s`
+            : `${this.configService.get('accessTokenExpire')}s`,
       }),
       jti: payload.jti,
     };

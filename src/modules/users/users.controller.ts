@@ -1,14 +1,38 @@
-import { Body, Controller, Get, Patch, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Patch,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { GetUsersResponse, UpdateUserResponse } from './response';
-import { UpdateUserDTO } from './dto';
+import { GetUsersResponse, UpdateUserResponse, UserResponse } from './response';
+import { CreateUserDTO, UpdateUserDTO } from './dto';
 import { AccessAuthGuard } from 'src/guards';
 import { AuthPayloadRequest } from 'src/common/types/requests/requests';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
+
+  @ApiTags('USERS')
+  @ApiResponse({
+    status: 201,
+    type: UserResponse,
+    description: 'Create new user with auth.',
+  })
+  @ApiBearerAuth()
+  @UseGuards(AccessAuthGuard)
+  @Post('create')
+  createUserWithAuth(
+    @Body() createUserDTO: CreateUserDTO,
+    @Req() req: AuthPayloadRequest,
+  ) {
+    return this.usersService.createUser(createUserDTO, req.user.authId);
+  }
 
   @ApiTags('USERS')
   @ApiResponse({

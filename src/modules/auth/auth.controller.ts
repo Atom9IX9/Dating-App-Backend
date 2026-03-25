@@ -11,13 +11,19 @@ import {
 import { AuthService } from './auth.service';
 import { CreateUserDTO } from '../users/dto';
 import { LoginDTO, RegisterAuthCredentialsDTO } from './dto';
-import { ApiBearerAuth, ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiCookieAuth,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import {
   AuthResponse,
   RefreshTokensResponse,
   RegisterAuthCredentialsResponse,
 } from './response';
-import { AccessAuthGuard, RefreshAuthGuard } from 'src/guards';
+import { AccessAuthGuard, ProfileGuard, RefreshAuthGuard } from 'src/guards';
 import { DeleteUserResponse, UserResponse } from '../users/response';
 import { UsersService } from '../users/users.service';
 import {
@@ -34,6 +40,7 @@ export class AuthController {
   ) {}
 
   @Post('refresh')
+  @ApiCookieAuth()
   @UseGuards(RefreshAuthGuard)
   @ApiTags('AUTHORIZATION')
   @ApiResponse({
@@ -46,7 +53,6 @@ export class AuthController {
     @Req() req: RefreshAuthPayloadRequest,
     @Res({ passthrough: true }) res: Response,
   ): Promise<RefreshTokensResponse> {
-    console.log(req.user.authId);
     const { accessToken, refreshToken } = await this.authService.refreshTokens(
       req.user.authId,
       req.user.jti,
@@ -99,7 +105,7 @@ export class AuthController {
   // }
 
   @Get()
-  @UseGuards(AccessAuthGuard)
+  @UseGuards(AccessAuthGuard, ProfileGuard)
   @ApiTags('AUTHORIZATION')
   @ApiResponse({
     status: 200,
@@ -108,19 +114,20 @@ export class AuthController {
   })
   @ApiBearerAuth()
   checkAuth(@Req() req: AuthPayloadRequest) {
-    return this.authService.checkAuth(req.user.uid);
+    return this.authService.checkAuth(req.user.authId);
   }
 
-  @Delete()
-  @UseGuards(AccessAuthGuard)
-  @ApiTags('AUTHORIZATION')
-  @ApiResponse({
-    status: 204,
-    type: DeleteUserResponse,
-    description: 'Delete user account',
-  })
-  @ApiBearerAuth()
-  deleteUser(@Req() req: AuthPayloadRequest) {
-    return this.usersService.deleteUser(req.user.uid);
-  }
+  // //@Delete()
+  // todo: logout
+  // @UseGuards(AccessAuthGuard, ProfileGuard)
+  // @ApiTags('AUTHORIZATION')
+  // @ApiResponse({
+  //   status: 204,
+  //   type: DeleteUserResponse,
+  //   description: 'Delete user account',
+  // })
+  // @ApiBearerAuth()
+  // deleteUser(@Req() req: AuthPayloadRequest) {
+  //   return this.usersService.deleteUser(req.user.uid);
+  // }
 }

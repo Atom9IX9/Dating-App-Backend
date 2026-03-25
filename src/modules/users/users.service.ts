@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { User } from './models/user.model';
 import { CreateUserDTO, UpdateUserDTO } from './dto';
@@ -13,18 +13,19 @@ import { nanoid } from 'nanoid';
 import { MatchesService } from '../matches/matches.service';
 import { UserActivity } from '../usersActivity/models/userActivity.model';
 import { UserActivityService } from '../usersActivity/usersActivity.service';
+import { Auth } from '../auth/model/auth.model';
+import { getAgeByBd } from './utils/getAgeFromBd';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectModel(User) private readonly usersRepo: typeof User,
+    @InjectModel(Auth) private readonly authsRepo: typeof Auth,
     private readonly matchesService: MatchesService,
     private readonly activitiesService: UserActivityService,
   ) {}
 
-  public async createUser(dto: CreateUserDTO): Promise<UserResponse> {
-    const d1 = new Date();
-    const d2 = new Date(dto.dateOfBD);
+  public async createUser(dto: CreateUserDTO, authId: number): Promise<UserResponse> {
     const id = nanoid();
     const user = await this.usersRepo.create({
       uid: id,
@@ -32,9 +33,8 @@ export class UsersService {
       firstName: dto.firstName,
       lastName: dto.lastName,
       gender: dto.gender,
-      location: dto.location,
-      age: d1.getFullYear() - d2.getFullYear(),
-      description: dto.description,
+      genderInfo: dto.genderInfo,
+      authId: authId,
     });
 
     const activity = this.activitiesService.createActivity(id);
@@ -44,10 +44,10 @@ export class UsersService {
       firstName: dto.firstName,
       lastName: dto.lastName,
       gender: dto.gender,
-      age: user.age,
       dateOfBD: dto.dateOfBD,
-      description: dto.description,
-      location: dto.location,
+      genderInfo: dto.genderInfo,
+      age: getAgeByBd(dto.dateOfBD),
+      authId: authId,
     };
   }
 
@@ -79,12 +79,21 @@ export class UsersService {
     return { rows: mappedUsers, count: mappedUsers.length };
   }
 
-  public async getFullUserInfoById(uid: string): Promise<UserResponse> {
+  public async getUserInfoById(uid: string): Promise<UserResponse> {
     const user = await this.usersRepo.findOne({
       where: { uid },
     });
 
-    return user;
+    return {
+      uid,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      gender: user.gender,
+      dateOfBD: user.dateOfBD,
+      genderInfo: user.genderInfo,
+      age: getAgeByBd(user.dateOfBD),
+      authId: user.authId,
+    };
   }
 
   public async updateUser(
