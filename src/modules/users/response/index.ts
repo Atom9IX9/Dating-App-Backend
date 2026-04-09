@@ -87,7 +87,7 @@ export class UserResponse {
   @IsString()
   gender: Genders;
 
-  @ApiProperty()
+  @ApiProperty({ required: false })
   @IsOptional()
   @IsString()
   genderInfo?: string;

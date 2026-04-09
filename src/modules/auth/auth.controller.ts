@@ -20,6 +20,7 @@ import {
 } from '@nestjs/swagger';
 import {
   AuthResponse,
+  CheckAuthResponse,
   RefreshTokensResponse,
   RegisterAuthCredentialsResponse,
 } from './response';
@@ -67,7 +68,7 @@ export class AuthController {
     return { accessToken };
   }
 
-  @Post('register-credentials')
+  @Post('register/credentials')
   @ApiTags('AUTHORIZATION')
   @ApiResponse({
     status: 201,
@@ -93,6 +94,23 @@ export class AuthController {
     };
   }
 
+  @ApiTags('AUTHORIZATION')
+    @ApiResponse({
+      status: 201,
+      type: UserResponse,
+      description: 'Create new user with auth.',
+    })
+    @ApiBearerAuth()
+    @UseGuards(AccessAuthGuard)
+    @Post('register/user-personal')
+    createUserWithAuth(
+      @Body() createUserDTO: CreateUserDTO,
+      @Req() req: AuthPayloadRequest,
+    ) {
+      return this.usersService.createUser(createUserDTO, req.user.authId);
+    }
+  
+
   // @Post('login')
   // @ApiTags('AUTHORIZATION')
   // @ApiResponse({
@@ -109,7 +127,7 @@ export class AuthController {
   @ApiTags('AUTHORIZATION')
   @ApiResponse({
     status: 200,
-    type: UserResponse,
+    type: CheckAuthResponse,
     description: 'Check user authentication status',
   })
   @ApiBearerAuth()
