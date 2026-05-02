@@ -1,8 +1,8 @@
 import { Controller, Get, Param, Post, Req, UseGuards } from '@nestjs/common';
 import { ChatsService } from './chats.service';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { AccessAuthGuard, ProfileGuard } from 'src/guards';
-import { AuthPayloadRequest } from 'src/common/types/requests/requests';
+import { AccessAuthGuard, ProfileGuard } from '@/guards';
+import { AuthPayloadRequest } from '@/common/types/requests/requests';
 import { ChatResponse, GetUserChatsResponse } from './response';
 
 @Controller('chats')

@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsInt, IsNumber, IsObject, IsString } from 'class-validator';
-import { UserResponse } from 'src/modules/users/response';
+import { UserResponse } from '@/modules/users/response';
 
 export class AuthCredentials {
   @ApiProperty()

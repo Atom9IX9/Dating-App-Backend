@@ -1,4 +1,4 @@
-import { ChatsService } from 'src/modules/chats/chats.service';
+import { ChatsService } from '@/modules/chats/chats.service';
 
 export const processClientChatRooms = async (
   clientId: string,

@@ -8,9 +8,9 @@ import {
   DataType,
   HasMany,
 } from 'sequelize-typescript';
-import { User } from 'src/modules/users/models/user.model';
+import { User } from '@/modules/users/models/user.model';
 import { ChatUser } from './chatUser.model';
-import { Message } from 'src/modules/messages/models/message.model';
+import { Message } from '@/modules/messages/models/message.model';
 
 @Table
 export class Chat extends Model {

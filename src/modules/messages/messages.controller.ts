@@ -2,7 +2,7 @@ import { Controller, Get, Param, UseGuards } from '@nestjs/common';
 import { MessagesService } from './messages.service';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { GetUserMessagesFromRoomResponse } from './response';
-import { AccessAuthGuard } from 'src/guards';
+import { AccessAuthGuard } from '@/guards';
 
 @Controller('messages')
 export class MessagesController {

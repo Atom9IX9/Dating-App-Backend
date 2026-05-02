@@ -7,9 +7,9 @@ import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { InjectModel } from '@nestjs/sequelize';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { JwtPayload } from 'src/common/types/requests/requests';
-import { Auth } from 'src/modules/auth/model/auth.model';
-import { User } from 'src/modules/users/models/user.model';
+import { JwtPayload } from '@/common/types/requests/requests';
+import { Auth } from '@/modules/auth/model/auth.model';
+import { User } from '@/modules/users/models/user.model';
 
 @Injectable()
 export class AccessTokenStrategy extends PassportStrategy(

@@ -20,6 +20,7 @@ import { Message } from '../messages/models/message.model';
 import { UserActivity } from '../usersActivity/models/userActivity.model';
 import { Auth } from '../auth/model/auth.model';
 import { RefreshToken } from '../auth/model/refreshToken.model';
+import { HobbiesModule } from '../hobbies/hobbies.module';
 
 @Module({
   imports: [
@@ -41,16 +42,6 @@ import { RefreshToken } from '../auth/model/refreshToken.model';
         synchronize: process.env.NODE_ENV !== 'production',
         // sync: { force: true },
         autoLoadModels: true,
-        models: [
-          User,
-          Match,
-          Chat,
-          ChatUser,
-          Message,
-          UserActivity,
-          Auth,
-          RefreshToken,
-        ],
       }),
     }),
     UserModule,
@@ -60,6 +51,7 @@ import { RefreshToken } from '../auth/model/refreshToken.model';
     SocketsModule,
     ChatsModule,
     MessagesModule,
+    HobbiesModule
   ],
   controllers: [AppController],
   providers: [AppService],

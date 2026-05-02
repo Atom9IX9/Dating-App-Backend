@@ -9,7 +9,7 @@ import {
 } from '@nestjs/websockets';
 import { Server } from 'socket.io';
 import { ChatsService } from '../chats/chats.service';
-import { AuthPayloadSocket } from 'src/common/types/requests/requests';
+import { AuthPayloadSocket } from '@/common/types/requests/requests';
 import { processClientChatRooms } from './helpers/processClientChatRooms';
 import z from 'zod';
 import { MessagesService } from '../messages/messages.service';

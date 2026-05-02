@@ -9,8 +9,8 @@ import {
   Table,
   AllowNull,
 } from 'sequelize-typescript';
-import { Chat } from 'src/modules/chats/models/chat.model';
-import { User } from 'src/modules/users/models/user.model';
+import { Chat } from '@/modules/chats/models/chat.model';
+import { User } from '@/modules/users/models/user.model';
 
 @Table
 export class Message extends Model {

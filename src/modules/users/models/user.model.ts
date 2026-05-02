@@ -13,14 +13,16 @@ import {
   ForeignKey,
   BelongsTo,
 } from 'sequelize-typescript';
-import { Match } from 'src/modules/matches/models/match.model';
+import { Match } from '@/modules/matches/models/match.model';
 import { Genders } from '../types';
 import { DataTypes } from 'sequelize';
-import { Chat } from 'src/modules/chats/models/chat.model';
-import { ChatUser } from 'src/modules/chats/models/chatUser.model';
-import { Message } from 'src/modules/messages/models/message.model';
-import { UserActivity } from 'src/modules/usersActivity/models/userActivity.model';
-import { Auth } from 'src/modules/auth/model/auth.model';
+import { Chat } from '@/modules/chats/models/chat.model';
+import { ChatUser } from '@/modules/chats/models/chatUser.model';
+import { Message } from '@/modules/messages/models/message.model';
+import { UserActivity } from '@/modules/usersActivity/models/userActivity.model';
+import { Auth } from '@/modules/auth/model/auth.model';
+import { Hobby } from '@/modules/hobbies/models/hobby.model';
+import { UserHobby } from './userHobby.model';
 
 @Table
 @DefaultScope(() => ({
@@ -90,4 +92,7 @@ export class User extends Model {
 
   @BelongsTo(() => Auth)
   auth: Auth;
+
+  @BelongsToMany(() => Hobby, () => UserHobby)
+  hobbies: Hobby[];
 }

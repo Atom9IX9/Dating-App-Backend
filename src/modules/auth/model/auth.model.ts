@@ -8,8 +8,8 @@ import {
   PrimaryKey,
   Table,
 } from 'sequelize-typescript';
-import { RefreshToken } from 'src/modules/auth/model/refreshToken.model';
-import { User } from 'src/modules/users/models/user.model';
+import { RefreshToken } from '@/modules/auth/model/refreshToken.model';
+import { User } from '@/modules/users/models/user.model';
 
 @Table
 @DefaultScope(() => ({

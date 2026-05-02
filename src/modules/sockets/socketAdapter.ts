@@ -7,7 +7,7 @@ import {
   AuthPayload,
   AuthPayloadSocket,
   JwtPayload,
-} from 'src/common/types/requests/requests';
+} from '@/common/types/requests/requests';
 
 // todo: fix sockets
 

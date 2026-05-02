@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { CreateUserDTO } from '../users/dto';
-import { ApiErrors } from 'src/common/constants/errors';
+import { ApiErrors } from '@/common/constants/errors';
 import { LoginDTO, RegisterAuthCredentialsDTO } from './dto';
 import * as bcrypt from 'bcrypt';
 import {
@@ -23,7 +23,7 @@ import { Auth } from './model/auth.model';
 import { InjectModel } from '@nestjs/sequelize';
 import { RefreshToken } from './model/refreshToken.model';
 import { JwtService } from '@nestjs/jwt';
-import { JwtPayload } from 'src/common/types/requests/requests';
+import { JwtPayload } from '@/common/types/requests/requests';
 
 @Injectable()
 export class AuthService {

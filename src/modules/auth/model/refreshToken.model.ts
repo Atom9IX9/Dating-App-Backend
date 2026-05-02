@@ -8,7 +8,7 @@ import {
   PrimaryKey,
   Table,
 } from 'sequelize-typescript';
-import { Auth } from 'src/modules/auth/model/auth.model';
+import { Auth } from '@/modules/auth/model/auth.model';
 
 @Table
 export class RefreshToken extends Model {

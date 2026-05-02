@@ -9,9 +9,9 @@ import {
   IsString,
 } from 'class-validator';
 import { Genders } from '../types';
-import { ReceivedStatuses } from 'src/modules/matches/types';
+import { ReceivedStatuses } from '@/modules/matches/types';
 import { Type } from 'class-transformer';
-import { UserActivityResponse } from 'src/modules/usersActivity/respoonse';
+import { UserActivityResponse } from '@/modules/usersActivity/respoonse';
 
 export class PublicUser {
   @ApiProperty()
@@ -91,7 +91,6 @@ export class UserResponse {
   @IsOptional()
   @IsString()
   genderInfo?: string;
-
 
   // @ApiProperty({ required: false, maxLength: 300 })
   // @IsString()

@@ -1,17 +1,10 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Patch,
-  Req,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Get, Patch, Req, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { GetUsersResponse, UpdateUserResponse } from './response';
 import { UpdateUserDTO } from './dto';
-import { AccessAuthGuard } from 'src/guards';
-import { AuthPayloadRequest } from 'src/common/types/requests/requests';
+import { AccessAuthGuard } from '@/guards';
+import { AuthPayloadRequest } from '@/common/types/requests/requests';
 
 @Controller('users')
 export class UsersController {

@@ -9,7 +9,7 @@ import {
   PrimaryKey,
   Table,
 } from 'sequelize-typescript';
-import { User } from 'src/modules/users/models/user.model';
+import { User } from '@/modules/users/models/user.model';
 
 @Table
 export class UserActivity extends Model {

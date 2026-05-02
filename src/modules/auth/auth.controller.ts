@@ -24,13 +24,13 @@ import {
   RefreshTokensResponse,
   RegisterAuthCredentialsResponse,
 } from './response';
-import { AccessAuthGuard, ProfileGuard, RefreshAuthGuard } from 'src/guards';
+import { AccessAuthGuard, ProfileGuard, RefreshAuthGuard } from '@/guards';
 import { DeleteUserResponse, UserResponse } from '../users/response';
 import { UsersService } from '../users/users.service';
 import {
   AuthPayloadRequest,
   RefreshAuthPayloadRequest,
-} from 'src/common/types/requests/requests';
+} from '@/common/types/requests/requests';
 import { Response } from 'express';
 
 @Controller('auth')
@@ -95,21 +95,20 @@ export class AuthController {
   }
 
   @ApiTags('AUTHORIZATION')
-    @ApiResponse({
-      status: 201,
-      type: UserResponse,
-      description: 'Create new user with auth.',
-    })
-    @ApiBearerAuth()
-    @UseGuards(AccessAuthGuard)
-    @Post('register/user-personal')
-    createUserWithAuth(
-      @Body() createUserDTO: CreateUserDTO,
-      @Req() req: AuthPayloadRequest,
-    ) {
-      return this.usersService.createUser(createUserDTO, req.user.authId);
-    }
-  
+  @ApiResponse({
+    status: 201,
+    type: UserResponse,
+    description: 'Create new user with auth.',
+  })
+  @ApiBearerAuth()
+  @UseGuards(AccessAuthGuard)
+  @Post('register/user-personal')
+  createUserWithAuth(
+    @Body() createUserDTO: CreateUserDTO,
+    @Req() req: AuthPayloadRequest,
+  ) {
+    return this.usersService.createUser(createUserDTO, req.user.authId);
+  }
 
   // @Post('login')
   // @ApiTags('AUTHORIZATION')

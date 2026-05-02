@@ -9,7 +9,7 @@ import {
   AllowNull,
   BelongsTo,
 } from 'sequelize-typescript';
-import { User } from 'src/modules/users/models/user.model';
+import { User } from '@/modules/users/models/user.model';
 import { ReceivedStatuses } from '../types';
 
 @Table

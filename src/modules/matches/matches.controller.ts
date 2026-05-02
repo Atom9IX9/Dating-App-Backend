@@ -10,8 +10,8 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { AuthPayloadRequest } from 'src/common/types/requests/requests';
-import { AccessAuthGuard } from 'src/guards';
+import { AuthPayloadRequest } from '@/common/types/requests/requests';
+import { AccessAuthGuard } from '@/guards';
 import { MatchResponse, GetIsMatchedResponse } from './response';
 import { ReceiveMatchDTO } from './dto';
 
