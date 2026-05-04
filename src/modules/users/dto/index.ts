@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsDateString, IsEmail, IsNumber, IsOptional, IsString } from 'class-validator';
+import { ArrayMaxSize, IsArray, IsDateString, IsEmail, IsNumber, IsOptional, IsString, MaxLength } from 'class-validator';
 import { Genders } from '../types';
 
 export class CreateUserDTO {
@@ -51,3 +51,25 @@ export class UpdateUserDTO {
   @IsOptional()
   location?: string;
 }
+
+
+export class UserDescriptionDTO {
+  @ApiProperty({ maxLength: 300 })
+  @IsString()
+  description: string;
+
+  @ApiProperty({
+    type: [String],
+    maxItems: 7,
+    items: {
+      type: 'string',
+      maxLength: 20,
+    },
+  })
+  @IsArray()
+  @ArrayMaxSize(7)
+  @IsString({ each: true })
+  @MaxLength(20, { each: true })
+  hobbies: string[];
+}
+

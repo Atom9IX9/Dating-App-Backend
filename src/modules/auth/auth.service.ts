@@ -148,7 +148,11 @@ export class AuthService {
       where: { authId: user.authId },
     });
 
-    let onboardingStep = 3; // todo: the other steps check
+    let onboardingStep: number = 4; // todo: the other steps check
+
+    if (!user.description) {
+      onboardingStep = 3
+    }
 
     return {
       authCredentials: {

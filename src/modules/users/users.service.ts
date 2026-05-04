@@ -1,13 +1,13 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { User } from './models/user.model';
-import { CreateUserDTO, UpdateUserDTO } from './dto';
+import { CreateUserDTO, UpdateUserDTO, UserDescriptionDTO } from './dto';
 import {
   UserResponse,
   DeleteUserResponse,
   GetUsersResponse,
-  PublicUser,
   UpdateUserResponse,
+  UserDescriptionResponse,
 } from './response';
 import { nanoid } from 'nanoid';
 import { MatchesService } from '../matches/matches.service';
@@ -15,17 +15,21 @@ import { UserActivity } from '../usersActivity/models/userActivity.model';
 import { UserActivityService } from '../usersActivity/usersActivity.service';
 import { Auth } from '../auth/model/auth.model';
 import { getAgeByBd } from './utils/getAgeFromBd';
+import { HobbiesService } from '../hobbies/hobbies.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectModel(User) private readonly usersRepo: typeof User,
-    @InjectModel(Auth) private readonly authsRepo: typeof Auth,
     private readonly matchesService: MatchesService,
     private readonly activitiesService: UserActivityService,
+    private readonly hobbiesService: HobbiesService,
   ) {}
 
-  public async createUser(dto: CreateUserDTO, authId: number): Promise<UserResponse> {
+  public async createUser(
+    dto: CreateUserDTO,
+    authId: number,
+  ): Promise<UserResponse> {
     const id = nanoid();
     const user = await this.usersRepo.create({
       uid: id,
@@ -49,6 +53,23 @@ export class UsersService {
       age: getAgeByBd(dto.dateOfBD),
       authId: authId,
     };
+  }
+
+  public async createUserDescription(
+    userId: string,
+    dto: UserDescriptionDTO,
+  ): Promise<UserDescriptionResponse> {
+    const sinhronizedHobbies = await this.hobbiesService.syncHobbies(dto.hobbies);
+    const user = await this.usersRepo.findOne({ where: { uid: userId } });
+    console.log(sinhronizedHobbies, userId);
+
+    await user.$set('hobbies', sinhronizedHobbies.map((h) => h.id));
+    await user.update({ description: dto.description });
+
+    return {
+      description: dto.description,
+      hobbies: sinhronizedHobbies.map((h) => h.name),
+    }
   }
 
   public async getPublicUsers(authUserId: string): Promise<GetUsersResponse> {

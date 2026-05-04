@@ -9,7 +9,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { CreateUserDTO } from '../users/dto';
+import { CreateUserDTO, UserDescriptionDTO } from '../users/dto';
 import { LoginDTO, RegisterAuthCredentialsDTO } from './dto';
 import {
   ApiBearerAuth,
@@ -25,7 +25,7 @@ import {
   RegisterAuthCredentialsResponse,
 } from './response';
 import { AccessAuthGuard, ProfileGuard, RefreshAuthGuard } from '@/guards';
-import { DeleteUserResponse, UserResponse } from '../users/response';
+import { DeleteUserResponse, UserDescriptionResponse, UserResponse } from '../users/response';
 import { UsersService } from '../users/users.service';
 import {
   AuthPayloadRequest,
@@ -108,6 +108,22 @@ export class AuthController {
     @Req() req: AuthPayloadRequest,
   ) {
     return this.usersService.createUser(createUserDTO, req.user.authId);
+  }
+
+  @ApiTags('AUTHORIZATION')
+  @ApiResponse({
+    status: 201,
+    type: UserDescriptionResponse,
+    description: 'Complete user registration by adding description and hobbies.',
+  })
+  @ApiBearerAuth()
+  @UseGuards(AccessAuthGuard, ProfileGuard)
+  @Post('register/user-description')
+  registerUserDescription(
+    @Body() registerDescriptionDTO: UserDescriptionDTO,
+    @Req() req: AuthPayloadRequest,
+  ) {
+    return this.usersService.createUserDescription(req.user.uid, registerDescriptionDTO);
   }
 
   // @Post('login')

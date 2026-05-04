@@ -68,8 +68,6 @@ export class User extends Model {
   @Column({ type: DataTypes.STRING(300) })
   description?: string;
 
-  // todo: hobbies list
-
   @ApiProperty()
   @AllowNull(true)
   @Column

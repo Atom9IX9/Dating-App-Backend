@@ -7,11 +7,13 @@ import {
   IsNumber,
   IsOptional,
   IsString,
+  ValidateNested,
 } from 'class-validator';
 import { Genders } from '../types';
 import { ReceivedStatuses } from '@/modules/matches/types';
 import { Type } from 'class-transformer';
 import { UserActivityResponse } from '@/modules/usersActivity/respoonse';
+import { Hobby } from '@/modules/hobbies/models/hobby.model';
 
 export class PublicUser {
   @ApiProperty()
@@ -92,10 +94,10 @@ export class UserResponse {
   @IsString()
   genderInfo?: string;
 
-  // @ApiProperty({ required: false, maxLength: 300 })
-  // @IsString()
-  // @IsOptional()
-  // description?: string;
+  @ApiProperty({ required: false, maxLength: 300 })
+  @IsString()
+  @IsOptional()
+  description?: string;
 }
 
 export class GetUsersResponse {
@@ -143,4 +145,16 @@ export class DeleteUserResponse {
   @ApiProperty()
   @IsString()
   uid: string;
+}
+
+export class UserDescriptionResponse {
+  @ApiProperty()
+  @IsString()
+  description: string;
+
+  @ApiProperty({ type: [Hobby] })
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => Hobby)
+  hobbies: string[];
 }

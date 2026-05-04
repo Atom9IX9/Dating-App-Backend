@@ -7,12 +7,14 @@ import { MatchesModule } from '../matches/matches.module';
 import { UserActivityModule } from '../usersActivity/usersActivity.module';
 import { Auth } from '../auth/model/auth.model';
 import { UserHobby } from './models/userHobby.model';
+import { HobbiesModule } from '../hobbies/hobbies.module';
 
 @Module({
   imports: [
     SequelizeModule.forFeature([User, Auth, UserHobby]),
     MatchesModule,
     UserActivityModule,
+    HobbiesModule
   ],
   controllers: [UsersController],
   providers: [UsersService],

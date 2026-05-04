@@ -1,6 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsInt, IsNumber, IsObject, IsString } from 'class-validator';
+import { IsArray, isArray, IsInt, IsNumber, IsObject, IsString, ValidateNested } from 'class-validator';
 import { UserResponse } from '@/modules/users/response';
+import { Hobby } from '@/modules/hobbies/models/hobby.model';
+import { Type } from 'class-transformer';
 
 export class AuthCredentials {
   @ApiProperty()
