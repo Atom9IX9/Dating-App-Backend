@@ -1,29 +1,22 @@
 import {
   BadRequestException,
-  ForbiddenException,
   Injectable,
-  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
-import { CreateUserDTO } from '../users/dto';
 import { ApiErrors } from '@/common/constants/errors';
-import { LoginDTO, RegisterAuthCredentialsDTO } from './dto';
+import { RegisterAuthCredentialsDTO } from './dto';
 import * as bcrypt from 'bcrypt';
 import {
   AuthCredentials,
-  AuthResponse,
   CheckAuthResponse,
   RefreshedTokens,
-  RegisterAuthCredentialsResponse,
 } from './response';
 import { TokenService } from '../token/token.service';
-import { UserResponse } from '../users/response';
 import { Auth } from './model/auth.model';
 import { InjectModel } from '@nestjs/sequelize';
 import { RefreshToken } from './model/refreshToken.model';
 import { JwtService } from '@nestjs/jwt';
-import { JwtPayload } from '@/common/types/requests/requests';
 
 @Injectable()
 export class AuthService {
