@@ -8,6 +8,7 @@ import {
   GetUsersResponse,
   UpdateUserResponse,
   UserDescriptionResponse,
+  UserAvatarResponse,
 } from './response';
 import { nanoid } from 'nanoid';
 import { MatchesService } from '../matches/matches.service';
@@ -16,6 +17,9 @@ import { UserActivityService } from '../usersActivity/usersActivity.service';
 import { Auth } from '../auth/model/auth.model';
 import { getAgeByBd } from './utils/getAgeFromBd';
 import { HobbiesService } from '../hobbies/hobbies.service';
+import { StorageService } from '../storage/storage.service';
+import { th } from 'zod/locales';
+import { StorageFolder } from '@/common/storage/storage.constants';
 
 @Injectable()
 export class UsersService {
@@ -24,6 +28,7 @@ export class UsersService {
     private readonly matchesService: MatchesService,
     private readonly activitiesService: UserActivityService,
     private readonly hobbiesService: HobbiesService,
+    private readonly storageService: StorageService,
   ) {}
 
   public async createUser(
@@ -59,16 +64,32 @@ export class UsersService {
     userId: string,
     dto: UserDescriptionDTO,
   ): Promise<UserDescriptionResponse> {
-    const sinhronizedHobbies = await this.hobbiesService.syncHobbies(dto.hobbies);
+    const sinhronizedHobbies = await this.hobbiesService.syncHobbies(
+      dto.hobbies,
+    );
     const user = await this.usersRepo.findOne({ where: { uid: userId } });
     console.log(sinhronizedHobbies, userId);
 
-    await user.$set('hobbies', sinhronizedHobbies.map((h) => h.id));
+    await user.$set(
+      'hobbies',
+      sinhronizedHobbies.map((h) => h.id),
+    );
     await user.update({ description: dto.description });
 
     return {
       description: dto.description,
       hobbies: sinhronizedHobbies.map((h) => h.name),
+    };
+  }
+
+  public async saveUserAvatar(
+    userId: string,
+    avatar: Express.Multer.File,
+  ): Promise<UserAvatarResponse> {
+    const saved = this.storageService.saveFile(avatar, StorageFolder.AVATARS);
+
+    return {
+      url: saved.url
     }
   }
 

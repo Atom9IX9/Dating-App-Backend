@@ -12,9 +12,16 @@ import { SocketsModule } from '../sockets/sockets.module';
 import { ChatsModule } from '../chats/chats.module';
 import { MessagesModule } from '../messages/messages.module';
 import { HobbiesModule } from '../hobbies/hobbies.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
   imports: [
+    ServeStaticModule.forRoot({
+      rootPath: join(process.cwd(), 'static'),
+      serveRoot: '/static',
+      serveStaticOptions: { index: false },
+    }),
     ConfigModule.forRoot({
       isGlobal: true,
       load: [configs],
@@ -42,7 +49,7 @@ import { HobbiesModule } from '../hobbies/hobbies.module';
     SocketsModule,
     ChatsModule,
     MessagesModule,
-    HobbiesModule
+    HobbiesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

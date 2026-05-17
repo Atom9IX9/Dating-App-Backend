@@ -158,3 +158,9 @@ export class UserDescriptionResponse {
   @Type(() => Hobby)
   hobbies: string[];
 }
+
+export class UserAvatarResponse {
+  @ApiProperty()
+  @IsString()
+  url: string;
+}
