@@ -9,10 +9,11 @@ import { Auth } from '../auth/model/auth.model';
 import { UserHobby } from './models/userHobby.model';
 import { HobbiesModule } from '../hobbies/hobbies.module';
 import { StorageModule } from '../storage/storage.module';
+import { Avatar } from './models/avatar.model';
 
 @Module({
   imports: [
-    SequelizeModule.forFeature([User, Auth, UserHobby]),
+    SequelizeModule.forFeature([User, Auth, UserHobby, Avatar]),
     MatchesModule,
     UserActivityModule,
     HobbiesModule,

@@ -16,11 +16,12 @@ import {
   UpdateUserResponse,
   UserAvatarResponse,
 } from './response';
-import { UpdateUserDTO } from './dto';
+import { UpdateUserDTO, UserAvatarDTO } from './dto';
 import { AccessAuthGuard, ProfileGuard } from '@/guards';
 import { AuthPayloadRequest } from '@/common/types/requests/requests';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { FileValidationPipe } from '@/common/pipes/fileValidation.pipe';
+import { AvatarMimeType } from '@/common/storage/storage.constants';
 
 @Controller('users')
 export class UsersController {
@@ -70,12 +71,13 @@ export class UsersController {
     @UploadedFile(
       new FileValidationPipe({
         maxSize: 5 * 1024 * 1024,
-        mimeTypes: ['image/png', 'image/jpeg', 'image/webp'],
+        mimeTypes: Object.values(AvatarMimeType),
       }),
     )
     file: Express.Multer.File,
     @Req() req: AuthPayloadRequest,
+    @Body() dto: UserAvatarDTO,
   ): Promise<UserAvatarResponse> {
-    return this.usersService.saveUserAvatar(req.user.uid, file);
+    return this.usersService.saveUserAvatar(dto, req.user.uid, file);
   }
 }

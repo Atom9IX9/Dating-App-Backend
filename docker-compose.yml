@@ -8,6 +8,7 @@ services:
     volumes:
       - .:/app:cached
       - ./node_modules:/app/node_modules
+      - static_data:/app/static
     ports:
       - 5000:5000
       - 5001:5001
@@ -29,7 +30,7 @@ services:
     env_file:
       - .env.production
     volumes:
-      - postres-data:/var/lib/postgresql/data
+      - postgres-data:/var/lib/postgresql/data
 
   pgadmin:
     image: dpage/pgadmin4
@@ -44,4 +45,5 @@ services:
       - db
 
 volumes:
-  postres-data: {}
+  postgres-data: {}
+  static_data: {}

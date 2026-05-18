@@ -1,7 +1,12 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { User } from './models/user.model';
-import { CreateUserDTO, UpdateUserDTO, UserDescriptionDTO } from './dto';
+import {
+  CreateUserDTO,
+  UpdateUserDTO,
+  UserAvatarDTO,
+  UserDescriptionDTO,
+} from './dto';
 import {
   UserResponse,
   DeleteUserResponse,
@@ -14,17 +19,17 @@ import { nanoid } from 'nanoid';
 import { MatchesService } from '../matches/matches.service';
 import { UserActivity } from '../usersActivity/models/userActivity.model';
 import { UserActivityService } from '../usersActivity/usersActivity.service';
-import { Auth } from '../auth/model/auth.model';
 import { getAgeByBd } from './utils/getAgeFromBd';
 import { HobbiesService } from '../hobbies/hobbies.service';
 import { StorageService } from '../storage/storage.service';
-import { th } from 'zod/locales';
 import { StorageFolder } from '@/common/storage/storage.constants';
+import { Avatar } from './models/avatar.model';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectModel(User) private readonly usersRepo: typeof User,
+    @InjectModel(Avatar) private readonly avatarsRepo: typeof Avatar,
     private readonly matchesService: MatchesService,
     private readonly activitiesService: UserActivityService,
     private readonly hobbiesService: HobbiesService,
@@ -83,14 +88,26 @@ export class UsersService {
   }
 
   public async saveUserAvatar(
+    dto: UserAvatarDTO,
     userId: string,
     avatar: Express.Multer.File,
   ): Promise<UserAvatarResponse> {
     const saved = this.storageService.saveFile(avatar, StorageFolder.AVATARS);
 
+    const createdAvatar = await this.avatarsRepo.create({
+      userId,
+      url: saved.url,
+      posX: Number(dto.posX),
+      posY: Number(dto.posY),
+      scale: Number(dto.scale),
+    });
+
     return {
-      url: saved.url
-    }
+      scale: +dto.scale,
+      posX: +dto.posX,
+      posY: +dto.posY,
+      url: saved.url,
+    };
   }
 
   public async getPublicUsers(authUserId: string): Promise<GetUsersResponse> {

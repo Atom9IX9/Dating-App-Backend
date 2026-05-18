@@ -14,6 +14,7 @@ import { ReceivedStatuses } from '@/modules/matches/types';
 import { Type } from 'class-transformer';
 import { UserActivityResponse } from '@/modules/usersActivity/respoonse';
 import { Hobby } from '@/modules/hobbies/models/hobby.model';
+import { StorageFolder } from '@/common/storage/storage.constants';
 
 export class PublicUser {
   @ApiProperty()
@@ -160,7 +161,22 @@ export class UserDescriptionResponse {
 }
 
 export class UserAvatarResponse {
-  @ApiProperty()
+  @ApiProperty({
+    example: StorageFolder.AVATARS + '/avatar123.jpg',
+    description: 'Public URL to user avatar',
+  })
   @IsString()
   url: string;
+
+  @ApiProperty()
+  @IsNumber()
+  posX: number;
+
+  @ApiProperty()
+  @IsNumber()
+  posY: number;
+
+  @ApiProperty()
+  @IsNumber()
+  scale: number;
 }

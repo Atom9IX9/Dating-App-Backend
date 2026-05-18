@@ -37,8 +37,8 @@ import { join } from 'path';
         username: configService.get('db.user'),
         password: configService.get('db.password'),
         database: configService.get('db.name'),
-        synchronize: process.env.NODE_ENV !== 'production',
-        // sync: { force: true },
+        synchronize: process.env.NODE_ENV !== 'production', //after development, use migrations instead of sync / on dev - true to auto create tables based on models, on prod - false to avoid data loss
+        //sync: { force: true }, //force: true - drop tables and recreate them on every app restart (use only for development)
         autoLoadModels: true,
       }),
     }),

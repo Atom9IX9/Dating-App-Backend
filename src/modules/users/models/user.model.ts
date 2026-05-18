@@ -23,6 +23,7 @@ import { UserActivity } from '@/modules/usersActivity/models/userActivity.model'
 import { Auth } from '@/modules/auth/model/auth.model';
 import { Hobby } from '@/modules/hobbies/models/hobby.model';
 import { UserHobby } from './userHobby.model';
+import { Avatar } from './avatar.model';
 
 @Table
 @DefaultScope(() => ({
@@ -75,6 +76,9 @@ export class User extends Model {
 
   @HasOne(() => UserActivity)
   activity: UserActivity;
+
+  @HasOne(() => Avatar)
+  avatar: Avatar;
 
   @HasMany(() => Match, {
     onDelete: 'CASCADE',

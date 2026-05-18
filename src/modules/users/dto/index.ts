@@ -1,5 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ArrayMaxSize, IsArray, IsDateString, IsEmail, IsNumber, IsOptional, IsString, MaxLength } from 'class-validator';
+import {
+  ArrayMaxSize,
+  IsArray,
+  IsDateString,
+  IsEmail,
+  IsNumber,
+  IsOptional,
+  IsString,
+  MaxLength,
+} from 'class-validator';
 import { Genders } from '../types';
 
 export class CreateUserDTO {
@@ -52,7 +61,6 @@ export class UpdateUserDTO {
   location?: string;
 }
 
-
 export class UserDescriptionDTO {
   @ApiProperty({ maxLength: 300 })
   @IsString()
@@ -73,3 +81,16 @@ export class UserDescriptionDTO {
   hobbies: string[];
 }
 
+export class UserAvatarDTO {
+  @ApiProperty()
+  @IsString()
+  posX: string;
+
+  @ApiProperty()
+  @IsString()
+  posY: string;
+
+  @ApiProperty()
+  @IsString()
+  scale: string;
+}

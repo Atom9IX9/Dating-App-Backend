@@ -31,7 +31,7 @@ export class StorageService {
     return {
       filename,
       path: fullPath,
-      url: `/static/${to}/${filename}`,
+      url: `${to}/${filename}`,
     };
   }
 }
