@@ -94,18 +94,20 @@ export class UsersService {
   ): Promise<UserAvatarResponse> {
     const saved = this.storageService.saveFile(avatar, StorageFolder.AVATARS);
 
+    console.log(avatar);
+
     const createdAvatar = await this.avatarsRepo.create({
       userId,
       url: saved.url,
-      posX: Number(dto.posX),
-      posY: Number(dto.posY),
-      scale: Number(dto.scale),
+      posX: Math.round(Number(dto.posX)),
+      posY: Math.round(Number(dto.posY)),
+      scale: Math.round(Number(dto.scale)),
     });
 
     return {
-      scale: +dto.scale,
-      posX: +dto.posX,
-      posY: +dto.posY,
+      scale: Number(Number(dto.scale).toFixed(1)),
+      posX: Math.round(Number(dto.posX)),
+      posY: Math.round(Number(dto.posY)),
       url: saved.url,
     };
   }
