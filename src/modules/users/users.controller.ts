@@ -10,7 +10,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiConsumes, ApiResponse, ApiTags } from '@nestjs/swagger';
 import {
   GetUsersResponse,
   UpdateUserResponse,
@@ -64,6 +64,7 @@ export class UsersController {
     description: 'Uploads and updates the avatar of the authenticated user.',
   })
   @ApiBearerAuth()
+  @ApiConsumes('multipart/form-data')
   @Post('avatar')
   @UseInterceptors(FileInterceptor('file'))
   @UseGuards(AccessAuthGuard, ProfileGuard)

@@ -93,4 +93,7 @@ export class UserAvatarDTO {
   @ApiProperty()
   @IsString()
   scale: string;
+
+  @ApiProperty({ type: "file", format: 'binary', description: "Profile photo" })
+  file: any
 }
