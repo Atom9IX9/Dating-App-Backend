@@ -1,8 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, isArray, IsInt, IsNumber, IsObject, IsString, ValidateNested } from 'class-validator';
+import { IsEnum, IsInt, IsNumber, IsObject, IsString } from 'class-validator';
 import { UserResponse } from '@/modules/users/response';
-import { Hobby } from '@/modules/hobbies/models/hobby.model';
-import { Type } from 'class-transformer';
+
+export enum OnboardingStep {
+  REGISTERED = 'registered',
+  DESCRIPTION = 3,
+  AVATAR = 4,
+}
 
 export class AuthCredentials {
   @ApiProperty()
@@ -57,9 +61,9 @@ export class CheckAuthResponse {
   @IsObject()
   authCredentials: CheckAuthCredentials;
 
-  @ApiProperty()
-  @IsInt()
-  onboardingStep: number;
+  @ApiProperty({ enum: OnboardingStep })
+  @IsEnum(OnboardingStep)
+  onboardingStep: OnboardingStep;
 }
 
 export class RefreshedTokens {

@@ -10,6 +10,7 @@ import * as bcrypt from 'bcrypt';
 import {
   AuthCredentials,
   CheckAuthResponse,
+  OnboardingStep,
   RefreshedTokens,
 } from './response';
 import { TokenService } from '../token/token.service';
@@ -17,6 +18,8 @@ import { Auth } from './model/auth.model';
 import { InjectModel } from '@nestjs/sequelize';
 import { RefreshToken } from './model/refreshToken.model';
 import { JwtService } from '@nestjs/jwt';
+import { User } from '../users/models/user.model';
+import { Avatar } from '../users/models/avatar.model';
 
 @Injectable()
 export class AuthService {
@@ -135,27 +138,38 @@ export class AuthService {
   }
 
   public async checkAuth(authId: number): Promise<CheckAuthResponse> {
-    const user = await this.usersService.getUserByAuthId(authId);
-
     const auth = await this.authRepo.findOne({
-      where: { authId: user.authId },
+      where: { authId },
+      include: [
+        {
+          model: User,
+          include: [Avatar],
+          attributes: ['uid', 'firstName', 'lastName', "description"],
+        },
+      ],
     });
 
-    let onboardingStep: number = 4; // todo: the other steps check
+    console.log(auth.user.avatar);
 
-    if (!user.description) {
-      onboardingStep = 3
+    let onboardingStep: OnboardingStep;
+
+    if (!auth.user.description) {
+      onboardingStep = OnboardingStep.DESCRIPTION;
+    } else if (!auth.user.avatar) {
+      onboardingStep = OnboardingStep.AVATAR;
+    } else {
+      onboardingStep = OnboardingStep.REGISTERED;
     }
 
     return {
       authCredentials: {
-        authId: user.authId,
+        authId: auth.authId,
         email: auth.email,
       },
       user: {
-        firstName: user.firstName,
-        lastName: user.lastName,
-        uid: user.uid,
+        firstName: auth.user.firstName,
+        lastName: auth.user.lastName,
+        uid: auth.user.uid,
       },
       onboardingStep,
     };
