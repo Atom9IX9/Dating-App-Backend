@@ -144,12 +144,10 @@ export class AuthService {
         {
           model: User,
           include: [Avatar],
-          attributes: ['uid', 'firstName', 'lastName', "description"],
+          attributes: ['uid', 'firstName', 'lastName', 'description'],
         },
       ],
     });
-
-    console.log(auth.user.avatar);
 
     let onboardingStep: OnboardingStep;
 
@@ -170,6 +168,12 @@ export class AuthService {
         firstName: auth.user.firstName,
         lastName: auth.user.lastName,
         uid: auth.user.uid,
+        avatar: {
+          posX: auth.user.avatar.posX,
+          posY: auth.user.avatar.posY,
+          scale: auth.user.avatar.scale,
+          url: auth.user.avatar.url,
+        },
       },
       onboardingStep,
     };

@@ -1,6 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEnum, IsInt, IsNumber, IsObject, IsString } from 'class-validator';
+import {
+  IsEnum,
+  IsInt,
+  IsNumber,
+  IsObject,
+  IsString,
+  ValidateNested,
+} from 'class-validator';
 import { UserResponse } from '@/modules/users/response';
+import { Type } from 'class-transformer';
 
 export enum OnboardingStep {
   REGISTERED = 'registered',
@@ -28,6 +36,24 @@ export class AuthResponse {
   token: string;
 }
 
+export class CheckAuthUserAvatar {
+  @ApiProperty()
+  @IsInt()
+  posX: number;
+
+  @ApiProperty()
+  @IsInt()
+  posY: number;
+
+  @ApiProperty()
+  @IsInt()
+  scale: number;
+
+  @ApiProperty()
+  @IsString()
+  url: string;
+}
+
 export class CheckAuthUser {
   @ApiProperty()
   @IsString()
@@ -40,6 +66,11 @@ export class CheckAuthUser {
   @ApiProperty()
   @IsString()
   uid: string;
+
+  @ApiProperty({ type: CheckAuthUserAvatar })
+  @ValidateNested()
+  @Type(() => CheckAuthUserAvatar)
+  avatar: CheckAuthUserAvatar;
 }
 
 export class CheckAuthCredentials {
