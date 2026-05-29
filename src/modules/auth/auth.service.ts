@@ -24,13 +24,11 @@ import { Avatar } from '../users/models/avatar.model';
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly usersService: UsersService,
     private readonly tokenService: TokenService,
-    private readonly jwtService: JwtService,
 
     @InjectModel(Auth) private readonly authRepo: typeof Auth,
     @InjectModel(RefreshToken)
-    private readonly refreshTokensRepo: typeof RefreshToken,
+    private readonly refreshTokensRepo: typeof RefreshToken, //todo: just service
   ) {}
 
   public async refreshTokens(
@@ -106,33 +104,6 @@ export class AuthService {
     return bcrypt.hash(data, 10);
   }
 
-  // public async register(dto: CreateUserDTO): Promise<AuthResponse> {
-  //   const userAlreadyExists = !!(await this.findAuthByEmail(dto.email));
-  //   if (userAlreadyExists)
-  //     throw new BadRequestException(ApiErrors.USER_WITH_EMAIL_ALREADY_EXISTS);
-
-  //   const user = await this.usersService.createUser(dto);
-
-  //   return this.generateAuthResponseWithToken(user, false);
-  // }
-
-  // public async login(dto: LoginDTO): Promise<AuthResponse> {
-  //   const user = await this.findAuthByEmail(dto.email);
-  //   if (!user) {
-  //     throw new NotFoundException(ApiErrors.USER_DOES_NOT_EXIST);
-  //   }
-
-  //   const isValidPassword = await bcrypt.compare(dto.password, user.password);
-  //   if (!isValidPassword) {
-  //     throw new BadRequestException(ApiErrors.WRONG_EMAIL_OR_PASSWORD);
-  //   }
-
-  //   return this.generateAuthResponseWithToken(
-  //     { ...user.dataValues, password: undefined },
-  //     dto.rememberMe,
-  //   );
-  // }
-
   private async findAuthByEmail(email: string): Promise<Auth> {
     return await this.authRepo.findOne({ where: { email } });
   }
@@ -168,23 +139,14 @@ export class AuthService {
         firstName: auth.user.firstName,
         lastName: auth.user.lastName,
         uid: auth.user.uid,
-        avatar: {
+        avatar: auth.user && auth.user.avatar ? {
           posX: auth.user.avatar.posX,
           posY: auth.user.avatar.posY,
           scale: auth.user.avatar.scale,
           url: auth.user.avatar.url,
-        },
+        } : null,
       },
       onboardingStep,
     };
   }
-
-  // private generateAuthResponseWithToken(
-  //   user: UserResponse,
-  //   rememberUser: boolean,
-  // ): AuthResponse {
-  //   const token = this.tokenService.generateJwtToken(user, rememberUser);
-
-  //   return { user, token };
-  // }
 }
