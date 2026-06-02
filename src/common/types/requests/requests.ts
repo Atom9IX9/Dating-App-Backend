@@ -2,7 +2,14 @@ import { Request } from 'express';
 import { Socket } from 'socket.io';
 
 export type AuthPayloadRequest = Request & AuthPayload;
-export type AuthPayloadSocket = Socket & AuthPayload;
+export interface AuthSocket extends Socket {
+  data: {
+    user: {
+      authId: number;
+      uid: string | null;
+    };
+  };
+}
 export type JwtPayload = {
   authId: number;
   jti?: string;

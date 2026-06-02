@@ -9,7 +9,7 @@ import {
 } from '@nestjs/websockets';
 import { Server } from 'socket.io';
 import { ChatsService } from '../chats/chats.service';
-import { AuthPayloadSocket } from '@/common/types/requests/requests';
+import { AuthSocket } from '@/common/types/requests/requests';
 import { processClientChatRooms } from './helpers/processClientChatRooms';
 import z from 'zod';
 import { MessagesService } from '../messages/messages.service';
@@ -26,36 +26,50 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   server: Server;
 
-  async handleConnection(client: AuthPayloadSocket) {
-    await processClientChatRooms(client.user.uid, this.chatsService, (room) => {
-      client.join(room);
-      client.to(room).emit('setUserOnline', { isOnline: true });
-    });
+  async handleConnection(client: AuthSocket) {
+    await processClientChatRooms(
+      client.data.user.uid,
+      this.chatsService,
+      (room) => {
+        client.join(room);
+        client.to(room).emit('setUserOnline', { isOnline: true });
+      },
+    );
 
-    await this.usersActivityService.setUserOnlineStatus(client.user.uid, true);
+    await this.usersActivityService.setUserOnlineStatus(
+      client.data.user.uid,
+      true,
+    );
   }
 
-  async handleDisconnect(client: AuthPayloadSocket) {
-    await processClientChatRooms(client.user.uid, this.chatsService, (room) => {
-      client.to(room).emit('setUserOnline', {
-        isOnline: false,
-      });
-      client.leave(room);
-    });
+  async handleDisconnect(client: AuthSocket) {
+    await processClientChatRooms(
+      client.data.user.uid,
+      this.chatsService,
+      (room) => {
+        client.to(room).emit('setUserOnline', {
+          isOnline: false,
+        });
+        client.leave(room);
+      },
+    );
 
-    await this.usersActivityService.setUserOnlineStatus(client.user.uid, false);
+    await this.usersActivityService.setUserOnlineStatus(
+      client.data.user.uid,
+      false,
+    );
   }
 
   @SubscribeMessage('createMessage')
   async createMessageHandler(
     @MessageBody() body: CreateSocketMessage,
-    @ConnectedSocket() client: AuthPayloadSocket,
+    @ConnectedSocket() client: AuthSocket,
   ) {
     try {
       const createdMessage = await this.messagesService.createMessage({
         chatRoom: body.chatRoom,
         text: body.text,
-        authorId: client.user.uid,
+        authorId: client.data.user.uid,
       });
       client.broadcast.to(body.chatRoom).emit('newMessage', createdMessage);
     } catch (e: unknown) {

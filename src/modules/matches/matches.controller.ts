@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthPayloadRequest } from '@/common/types/requests/requests';
-import { AccessAuthGuard } from '@/guards';
+import { AccessAuthGuard, ProfileGuard } from '@/guards';
 import { MatchResponse, GetIsMatchedResponse } from './response';
 import { ReceiveMatchDTO } from './dto';
 
@@ -26,7 +26,7 @@ export class MatchesController {
     status: 201,
     description: 'Creates a match.',
   })
-  @UseGuards(AccessAuthGuard)
+  @UseGuards(AccessAuthGuard, ProfileGuard)
   @Post(':receiverId')
   createMatch(
     @Req() request: AuthPayloadRequest,
@@ -60,7 +60,7 @@ export class MatchesController {
     description: 'Sets the match status by matchId.',
   })
   @ApiBearerAuth()
-  @UseGuards(AccessAuthGuard)
+  @UseGuards(AccessAuthGuard, ProfileGuard)
   @Patch(':matchId')
   setMatchStatus(
     @Param('matchId') matchId: number,
@@ -75,7 +75,7 @@ export class MatchesController {
   }
 
   @ApiTags('MATCHES')
-  @UseGuards(AccessAuthGuard)
+  @UseGuards(AccessAuthGuard, ProfileGuard)
   @ApiResponse({
     type: GetIsMatchedResponse,
     status: 200,

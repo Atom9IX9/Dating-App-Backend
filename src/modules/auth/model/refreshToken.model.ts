@@ -12,11 +12,7 @@ import { Auth } from '@/modules/auth/model/auth.model';
 
 @Table
 export class RefreshToken extends Model {
-  @ApiProperty()
   @PrimaryKey
-  @Column({ type: DataTypes.INTEGER, autoIncrement: true })
-  refreshTokenId: number;
-
   @Column({ type: DataTypes.STRING, allowNull: false })
   jti: string;
 

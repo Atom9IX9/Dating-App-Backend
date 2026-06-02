@@ -5,8 +5,7 @@ import { IoAdapter } from '@nestjs/platform-socket.io';
 import { Server } from 'socket.io';
 import {
   AuthPayload,
-  AuthPayloadSocket,
-  JwtPayload,
+  AuthSocket,
 } from '@/common/types/requests/requests';
 
 // todo: fix sockets
@@ -24,7 +23,7 @@ export class WebSocketAuthAdapter extends IoAdapter {
 
     const jwtService = this.app.get(JwtService);
     const config = this.app.get(ConfigService);
-    const secret = config.get('jwtSecret'); //todo: refactor (not valid)
+    const secret = config.get('accessTokenSecret'); 
 
     server.use(tockenMiddleware(jwtService, secret));
 
@@ -34,14 +33,14 @@ export class WebSocketAuthAdapter extends IoAdapter {
 
 const tockenMiddleware =
   (jwtService: JwtService, secret: string) =>
-  (client: AuthPayloadSocket, next) => {
+  (client: AuthSocket, next) => {
     const token = client.handshake.headers.authorization?.split(' ')[1];
 
     try {
       const payload: AuthPayload = jwtService.verify(token, {
         secret,
       });
-      client.user.uid = payload.user.uid;
+      client.data.user.uid = payload.user.uid;
       next();
     } catch (e) {
       next(new UnauthorizedException(e));
