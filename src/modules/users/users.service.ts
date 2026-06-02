@@ -101,7 +101,7 @@ export class UsersService {
       url: saved.url,
       posX: Math.round(Number(dto.posX)),
       posY: Math.round(Number(dto.posY)),
-      scale: Math.round(Number(dto.scale)),
+      scale: Number(dto.scale).toFixed(3),
     });
 
     return {
