@@ -105,7 +105,7 @@ export class UsersService {
     });
 
     return {
-      scale: Number(Number(dto.scale).toFixed(1)),
+      scale: Number(Number(dto.scale).toFixed(3)),
       posX: Math.round(Number(dto.posX)),
       posY: Math.round(Number(dto.posY)),
       url: saved.url,
