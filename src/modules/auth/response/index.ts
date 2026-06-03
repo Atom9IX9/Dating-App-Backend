@@ -4,6 +4,7 @@ import {
   IsInt,
   IsNumber,
   IsObject,
+  IsOptional,
   IsString,
   ValidateNested,
 } from 'class-validator';
@@ -84,17 +85,27 @@ export class CheckAuthCredentials {
 }
 
 export class CheckAuthResponse {
-  @ApiProperty()
-  @IsObject()
-  user: CheckAuthUser;
+  @ApiProperty({ type: CheckAuthUser, nullable: true })
+  @ValidateNested()
+  @IsOptional()
+  @Type(() => CheckAuthUser)
+  user?: CheckAuthUser;
 
   @ApiProperty()
   @IsObject()
+  @ValidateNested()
+  @Type(() => CheckAuthUser)
   authCredentials: CheckAuthCredentials;
 
   @ApiProperty({ enum: OnboardingStep })
   @IsEnum(OnboardingStep)
   onboardingStep: OnboardingStep;
+}
+
+export class LoginResponse extends CheckAuthResponse {
+  @ApiProperty()
+  @IsString()
+  accessToken: string;
 }
 
 export class RefreshedTokens {

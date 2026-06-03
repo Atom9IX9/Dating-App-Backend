@@ -3,13 +3,13 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { UsersService } from '../users/users.service';
 import { ApiErrors } from '@/common/constants/errors';
-import { RegisterAuthCredentialsDTO } from './dto';
+import { LoginDTO, RegisterAuthCredentialsDTO } from './dto';
 import * as bcrypt from 'bcrypt';
 import {
   AuthCredentials,
   CheckAuthResponse,
+  LoginResponse,
   OnboardingStep,
   RefreshedTokens,
 } from './response';
@@ -17,7 +17,6 @@ import { TokenService } from '../token/token.service';
 import { Auth } from './model/auth.model';
 import { InjectModel } from '@nestjs/sequelize';
 import { RefreshToken } from './model/refreshToken.model';
-import { JwtService } from '@nestjs/jwt';
 import { User } from '../users/models/user.model';
 import { Avatar } from '../users/models/avatar.model';
 
@@ -105,7 +104,10 @@ export class AuthService {
   }
 
   private async findAuthByEmail(email: string): Promise<Auth> {
-    return await this.authRepo.findOne({ where: { email } });
+    return await this.authRepo.findOne({
+      where: { email },
+      attributes: { include: ['password'] },
+    });
   }
 
   public async checkAuth(authId: number): Promise<CheckAuthResponse> {
@@ -120,15 +122,10 @@ export class AuthService {
       ],
     });
 
-    let onboardingStep: OnboardingStep;
-
-    if (!auth.user.description) {
-      onboardingStep = OnboardingStep.DESCRIPTION;
-    } else if (!auth.user.avatar) {
-      onboardingStep = OnboardingStep.AVATAR;
-    } else {
-      onboardingStep = OnboardingStep.REGISTERED;
-    }
+    const onboardingStep = this.getOnboardingStep(
+      auth.user,
+      auth.user ? auth.user.avatar : null,
+    );
 
     return {
       authCredentials: {
@@ -139,14 +136,85 @@ export class AuthService {
         firstName: auth.user.firstName,
         lastName: auth.user.lastName,
         uid: auth.user.uid,
-        avatar: auth.user && auth.user.avatar ? {
-          posX: auth.user.avatar.posX,
-          posY: auth.user.avatar.posY,
-          scale: auth.user.avatar.scale,
-          url: auth.user.avatar.url,
-        } : null,
+        avatar:
+          auth.user && auth.user.avatar
+            ? {
+                posX: auth.user.avatar.posX,
+                posY: auth.user.avatar.posY,
+                scale: auth.user.avatar.scale,
+                url: auth.user.avatar.url,
+              }
+            : null,
       },
       onboardingStep,
     };
+  }
+
+  public async login(
+    dto: LoginDTO,
+  ): Promise<LoginResponse & { refreshToken: string }> {
+    const auth = await this.authRepo.findOne({
+      where: { email: dto.email },
+      attributes: { include: ['password'] },
+      include: [
+        {
+          model: User,
+          include: [Avatar],
+        },
+        { model: RefreshToken },
+      ],
+    });
+
+    if (!auth || !auth.password) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    const isPasswordValid = await bcrypt.compare(dto.password, auth.password);
+
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    const onboardingStep = this.getOnboardingStep(
+      auth.user,
+      auth.user ? auth.user.avatar : null,
+    );
+
+    const { accessToken, refreshToken } = await this.refreshTokens(auth.authId, auth.refreshToken.jti);
+
+    return {
+      authCredentials: {
+        authId: auth.authId,
+        email: auth.email,
+      },
+      user: auth.user
+        ? {
+            avatar: auth.user.avatar || null,
+            firstName: auth.user.firstName,
+            lastName: auth.user.lastName,
+            uid: auth.user.uid,
+          }
+        : null,
+      onboardingStep,
+      accessToken,
+      refreshToken,
+    };
+  }
+
+  private getOnboardingStep(
+    user: User | null,
+    avatar: Avatar | null,
+  ): OnboardingStep {
+    let onboardingStep: OnboardingStep;
+
+    if (!user?.description) {
+      onboardingStep = OnboardingStep.DESCRIPTION;
+    } else if (!avatar) {
+      onboardingStep = OnboardingStep.AVATAR;
+    } else {
+      onboardingStep = OnboardingStep.REGISTERED;
+    }
+
+    return onboardingStep;
   }
 }

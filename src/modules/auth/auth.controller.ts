@@ -21,11 +21,16 @@ import {
 import {
   AuthResponse,
   CheckAuthResponse,
+  LoginResponse,
   RefreshTokensResponse,
   RegisterAuthCredentialsResponse,
 } from './response';
 import { AccessAuthGuard, ProfileGuard, RefreshAuthGuard } from '@/guards';
-import { DeleteUserResponse, UserDescriptionResponse, UserResponse } from '../users/response';
+import {
+  DeleteUserResponse,
+  UserDescriptionResponse,
+  UserResponse,
+} from '../users/response';
 import { UsersService } from '../users/users.service';
 import {
   AuthPayloadRequest,
@@ -114,7 +119,8 @@ export class AuthController {
   @ApiResponse({
     status: 201,
     type: UserDescriptionResponse,
-    description: 'Complete user registration by adding description and hobbies.',
+    description:
+      'Complete user registration by adding description and hobbies.',
   })
   @ApiBearerAuth()
   @UseGuards(AccessAuthGuard, ProfileGuard)
@@ -123,19 +129,34 @@ export class AuthController {
     @Body() registerDescriptionDTO: UserDescriptionDTO,
     @Req() req: AuthPayloadRequest,
   ) {
-    return this.usersService.createUserDescription(req.user.uid, registerDescriptionDTO);
+    return this.usersService.createUserDescription(
+      req.user.uid,
+      registerDescriptionDTO,
+    );
   }
 
-  // @Post('login')
-  // @ApiTags('AUTHORIZATION')
-  // @ApiResponse({
-  //   status: 200,
-  //   type: AuthResponse,
-  //   description: 'User login and token generation',
-  // })
-  // login(@Body() dto: LoginDTO) {
-  //   return this.authService.login(dto);
-  // }
+  @Post('login')
+  @ApiTags('AUTHORIZATION')
+  @ApiResponse({
+    status: 200,
+    type: LoginResponse,
+    description: 'User login and token generation',
+  })
+  async login(
+    @Body() dto: LoginDTO,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const { refreshToken, ...credentials } = await this.authService.login(dto);
+
+    res.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'strict',
+    });
+    res.status(200);
+
+    return credentials;
+  }
 
   @Get()
   @UseGuards(AccessAuthGuard, ProfileGuard)
