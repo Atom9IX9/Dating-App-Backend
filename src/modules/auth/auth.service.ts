@@ -159,7 +159,7 @@ export class AuthService {
       include: [
         {
           model: User,
-          include: [Avatar],
+          include: [{ model: Avatar, attributes: { exclude: ["userId", "id", "createdAt", "updatedAt"] } }],
         },
         { model: RefreshToken },
       ],
@@ -180,7 +180,10 @@ export class AuthService {
       auth.user ? auth.user.avatar : null,
     );
 
-    const { accessToken, refreshToken } = await this.refreshTokens(auth.authId, auth.refreshToken.jti);
+    const { accessToken, refreshToken } = await this.refreshTokens(
+      auth.authId,
+      auth.refreshToken.jti,
+    );
 
     return {
       authCredentials: {
@@ -207,7 +210,9 @@ export class AuthService {
   ): OnboardingStep {
     let onboardingStep: OnboardingStep;
 
-    if (!user?.description) {
+    if (!user) {
+      onboardingStep = OnboardingStep.USER_INFO;
+    } else if (!user.description) {
       onboardingStep = OnboardingStep.DESCRIPTION;
     } else if (!avatar) {
       onboardingStep = OnboardingStep.AVATAR;

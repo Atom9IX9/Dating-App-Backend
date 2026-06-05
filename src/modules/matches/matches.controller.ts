@@ -38,21 +38,6 @@ export class MatchesController {
     });
   }
 
-  // @ApiTags('MATCHES')
-  // @UseGuards(AccessAuthGuard)
-  // @ApiResponse({ type: GetMatchesResponse, status: 200 })
-  // @ApiQuery({ name: 'user', enum: UserTypeEnum })
-  // @Get()
-  // getMatches(
-  //   @Req() request: AuthPayloadRequest,
-  //   @Query('user') userType: UserTypeEnum,
-  // ) {
-  //   return this.matchesService.getMatches({
-  //     userId: request.user.uid,
-  //     userType,
-  //   });
-  // }
-
   @ApiTags('MATCHES')
   @ApiResponse({
     type: MatchResponse,

@@ -19,7 +19,6 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import {
-  AuthResponse,
   CheckAuthResponse,
   LoginResponse,
   RefreshTokensResponse,
@@ -171,8 +170,8 @@ export class AuthController {
     return this.authService.checkAuth(req.user.authId);
   }
 
-  // //@Delete()
   // todo: logout
+  //@Delete()
   // @UseGuards(AccessAuthGuard, ProfileGuard)
   // @ApiTags('AUTHORIZATION')
   // @ApiResponse({

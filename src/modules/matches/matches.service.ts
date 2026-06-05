@@ -91,37 +91,4 @@ export class MatchesService {
 
     return match;
   }
-
-  // private async getSecondUsersByUserTypeAndMatches(
-  //   userType: UserTypeEnum,
-  //   matches: Match[],
-  // ): Promise<GetMatchResponse[]> {
-  //   let secondUserIds: string[];
-  //   let secondUsers: GetUsersResponse;
-  //   let result: GetMatchResponse[];
-
-  //   if (userType === UserTypeEnum.Receiver) {
-  //     secondUserIds = matches.map((m) => m.userId);
-  //     secondUsers = await this.usersService.getPublicUsers(secondUserIds);
-  //     result = matches.map((m) => {
-  //       for (const u of secondUsers.rows) {
-  //         if (u.uid === m.userId) {
-  //           return { ...m.dataValues, secondUser: u };
-  //         }
-  //       }
-  //     });
-  //   } else {
-  //     secondUserIds = matches.map((m) => m.receiverId);
-  //     secondUsers = await this.usersService.getPublicUsers(secondUserIds);
-  //     result = matches.map((m) => {
-  //       for (const u of secondUsers.rows) {
-  //         if (u.uid === m.receiverId) {
-  //           return { ...m.dataValues, secondUser: u };
-  //         }
-  //       }
-  //     });
-  //   }
-
-  //   return result;
-  // }
 }
