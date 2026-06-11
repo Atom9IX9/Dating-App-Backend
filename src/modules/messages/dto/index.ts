@@ -1,3 +1,8 @@
+/*
+ * FILE: src/modules/messages/dto/index.ts
+ * PURPOSE: Barrel file re-exporting module members for easier imports.
+ */
+
 import z from 'zod';
 
 export const createMessageDTO = z.object({

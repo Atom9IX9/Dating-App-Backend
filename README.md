@@ -1,3 +1,7 @@
+## Author
+**Yaroslav Vorobjov**  
+Group: 24  
+
 # Dating App — Backend
 
 Backend part of a web application for dating and social interaction between users.

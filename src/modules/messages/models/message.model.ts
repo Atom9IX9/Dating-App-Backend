@@ -1,3 +1,8 @@
+/*
+ * FILE: src/modules/messages/models/message.model.ts
+ * PURPOSE: Module file with defined behavior.
+ */
+
 import { ApiProperty } from '@nestjs/swagger';
 import {
   AutoIncrement,
@@ -9,9 +14,10 @@ import {
   Table,
   AllowNull,
 } from 'sequelize-typescript';
-import { Chat } from 'src/modules/chats/models/chat.model';
-import { User } from 'src/modules/users/models/user.model';
+import { Chat } from '@/modules/chats/models/chat.model';
+import { User } from '@/modules/users/models/user.model';
 
+// NestJS class implementing Message.
 @Table
 export class Message extends Model {
   @ApiProperty()

@@ -1,3 +1,8 @@
+/*
+ * FILE: src/modules/chats/models/chat.model.ts
+ * PURPOSE: Module file with defined behavior.
+ */
+
 import { ApiProperty } from '@nestjs/swagger';
 import {
   BelongsToMany,
@@ -8,10 +13,11 @@ import {
   DataType,
   HasMany,
 } from 'sequelize-typescript';
-import { User } from 'src/modules/users/models/user.model';
+import { User } from '@/modules/users/models/user.model';
 import { ChatUser } from './chatUser.model';
-import { Message } from 'src/modules/messages/models/message.model';
+import { Message } from '@/modules/messages/models/message.model';
 
+// NestJS class implementing Chat.
 @Table
 export class Chat extends Model {
   @ApiProperty()

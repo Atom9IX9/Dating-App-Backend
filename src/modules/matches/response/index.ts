@@ -1,3 +1,8 @@
+/*
+ * FILE: src/modules/matches/response/index.ts
+ * PURPOSE: Barrel file re-exporting module members for easier imports.
+ */
+
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
@@ -11,6 +16,7 @@ import {
 } from 'class-validator';
 import { ReceivedStatuses } from '../types';
 
+// NestJS class implementing MatchResponse.
 export class MatchResponse {
   @ApiProperty()
   @IsNumber()
@@ -29,6 +35,7 @@ export class MatchResponse {
   status: ReceivedStatuses;
 }
 
+// NestJS class implementing GetMatchesResponse.
 export class GetMatchesResponse {
   @ApiProperty({ isArray: true, type: MatchResponse })
   @IsArray()
@@ -41,6 +48,7 @@ export class GetMatchesResponse {
   count: number;
 }
 
+// NestJS class implementing GetIsMatchedResponse.
 export class GetIsMatchedResponse {
   @ApiProperty()
   @IsBoolean()

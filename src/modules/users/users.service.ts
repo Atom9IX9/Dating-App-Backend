@@ -1,74 +1,129 @@
-import { Injectable } from '@nestjs/common';
+/*
+ * FILE: src/modules/users/users.service.ts
+ * PURPOSE: TypeScript source file part of the application logic.
+ */
+
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { User } from './models/user.model';
-import * as bcrypt from 'bcrypt';
-import { CreateUserDTO, UpdateUserDTO } from './dto';
+import {
+  CreateUserDTO,
+  UpdateUserDTO,
+  UserAvatarDTO,
+  UserDescriptionDTO,
+} from './dto';
 import {
   UserResponse,
   DeleteUserResponse,
   GetUsersResponse,
-  PublicUser,
   UpdateUserResponse,
+  UserDescriptionResponse,
+  UserAvatarResponse,
 } from './response';
 import { nanoid } from 'nanoid';
 import { MatchesService } from '../matches/matches.service';
 import { UserActivity } from '../usersActivity/models/userActivity.model';
 import { UserActivityService } from '../usersActivity/usersActivity.service';
+import { getAgeByBd } from './utils/getAgeFromBd';
+import { HobbiesService } from '../hobbies/hobbies.service';
+import { StorageService } from '../storage/storage.service';
+import { StorageFolder } from '@/common/storage/storage.constants';
+import { Avatar } from './models/avatar.model';
 
+// NestJS class implementing UsersService.
 @Injectable()
 export class UsersService {
+  // Inject required services and repositories for this class.
   constructor(
     @InjectModel(User) private readonly usersRepo: typeof User,
+    @InjectModel(Avatar) private readonly avatarsRepo: typeof Avatar,
     private readonly matchesService: MatchesService,
     private readonly activitiesService: UserActivityService,
+    private readonly hobbiesService: HobbiesService,
+    private readonly storageService: StorageService,
   ) {}
 
-  private async hashPassword(password: string) {
-    return bcrypt.hash(password, 10);
-  }
-
-  public async findUserByEmail(
-    email: string,
-  ): Promise<User & { password: string }> {
-    return await this.usersRepo.scope('login').findOne({ where: { email } });
-  }
-
-  public async createUser(dto: CreateUserDTO): Promise<UserResponse> {
-    dto.password = await this.hashPassword(dto.password);
-    const d1 = new Date();
-    const d2 = new Date(dto.dateOfBD);
+  // Create user and save it to the data store.
+  public async createUser(
+    dto: CreateUserDTO,
+    authId: number,
+  ): Promise<UserResponse> {
     const id = nanoid();
     const user = await this.usersRepo.create({
       uid: id,
-      email: dto.email,
       dateOfBD: dto.dateOfBD,
       firstName: dto.firstName,
       lastName: dto.lastName,
       gender: dto.gender,
-      location: dto.location,
-      password: dto.password,
-      age: d1.getFullYear() - d2.getFullYear(),
-      description: dto.description,
+      genderInfo: dto.genderInfo,
+      authId: authId,
     });
 
     const activity = this.activitiesService.createActivity(id);
 
     return {
       uid: id,
-      email: dto.email,
       firstName: dto.firstName,
       lastName: dto.lastName,
       gender: dto.gender,
-      age: user.age,
       dateOfBD: dto.dateOfBD,
-      description: dto.description,
-      location: dto.location,
+      genderInfo: dto.genderInfo,
+      age: getAgeByBd(dto.dateOfBD),
+      authId: authId,
     };
   }
 
-  public async getPublicUsers(
-    authUser: UserResponse,
-  ): Promise<GetUsersResponse> {
+  // Create user description and save it to the data store.
+  public async createUserDescription(
+    userId: string,
+    dto: UserDescriptionDTO,
+  ): Promise<UserDescriptionResponse> {
+    const sinhronizedHobbies = await this.hobbiesService.syncHobbies(
+      dto.hobbies,
+    );
+    const user = await this.usersRepo.findOne({ where: { uid: userId } });
+    console.log(sinhronizedHobbies, userId);
+
+    await user.$set(
+      'hobbies',
+      sinhronizedHobbies.map((h) => h.id),
+    );
+    await user.update({ description: dto.description });
+
+    return {
+      description: dto.description,
+      hobbies: sinhronizedHobbies.map((h) => h.name),
+    };
+  }
+
+  // Save user avatar and return the persisted metadata.
+  public async saveUserAvatar(
+    dto: UserAvatarDTO,
+    userId: string,
+    avatar: Express.Multer.File,
+  ): Promise<UserAvatarResponse> {
+    const saved = this.storageService.saveFile(avatar, StorageFolder.AVATARS);
+
+    console.log(avatar);
+
+    const createdAvatar = await this.avatarsRepo.create({
+      userId,
+      url: saved.url,
+      posX: Math.round(Number(dto.posX)),
+      posY: Math.round(Number(dto.posY)),
+      scale: Number(dto.scale).toFixed(3),
+    });
+
+    return {
+      scale: Number(Number(dto.scale).toFixed(3)),
+      posX: Math.round(Number(dto.posX)),
+      posY: Math.round(Number(dto.posY)),
+      url: saved.url,
+    };
+  }
+
+  // Retrieve public users and return the requested data.
+  public async getPublicUsers(authUserId: string): Promise<GetUsersResponse> {
     const users = await this.usersRepo.findAll({
       attributes: {
         exclude: ['dateOfBD', 'location'],
@@ -76,7 +131,7 @@ export class UsersService {
       include: { model: UserActivity, attributes: ['isOnline', 'updatedAt'] },
     });
     const matches = await this.matchesService.getMatches({
-      userId: authUser.uid,
+      userId: authUserId,
     });
 
     const mappedUsers = users
@@ -86,25 +141,35 @@ export class UsersService {
             return {
               ...u.dataValues,
               matchStatus: m.status,
-              
             };
           }
         }
         return u;
       })
-      .filter((u) => u.uid !== authUser.uid);
+      .filter((u) => u.uid !== authUserId);
 
     return { rows: mappedUsers, count: mappedUsers.length };
   }
 
-  public async getFullUserInfoById(uid: string): Promise<UserResponse> {
+  // Retrieve user info by id and return the requested data.
+  public async getUserInfoById(uid: string): Promise<UserResponse> {
     const user = await this.usersRepo.findOne({
       where: { uid },
     });
 
-    return user;
+    return {
+      uid,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      gender: user.gender,
+      dateOfBD: user.dateOfBD,
+      genderInfo: user.genderInfo,
+      age: getAgeByBd(user.dateOfBD),
+      authId: user.authId,
+    };
   }
 
+  // Apply updates to user and return the result.
   public async updateUser(
     userId: string,
     dto: UpdateUserDTO,
@@ -124,8 +189,20 @@ export class UsersService {
     return newUser;
   }
 
+  // Remove user from storage and return confirmation.
   public async deleteUser(userId: string): Promise<DeleteUserResponse> {
     await this.usersRepo.destroy({ where: { uid: userId } });
     return { uid: userId };
+  }
+
+  // Retrieve user by auth id and return the requested data.
+  public async getUserByAuthId(authId: number): Promise<User> {
+    return await this.usersRepo.findOne({
+      where: { authId },
+      attributes: {
+        exclude: ['createdAt', 'updatedAt'],
+        include: ['uid', 'firstName', 'lastName'],
+      },
+    });
   }
 }

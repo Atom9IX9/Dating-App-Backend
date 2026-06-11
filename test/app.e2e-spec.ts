@@ -1,3 +1,8 @@
+/*
+ * FILE: test/app.e2e-spec.ts
+ * PURPOSE: TypeScript source file part of the application logic.
+ */
+
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';

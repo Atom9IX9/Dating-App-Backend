@@ -1,7 +1,22 @@
+/*
+ * FILE: src/modules/users/dto/index.ts
+ * PURPOSE: Barrel file re-exporting module members for easier imports.
+ */
+
 import { ApiProperty } from '@nestjs/swagger';
-import { IsDateString, IsEmail, IsOptional, IsString } from 'class-validator';
+import {
+  ArrayMaxSize,
+  IsArray,
+  IsDateString,
+  IsEmail,
+  IsNumber,
+  IsOptional,
+  IsString,
+  MaxLength,
+} from 'class-validator';
 import { Genders } from '../types';
 
+// NestJS class implementing CreateUserDTO.
 export class CreateUserDTO {
   @ApiProperty()
   @IsString()
@@ -11,14 +26,6 @@ export class CreateUserDTO {
   @IsString()
   lastName: string;
 
-  @ApiProperty()
-  @IsEmail()
-  email: string;
-
-  @ApiProperty()
-  @IsString()
-  password: string;
-
   @ApiProperty({ type: Date })
   @IsDateString()
   dateOfBD: string;
@@ -27,17 +34,13 @@ export class CreateUserDTO {
   @IsString()
   gender: Genders;
 
-  @ApiProperty({ required: false })
-  @IsString()
+  @ApiProperty()
   @IsOptional()
-  location?: string;
-
-  @ApiProperty({ required: false, maxLength: 125 })
   @IsString()
-  @IsOptional()
-  description?: string;
+  genderInfo?: string;
 }
 
+// NestJS class implementing UpdateUserDTO.
 export class UpdateUserDTO {
   @ApiProperty({ required: false })
   @IsString()
@@ -63,4 +66,40 @@ export class UpdateUserDTO {
   @IsString()
   @IsOptional()
   location?: string;
+}
+
+// NestJS class implementing UserDescriptionDTO.
+export class UserDescriptionDTO {
+  @ApiProperty({ maxLength: 300 })
+  @IsString()
+  description: string;
+
+  @ApiProperty({
+    type: [String],
+    maxItems: 7,
+    items: {
+      type: 'string',
+      maxLength: 20,
+    },
+  })
+  @IsArray()
+  @ArrayMaxSize(7)
+  @IsString({ each: true })
+  @MaxLength(20, { each: true })
+  hobbies: string[];
+}
+
+// NestJS class implementing UserAvatarDTO.
+export class UserAvatarDTO {
+  @ApiProperty()
+  @IsString()
+  posX: string;
+
+  @ApiProperty()
+  @IsString()
+  posY: string;
+
+  @ApiProperty()
+  @IsString()
+  scale: string;
 }

@@ -1,8 +1,15 @@
+/*
+ * FILE: src/configs/index.ts
+ * PURPOSE: Barrel file re-exporting module members for easier imports.
+ */
+
 export default () => ({
   port: process.env.PORT,
-  jwtSecret: process.env.JWT_SECRET,
-  jwtExpire: process.env.JWT_EXPIRE,
-  jwtRememberMeExpire: process.env.JWT_REMEMBER_ME_EXPIRE,
+  accessTokenSecret: process.env.ACCESS_TOKEN_SECRET,
+  refreshTokenSecret: process.env.REFRESH_TOKEN_SECRET,
+  accessTokenExpire: process.env.ACCESS_TOKEN_EXPIRE,
+  refreshTokenExpire: process.env.REFRESH_TOKEN_EXPIRE,
+  frontendURL: process.env.FRONTEND_URL,
   db: {
     port: +process.env.POSTGRES_PORT,
     host: process.env.POSTGRES_HOST,

@@ -1,3 +1,8 @@
+/*
+ * FILE: src/modules/matches/models/match.model.ts
+ * PURPOSE: Module file with defined behavior.
+ */
+
 import { ApiProperty } from '@nestjs/swagger';
 import {
   Column,
@@ -9,9 +14,10 @@ import {
   AllowNull,
   BelongsTo,
 } from 'sequelize-typescript';
-import { User } from 'src/modules/users/models/user.model';
+import { User } from '@/modules/users/models/user.model';
 import { ReceivedStatuses } from '../types';
 
+// NestJS class implementing Match.
 @Table
 export class Match extends Model {
   @ApiProperty()

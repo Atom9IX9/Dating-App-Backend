@@ -1,4 +1,9 @@
-import { ChatsService } from 'src/modules/chats/chats.service';
+/*
+ * FILE: src/modules/sockets/helpers/processClientChatRooms.ts
+ * PURPOSE: Module file with defined behavior.
+ */
+
+import { ChatsService } from '@/modules/chats/chats.service';
 
 export const processClientChatRooms = async (
   clientId: string,

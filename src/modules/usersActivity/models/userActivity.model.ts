@@ -1,3 +1,8 @@
+/*
+ * FILE: src/modules/usersActivity/models/userActivity.model.ts
+ * PURPOSE: Module file with defined behavior.
+ */
+
 import { ApiProperty } from '@nestjs/swagger';
 import {
   AutoIncrement,
@@ -9,8 +14,9 @@ import {
   PrimaryKey,
   Table,
 } from 'sequelize-typescript';
-import { User } from 'src/modules/users/models/user.model';
+import { User } from '@/modules/users/models/user.model';
 
+// NestJS class implementing UserActivity.
 @Table
 export class UserActivity extends Model {
   @ApiProperty()
@@ -31,5 +37,5 @@ export class UserActivity extends Model {
   userId: string;
 
   @BelongsTo(() => User, 'userId')
-  user: User
+  user: User;
 }

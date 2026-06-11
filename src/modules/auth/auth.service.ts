@@ -1,63 +1,239 @@
+/*
+ * FILE: src/modules/auth/auth.service.ts
+ * PURPOSE: TypeScript source file part of the application logic.
+ */
+
 import {
   BadRequestException,
   Injectable,
-  NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
-import { UsersService } from '../users/users.service';
-import { CreateUserDTO } from '../users/dto';
-import { ApiErrors } from 'src/common/constants/errors';
-import { LoginDTO } from './dto';
+import { ApiErrors } from '@/common/constants/errors';
+import { LoginDTO, RegisterAuthCredentialsDTO } from './dto';
 import * as bcrypt from 'bcrypt';
-import { AuthResponse } from './response';
+import {
+  AuthCredentials,
+  CheckAuthResponse,
+  LoginResponse,
+  OnboardingStep,
+  RefreshedTokens,
+} from './response';
 import { TokenService } from '../token/token.service';
-import { UserResponse } from '../users/response';
+import { Auth } from './model/auth.model';
+import { InjectModel } from '@nestjs/sequelize';
+import { RefreshToken } from './model/refreshToken.model';
+import { User } from '../users/models/user.model';
+import { Avatar } from '../users/models/avatar.model';
 
+// NestJS class implementing AuthService.
 @Injectable()
 export class AuthService {
+  // Inject required services and repositories for this class.
   constructor(
-    private readonly usersService: UsersService,
     private readonly tokenService: TokenService,
+
+    @InjectModel(Auth) private readonly authRepo: typeof Auth,
+    @InjectModel(RefreshToken)
+    private readonly refreshTokensRepo: typeof RefreshToken, //todo: just service
   ) {}
 
-  public async register(dto: CreateUserDTO): Promise<AuthResponse> {
-    const userAlreadyExists = !!(await this.usersService.findUserByEmail(
-      dto.email,
-    ));
+  // Refresh token data and return new authentication tokens.
+  public async refreshTokens(
+    authId: number,
+    jti: string,
+  ): Promise<RefreshedTokens> {
+    const dbToken = await this.refreshTokensRepo.findOne({
+      where: { authId, jti },
+    });
+
+    if (!dbToken) {
+      throw new UnauthorizedException();
+    }
+
+    const accessToken = this.tokenService.generateJwtToken(authId, 'access');
+    const newRefreshToken = this.tokenService.generateJwtToken(
+      authId,
+      'refresh',
+    );
+
+    const newDBRefreshToken = await this.refreshTokensRepo.update(
+      { jti: newRefreshToken.jti },
+      { where: { authId } },
+    );
+
+    return {
+      accessToken: accessToken.token,
+      refreshToken: newRefreshToken.token,
+    };
+  }
+
+  // Register a new user or auth record and return authentication details.
+  public async registerAuthCredentials(
+    dto: RegisterAuthCredentialsDTO,
+  ): Promise<{ auth: AuthCredentials } & RefreshedTokens> {
+    const userAlreadyExists = !!(await this.findAuthByEmail(dto.email));
+
     if (userAlreadyExists)
       throw new BadRequestException(ApiErrors.USER_WITH_EMAIL_ALREADY_EXISTS);
 
-    const user = await this.usersService.createUser(dto);
+    const hashedPassword = await this.hashData(dto.password);
 
-    return this.generateAuthResponseWithToken(user, false);
-  }
+    const authCredentials = await this.authRepo.create({
+      email: dto.email,
+      password: hashedPassword,
+    });
 
-  public async login(dto: LoginDTO): Promise<AuthResponse> {
-    const user = await this.usersService.findUserByEmail(dto.email);
-    if (!user) {
-      throw new NotFoundException(ApiErrors.USER_DOES_NOT_EXIST);
-    }
-
-    const isValidPassword = await bcrypt.compare(dto.password, user.password);
-    if (!isValidPassword) {
-      throw new BadRequestException(ApiErrors.WRONG_EMAIL_OR_PASSWORD);
-    }
-
-    return this.generateAuthResponseWithToken(
-      { ...user.dataValues, password: undefined },
-      dto.rememberMe,
+    const accessToken = this.tokenService.generateJwtToken(
+      authCredentials.authId,
+      'access',
     );
+
+    const refreshToken = this.tokenService.generateJwtToken(
+      authCredentials.authId,
+      'refresh',
+    );
+
+    const newDBToken = await this.refreshTokensRepo.create({
+      authId: authCredentials.authId,
+      jti: refreshToken.jti,
+    });
+
+    return {
+      accessToken: accessToken.token,
+      refreshToken: refreshToken.token,
+      auth: {
+        authId: authCredentials.authId,
+        email: authCredentials.email,
+      },
+    };
   }
 
-  public async checkAuth(user: UserResponse): Promise<UserResponse> {
-    return user;
+  // Hash the provided password before storing it.
+  private async hashData(data: string) {
+    return bcrypt.hash(data, 10);
   }
 
-  private generateAuthResponseWithToken(
-    user: UserResponse,
-    rememberUser: boolean,
-  ): AuthResponse {
-    const token = this.tokenService.generateJwtToken(user, rememberUser);
+  // Find existing auth credentials by email address.
+  private async findAuthByEmail(email: string): Promise<Auth> {
+    return await this.authRepo.findOne({
+      where: { email },
+      attributes: { include: ['password'] },
+    });
+  }
 
-    return { user, token };
+  // Validate auth and return whether the condition holds.
+  public async checkAuth(authId: number): Promise<CheckAuthResponse> {
+    const auth = await this.authRepo.findOne({
+      where: { authId },
+      include: [
+        {
+          model: User,
+          include: [Avatar],
+          attributes: ['uid', 'firstName', 'lastName', 'description'],
+        },
+      ],
+    });
+
+    const onboardingStep = this.getOnboardingStep(
+      auth.user,
+      auth.user ? auth.user.avatar : null,
+    );
+
+    return {
+      authCredentials: {
+        authId: auth.authId,
+        email: auth.email,
+      },
+      user: {
+        firstName: auth.user.firstName,
+        lastName: auth.user.lastName,
+        uid: auth.user.uid,
+        avatar:
+          auth.user && auth.user.avatar
+            ? {
+                posX: auth.user.avatar.posX,
+                posY: auth.user.avatar.posY,
+                scale: auth.user.avatar.scale,
+                url: auth.user.avatar.url,
+              }
+            : null,
+      },
+      onboardingStep,
+    };
+  }
+
+  // Authenticate the user and return access and refresh tokens.
+  public async login(
+    dto: LoginDTO,
+  ): Promise<LoginResponse & { refreshToken: string }> {
+    const auth = await this.authRepo.findOne({
+      where: { email: dto.email },
+      attributes: { include: ['password'] },
+      include: [
+        {
+          model: User,
+          include: [{ model: Avatar, attributes: { exclude: ["userId", "id", "createdAt", "updatedAt"] } }],
+        },
+        { model: RefreshToken },
+      ],
+    });
+
+    if (!auth || !auth.password) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    const isPasswordValid = await bcrypt.compare(dto.password, auth.password);
+
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    const onboardingStep = this.getOnboardingStep(
+      auth.user,
+      auth.user ? auth.user.avatar : null,
+    );
+
+    const { accessToken, refreshToken } = await this.refreshTokens(
+      auth.authId,
+      auth.refreshToken.jti,
+    );
+
+    return {
+      authCredentials: {
+        authId: auth.authId,
+        email: auth.email,
+      },
+      user: auth.user
+        ? {
+            avatar: auth.user.avatar || null,
+            firstName: auth.user.firstName,
+            lastName: auth.user.lastName,
+            uid: auth.user.uid,
+          }
+        : null,
+      onboardingStep,
+      accessToken,
+      refreshToken,
+    };
+  }
+
+  // Retrieve onboarding step and return the requested data.
+  private getOnboardingStep(
+    user: User | null,
+    avatar: Avatar | null,
+  ): OnboardingStep {
+    let onboardingStep: OnboardingStep;
+
+    if (!user) {
+      onboardingStep = OnboardingStep.USER_INFO;
+    } else if (!user.description) {
+      onboardingStep = OnboardingStep.DESCRIPTION;
+    } else if (!avatar) {
+      onboardingStep = OnboardingStep.AVATAR;
+    } else {
+      onboardingStep = OnboardingStep.REGISTERED;
+    }
+
+    return onboardingStep;
   }
 }

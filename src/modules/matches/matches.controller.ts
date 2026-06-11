@@ -1,3 +1,8 @@
+/*
+ * FILE: src/modules/matches/matches.controller.ts
+ * PURPOSE: TypeScript source file part of the application logic.
+ */
+
 import { MatchesService } from './matches.service';
 import {
   Body,
@@ -9,19 +14,27 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { ApiResponse, ApiTags } from '@nestjs/swagger';
-import { AuthPayloadRequest } from 'src/common/types/requests/requests';
-import { JwtAuthGuard } from 'src/guards';
+import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { AuthPayloadRequest } from '@/common/types/requests/requests';
+import { AccessAuthGuard, ProfileGuard } from '@/guards';
 import { MatchResponse, GetIsMatchedResponse } from './response';
 import { ReceiveMatchDTO } from './dto';
 
+// NestJS class implementing MatchesController.
 @Controller('matches')
 export class MatchesController {
+  // Inject required services and repositories for this class.
   constructor(private readonly matchesService: MatchesService) {}
 
   @ApiTags('MATCHES')
-  @UseGuards(JwtAuthGuard)
-  @ApiResponse({ type: MatchResponse, status: 201 })
+  @ApiBearerAuth()
+  @ApiResponse({
+    type: MatchResponse,
+    status: 201,
+    description: 'Creates a match.',
+  })
+  // Create match and save it to the data store.
+  @UseGuards(AccessAuthGuard, ProfileGuard)
   @Post(':receiverId')
   createMatch(
     @Req() request: AuthPayloadRequest,
@@ -33,26 +46,16 @@ export class MatchesController {
     });
   }
 
-  // @ApiTags('MATCHES')
-  // @UseGuards(JwtAuthGuard)
-  // @ApiResponse({ type: GetMatchesResponse, status: 200 })
-  // @ApiQuery({ name: 'user', enum: UserTypeEnum })
-  // @Get()
-  // getMatches(
-  //   @Req() request: AuthPayloadRequest,
-  //   @Query('user') userType: UserTypeEnum,
-  // ) {
-  //   return this.matchesService.getMatches({
-  //     userId: request.user.uid,
-  //     userType,
-  //   });
-  // }
-
   @ApiTags('MATCHES')
-  @UseGuards(JwtAuthGuard)
-  @ApiResponse({ type: MatchResponse, status: 200 })
+  @ApiResponse({
+    type: MatchResponse,
+    status: 200,
+    description: 'Sets the match status by matchId.',
+  })
+  @ApiBearerAuth()
+  @UseGuards(AccessAuthGuard, ProfileGuard)
   @Patch(':matchId')
-  acceptMatch(
+  setMatchStatus(
     @Param('matchId') matchId: number,
     @Req() request: AuthPayloadRequest,
     @Body() dto: ReceiveMatchDTO,
@@ -65,8 +68,13 @@ export class MatchesController {
   }
 
   @ApiTags('MATCHES')
-  @UseGuards(JwtAuthGuard)
-  @ApiResponse({ type: GetIsMatchedResponse, status: 200 })
+  @UseGuards(AccessAuthGuard, ProfileGuard)
+  @ApiResponse({
+    type: GetIsMatchedResponse,
+    status: 200,
+    description: 'Checks if the user is matched with another user.',
+  })
+  // Retrieve is matched and return the requested data.
   @Get(':secondUserId')
   getIsMatched(
     @Req() request: AuthPayloadRequest,

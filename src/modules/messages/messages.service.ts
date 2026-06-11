@@ -1,3 +1,8 @@
+/*
+ * FILE: src/modules/messages/messages.service.ts
+ * PURPOSE: TypeScript source file part of the application logic.
+ */
+
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Message } from './models/message.model';
@@ -6,13 +11,16 @@ import { ChatsService } from '../chats/chats.service';
 import { UserHasNotJoinedToRoomError } from './errors/userHasNotJoinedToRoomError';
 import { GetUserMessagesFromRoomResponse } from './response';
 
+// NestJS class implementing MessagesService.
 @Injectable()
 export class MessagesService {
+  // Inject required services and repositories for this class.
   constructor(
     @InjectModel(Message) private readonly messagesRepo: typeof Message,
     private readonly chatsService: ChatsService,
   ) {}
 
+  // Create message and save it to the data store.
   public async createMessage(dto: CreateMessageDTO) {
     createMessageDTO.parse(dto);
 
@@ -34,6 +42,7 @@ export class MessagesService {
     return message;
   }
 
+  // Retrieve all messages from room and return the requested data.
   public async getAllMessagesFromRoom(
     chatRoom: string,
   ): Promise<GetUserMessagesFromRoomResponse> {

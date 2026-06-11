@@ -1,3 +1,8 @@
+/*
+ * FILE: src/modules/chats/chats.service.ts
+ * PURPOSE: TypeScript source file part of the application logic.
+ */
+
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { ChatUser } from './models/chatUser.model';
@@ -11,13 +16,16 @@ import { nanoid } from 'nanoid';
 import { User } from '../users/models/user.model';
 import { Op } from 'sequelize';
 
+// NestJS class implementing ChatsService.
 @Injectable()
 export class ChatsService {
+  // Inject required services and repositories for this class.
   constructor(
     @InjectModel(ChatUser) private readonly chatUsersRepo: typeof ChatUser,
     @InjectModel(Chat) private readonly chatsRepo: typeof Chat,
   ) {}
 
+  // Retrieve user chat rooms and return the requested data.
   public async getUserChatRooms(userId: string) {
     const chats = await this.chatUsersRepo.findAll({ where: { userId } });
 
@@ -26,6 +34,7 @@ export class ChatsService {
     return chatRooms;
   }
 
+  // Create privat chat and save it to the data store.
   public async createPrivatChat(
     senderUserId: string,
     receiverUserId: string,
@@ -50,6 +59,7 @@ export class ChatsService {
 
     await chat.$set('chatUsers', [senderUserId, receiverUserId]);
 
+    // Load the connected chat user metadata for the new room.
     const chatUser = (
       await chat.$get('chatUsers', {
         where: { uid: receiverUserId },
@@ -60,6 +70,7 @@ export class ChatsService {
     return { room: chat.room, chatUser: { ...chatUser, ChatUser: undefined } };
   }
 
+  // Retrieve user chats and return the requested data.
   public async getUserChats(userId: string): Promise<GetUserChatsResponse> {
     const chatRooms = await this.getUserChatRooms(userId);
 
@@ -81,6 +92,7 @@ export class ChatsService {
     };
   }
 
+  // Validate user in room and return whether the condition holds.
   public async isUserInRoom(userId: string, room: string) {
     return !!(await this.chatUsersRepo.findOne({ where: { userId, room } }));
   }

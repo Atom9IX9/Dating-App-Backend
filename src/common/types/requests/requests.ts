@@ -1,6 +1,34 @@
+/*
+ * FILE: src/common/types/requests/requests.ts
+ * PURPOSE: TypeScript source file part of the application logic.
+ */
+
 import { Request } from 'express';
-import { UserResponse } from 'src/modules/users/response';
 import { Socket } from 'socket.io';
 
-export type AuthPayloadRequest = Request & { user: UserResponse };
-export type AuthPayloadSocket = Socket & { user: UserResponse };
+export type AuthPayloadRequest = Request & AuthPayload;
+export interface AuthSocket extends Socket {
+  data: {
+    user: {
+      authId: number;
+      uid: string | null;
+    };
+  };
+}
+export type JwtPayload = {
+  authId: number;
+  jti?: string;
+};
+export type AuthPayload = {
+  user: {
+    authId: number;
+    uid: string | null;
+  };
+};
+export type RefreshAuthPayload = {
+  user: {
+    authId: number;
+    jti: string;
+  };
+};
+export type RefreshAuthPayloadRequest = Request & RefreshAuthPayload;

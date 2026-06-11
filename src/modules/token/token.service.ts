@@ -1,23 +1,45 @@
+/*
+ * FILE: src/modules/token/token.service.ts
+ * PURPOSE: TypeScript source file part of the application logic.
+ */
+
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { UserResponse } from '../users/response';
+import { randomUUID } from 'crypto';
+import { JwtPayload } from '@/common/types/requests/requests';
 
+// NestJS class implementing TokenService.
 @Injectable()
 export class TokenService {
+  // Inject required services and repositories for this class.
   constructor(
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
   ) {}
 
-  generateJwtToken(user: UserResponse, rememberMe?: boolean) {
-    const payload = { user };
+  generateJwtToken(
+    authId: number,
+    type: 'access' | 'refresh',
+  ): { token: string; jti?: string } {
+    const payload: JwtPayload = { authId };
 
-    return this.jwtService.sign(payload, {
-      secret: this.configService.get('jwtSecret'),
-      expiresIn: rememberMe
-        ? this.configService.get('jwtRememberMeExpire')
-        : this.configService.get('jwtExpire'),
-    });
+    if (type === 'refresh') {
+      payload.jti = randomUUID();
+    }
+
+    return {
+      token: this.jwtService.sign(payload, {
+        secret:
+          type === 'refresh'
+            ? this.configService.get('refreshTokenSecret')
+            : this.configService.get('accessTokenSecret'),
+        expiresIn:
+          type === 'refresh'
+            ? `${this.configService.get('refreshTokenExpire')}s`
+            : `${this.configService.get('accessTokenExpire')}s`,
+      }),
+      jti: payload.jti,
+    };
   }
 }

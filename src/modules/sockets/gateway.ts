@@ -1,3 +1,8 @@
+/*
+ * FILE: src/modules/sockets/gateway.ts
+ * PURPOSE: TypeScript source file part of the application logic.
+ */
+
 import {
   ConnectedSocket,
   MessageBody,
@@ -9,15 +14,17 @@ import {
 } from '@nestjs/websockets';
 import { Server } from 'socket.io';
 import { ChatsService } from '../chats/chats.service';
-import { AuthPayloadSocket } from 'src/common/types/requests/requests';
+import { AuthSocket } from '@/common/types/requests/requests';
 import { processClientChatRooms } from './helpers/processClientChatRooms';
 import z from 'zod';
 import { MessagesService } from '../messages/messages.service';
 import { CreateSocketMessage } from './dto';
 import { UserActivityService } from '../usersActivity/usersActivity.service';
 
-@WebSocketGateway(5001, { transports: 'websocket' })
+// NestJS class implementing Gateway.
+@WebSocketGateway({ transports: 'websocket' })
 export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
+  // Inject required services and repositories for this class.
   constructor(
     private readonly chatsService: ChatsService,
     private readonly messagesService: MessagesService,
@@ -26,39 +33,53 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   server: Server;
 
-  async handleConnection(client: AuthPayloadSocket) {
-    await processClientChatRooms(client.user.uid, this.chatsService, (room) => {
-      client.join(room);
-      client
-        .to(room)
-        .emit('setUserOnline', { email: client.user.email, isOnline: true });
-    });
+  // Handle an incoming event or request and execute the business logic.
+  async handleConnection(client: AuthSocket) {
+    await processClientChatRooms(
+      client.data.user.uid,
+      this.chatsService,
+      (room) => {
+        client.join(room);
+        client.to(room).emit('setUserOnline', { isOnline: true });
+      },
+    );
 
-    await this.usersActivityService.setUserOnlineStatus(client.user.uid, true)
+    await this.usersActivityService.setUserOnlineStatus(
+      client.data.user.uid,
+      true,
+    );
   }
 
-  async handleDisconnect(client: AuthPayloadSocket) {
-    await processClientChatRooms(client.user.uid, this.chatsService, (room) => {
-      client.to(room).emit('setUserOnline', {
-        email: client.user.email,
-        isOnline: false,
-      });
-      client.leave(room);
-    });
+  // Handle an incoming event or request and execute the business logic.
+  async handleDisconnect(client: AuthSocket) {
+    await processClientChatRooms(
+      client.data.user.uid,
+      this.chatsService,
+      (room) => {
+        client.to(room).emit('setUserOnline', {
+          isOnline: false,
+        });
+        client.leave(room);
+      },
+    );
 
-    await this.usersActivityService.setUserOnlineStatus(client.user.uid, false)
+    await this.usersActivityService.setUserOnlineStatus(
+      client.data.user.uid,
+      false,
+    );
   }
 
+  // Create message handler and save it to the data store.
   @SubscribeMessage('createMessage')
   async createMessageHandler(
     @MessageBody() body: CreateSocketMessage,
-    @ConnectedSocket() client: AuthPayloadSocket,
+    @ConnectedSocket() client: AuthSocket,
   ) {
     try {
       const createdMessage = await this.messagesService.createMessage({
         chatRoom: body.chatRoom,
         text: body.text,
-        authorId: client.user.uid,
+        authorId: client.data.user.uid,
       });
       client.broadcast.to(body.chatRoom).emit('newMessage', createdMessage);
     } catch (e: unknown) {

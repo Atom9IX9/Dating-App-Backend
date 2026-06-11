@@ -1,3 +1,8 @@
+/*
+ * FILE: src/modules/sockets/sockets.module.ts
+ * PURPOSE: TypeScript source file part of the application logic.
+ */
+
 import { Module } from '@nestjs/common';
 import { Gateway } from './gateway';
 import { JwtModule } from '@nestjs/jwt';
@@ -9,4 +14,5 @@ import { UserActivityModule } from '../usersActivity/usersActivity.module';
   imports: [JwtModule, ChatsModule, MessagesModule, UserActivityModule],
   providers: [Gateway],
 })
+// NestJS class implementing SocketsModule.
 export class SocketsModule {}

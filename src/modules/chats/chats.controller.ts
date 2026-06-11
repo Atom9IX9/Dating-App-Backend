@@ -1,23 +1,30 @@
+/*
+ * FILE: src/modules/chats/chats.controller.ts
+ * PURPOSE: TypeScript source file part of the application logic.
+ */
+
 import { Controller, Get, Param, Post, Req, UseGuards } from '@nestjs/common';
 import { ChatsService } from './chats.service';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { JwtAuthGuard } from 'src/guards';
-import { AuthPayloadRequest } from 'src/common/types/requests/requests';
-import {
-  ChatResponse,
-  GetUserChatsResponse,
-} from './response';
+import { AccessAuthGuard, ProfileGuard } from '@/guards';
+import { AuthPayloadRequest } from '@/common/types/requests/requests';
+import { ChatResponse, GetUserChatsResponse } from './response';
 
+// NestJS class implementing ChatsController.
 @Controller('chats')
 export class ChatsController {
-  constructor(
-    private readonly chatsService: ChatsService,
-  ) {}
+  // Inject required services and repositories for this class.
+  constructor(private readonly chatsService: ChatsService) {}
 
   @ApiTags('CHATS')
-  @ApiResponse({ status: 201, type: ChatResponse })
+  @ApiResponse({
+    status: 201,
+    type: ChatResponse,
+    description: 'Create a private chat with another user',
+  })
+  // Create privat chat and save it to the data store.
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(AccessAuthGuard, ProfileGuard)
   @Post(':createWithUserId')
   createPrivatChat(
     @Param('createWithUserId') createWithUserId: string,
@@ -27,9 +34,14 @@ export class ChatsController {
   }
 
   @ApiTags('CHATS')
-  @ApiResponse({ status: 200, type: GetUserChatsResponse })
+  @ApiResponse({
+    status: 200,
+    type: GetUserChatsResponse,
+    description: 'Get all user chats',
+  })
+  // Retrieve all user chats and return the requested data.
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(AccessAuthGuard, ProfileGuard)
   @Get()
   getAllUserChats(
     @Req() req: AuthPayloadRequest,
