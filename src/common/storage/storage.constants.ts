@@ -1,3 +1,8 @@
+/*
+ * FILE: src/common/storage/storage.constants.ts
+ * PURPOSE: TypeScript source file part of the application logic.
+ */
+
 export enum StorageFolder {
   AVATARS = 'images/avatars',
 }

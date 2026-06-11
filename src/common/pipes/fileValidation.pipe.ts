@@ -1,11 +1,18 @@
+/*
+ * FILE: src/common/pipes/fileValidation.pipe.ts
+ * PURPOSE: TypeScript source file part of the application logic.
+ */
+
 import {
   PipeTransform,
   Injectable,
   BadRequestException,
 } from '@nestjs/common';
 
+// NestJS class implementing FileValidationPipe.
 @Injectable()
 export class FileValidationPipe implements PipeTransform {
+  // Inject required services and repositories for this class.
   constructor(
     private readonly options: {
       maxSize?: number;

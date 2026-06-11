@@ -1,3 +1,8 @@
+/*
+ * FILE: src/modules/auth/model/auth.model.ts
+ * PURPOSE: TypeScript source file part of the application logic.
+ */
+
 import { ApiProperty } from '@nestjs/swagger';
 import { DataTypes } from 'sequelize';
 import {
@@ -17,6 +22,7 @@ import { User } from '@/modules/users/models/user.model';
     exclude: ['password'],
   },
 }))
+// NestJS class implementing Auth.
 export class Auth extends Model {
   @ApiProperty()
   @PrimaryKey

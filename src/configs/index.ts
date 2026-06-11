@@ -1,3 +1,8 @@
+/*
+ * FILE: src/configs/index.ts
+ * PURPOSE: Barrel file re-exporting module members for easier imports.
+ */
+
 export default () => ({
   port: process.env.PORT,
   accessTokenSecret: process.env.ACCESS_TOKEN_SECRET,

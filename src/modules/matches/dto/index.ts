@@ -1,7 +1,13 @@
+/*
+ * FILE: src/modules/matches/dto/index.ts
+ * PURPOSE: Barrel file re-exporting module members for easier imports.
+ */
+
 import { ApiProperty } from '@nestjs/swagger';
 import { IsOptional, IsString } from 'class-validator';
 import { UserReceives, UserTypeEnum } from '../types';
 
+// NestJS class implementing MatchDTO.
 export class MatchDTO {
   @ApiProperty()
   @IsString()
@@ -12,6 +18,7 @@ export class MatchDTO {
   userId: string;
 }
 
+// NestJS class implementing GetMatchesDTO.
 export class GetMatchesDTO {
   @ApiProperty()
   @IsString()
@@ -23,6 +30,7 @@ export class GetMatchesDTO {
   userType?: UserTypeEnum;
 }
 
+// NestJS class implementing ReceiveMatchDTO.
 export class ReceiveMatchDTO {
   @ApiProperty({ enum: UserReceives })
   @IsString()

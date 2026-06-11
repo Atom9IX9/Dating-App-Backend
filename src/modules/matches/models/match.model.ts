@@ -1,3 +1,8 @@
+/*
+ * FILE: src/modules/matches/models/match.model.ts
+ * PURPOSE: Module file with defined behavior.
+ */
+
 import { ApiProperty } from '@nestjs/swagger';
 import {
   Column,
@@ -12,6 +17,7 @@ import {
 import { User } from '@/modules/users/models/user.model';
 import { ReceivedStatuses } from '../types';
 
+// NestJS class implementing Match.
 @Table
 export class Match extends Model {
   @ApiProperty()

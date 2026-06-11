@@ -1,3 +1,8 @@
+/*
+ * FILE: src/modules/users/users.service.ts
+ * PURPOSE: TypeScript source file part of the application logic.
+ */
+
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { User } from './models/user.model';
@@ -25,8 +30,10 @@ import { StorageService } from '../storage/storage.service';
 import { StorageFolder } from '@/common/storage/storage.constants';
 import { Avatar } from './models/avatar.model';
 
+// NestJS class implementing UsersService.
 @Injectable()
 export class UsersService {
+  // Inject required services and repositories for this class.
   constructor(
     @InjectModel(User) private readonly usersRepo: typeof User,
     @InjectModel(Avatar) private readonly avatarsRepo: typeof Avatar,
@@ -36,6 +43,7 @@ export class UsersService {
     private readonly storageService: StorageService,
   ) {}
 
+  // Create user and save it to the data store.
   public async createUser(
     dto: CreateUserDTO,
     authId: number,
@@ -65,6 +73,7 @@ export class UsersService {
     };
   }
 
+  // Create user description and save it to the data store.
   public async createUserDescription(
     userId: string,
     dto: UserDescriptionDTO,
@@ -87,6 +96,7 @@ export class UsersService {
     };
   }
 
+  // Save user avatar and return the persisted metadata.
   public async saveUserAvatar(
     dto: UserAvatarDTO,
     userId: string,
@@ -112,6 +122,7 @@ export class UsersService {
     };
   }
 
+  // Retrieve public users and return the requested data.
   public async getPublicUsers(authUserId: string): Promise<GetUsersResponse> {
     const users = await this.usersRepo.findAll({
       attributes: {
@@ -140,6 +151,7 @@ export class UsersService {
     return { rows: mappedUsers, count: mappedUsers.length };
   }
 
+  // Retrieve user info by id and return the requested data.
   public async getUserInfoById(uid: string): Promise<UserResponse> {
     const user = await this.usersRepo.findOne({
       where: { uid },
@@ -157,6 +169,7 @@ export class UsersService {
     };
   }
 
+  // Apply updates to user and return the result.
   public async updateUser(
     userId: string,
     dto: UpdateUserDTO,
@@ -176,11 +189,13 @@ export class UsersService {
     return newUser;
   }
 
+  // Remove user from storage and return confirmation.
   public async deleteUser(userId: string): Promise<DeleteUserResponse> {
     await this.usersRepo.destroy({ where: { uid: userId } });
     return { uid: userId };
   }
 
+  // Retrieve user by auth id and return the requested data.
   public async getUserByAuthId(authId: number): Promise<User> {
     return await this.usersRepo.findOne({
       where: { authId },

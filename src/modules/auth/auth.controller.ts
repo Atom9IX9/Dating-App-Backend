@@ -1,3 +1,8 @@
+/*
+ * FILE: src/modules/auth/auth.controller.ts
+ * PURPOSE: TypeScript source file part of the application logic.
+ */
+
 import {
   Body,
   Controller,
@@ -37,8 +42,10 @@ import {
 } from '@/common/types/requests/requests';
 import { Response } from 'express';
 
+// NestJS class implementing AuthController.
 @Controller('auth')
 export class AuthController {
+  // Inject required services and repositories for this class.
   constructor(
     private readonly authService: AuthService,
     private readonly usersService: UsersService,
@@ -54,6 +61,7 @@ export class AuthController {
     description:
       'Refresh access and refresh tokens using refresh token from cookies',
   })
+  // Refresh token data and return new authentication tokens.
   async refreshTokens(
     @Req() req: RefreshAuthPayloadRequest,
     @Res({ passthrough: true }) res: Response,
@@ -80,6 +88,7 @@ export class AuthController {
     description:
       'User registration with email and password, and token generation',
   })
+  // Register a new user or auth record and return authentication details.
   async registerAuthCredentials(
     @Body() dto: RegisterAuthCredentialsDTO,
     @Res({ passthrough: true }) res: Response,
@@ -104,6 +113,7 @@ export class AuthController {
     type: UserResponse,
     description: 'Create new user with auth.',
   })
+  // Create user with auth and save it to the data store.
   @ApiBearerAuth()
   @UseGuards(AccessAuthGuard)
   @Post('register/user-personal')
@@ -121,6 +131,7 @@ export class AuthController {
     description:
       'Complete user registration by adding description and hobbies.',
   })
+  // Register a new user or auth record and return authentication details.
   @ApiBearerAuth()
   @UseGuards(AccessAuthGuard, ProfileGuard)
   @Post('register/user-description')
@@ -141,6 +152,7 @@ export class AuthController {
     type: LoginResponse,
     description: 'User login and token generation',
   })
+  // Authenticate the user and return access and refresh tokens.
   async login(
     @Body() dto: LoginDTO,
     @Res({ passthrough: true }) res: Response,
@@ -165,6 +177,7 @@ export class AuthController {
     type: CheckAuthResponse,
     description: 'Check user authentication status',
   })
+  // Validate auth and return whether the condition holds.
   @ApiBearerAuth()
   checkAuth(@Req() req: AuthPayloadRequest) {
     return this.authService.checkAuth(req.user.authId);

@@ -1,3 +1,8 @@
+/*
+ * FILE: src/modules/auth/auth.service.ts
+ * PURPOSE: TypeScript source file part of the application logic.
+ */
+
 import {
   BadRequestException,
   Injectable,
@@ -20,8 +25,10 @@ import { RefreshToken } from './model/refreshToken.model';
 import { User } from '../users/models/user.model';
 import { Avatar } from '../users/models/avatar.model';
 
+// NestJS class implementing AuthService.
 @Injectable()
 export class AuthService {
+  // Inject required services and repositories for this class.
   constructor(
     private readonly tokenService: TokenService,
 
@@ -30,6 +37,7 @@ export class AuthService {
     private readonly refreshTokensRepo: typeof RefreshToken, //todo: just service
   ) {}
 
+  // Refresh token data and return new authentication tokens.
   public async refreshTokens(
     authId: number,
     jti: string,
@@ -59,6 +67,7 @@ export class AuthService {
     };
   }
 
+  // Register a new user or auth record and return authentication details.
   public async registerAuthCredentials(
     dto: RegisterAuthCredentialsDTO,
   ): Promise<{ auth: AuthCredentials } & RefreshedTokens> {
@@ -99,10 +108,12 @@ export class AuthService {
     };
   }
 
+  // Hash the provided password before storing it.
   private async hashData(data: string) {
     return bcrypt.hash(data, 10);
   }
 
+  // Find existing auth credentials by email address.
   private async findAuthByEmail(email: string): Promise<Auth> {
     return await this.authRepo.findOne({
       where: { email },
@@ -110,6 +121,7 @@ export class AuthService {
     });
   }
 
+  // Validate auth and return whether the condition holds.
   public async checkAuth(authId: number): Promise<CheckAuthResponse> {
     const auth = await this.authRepo.findOne({
       where: { authId },
@@ -150,6 +162,7 @@ export class AuthService {
     };
   }
 
+  // Authenticate the user and return access and refresh tokens.
   public async login(
     dto: LoginDTO,
   ): Promise<LoginResponse & { refreshToken: string }> {
@@ -204,6 +217,7 @@ export class AuthService {
     };
   }
 
+  // Retrieve onboarding step and return the requested data.
   private getOnboardingStep(
     user: User | null,
     avatar: Avatar | null,

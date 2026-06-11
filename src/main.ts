@@ -1,3 +1,8 @@
+/*
+ * FILE: src/main.ts
+ * PURPOSE: Application bootstrap file. Configures the NestJS app, global pipes, CORS, Swagger, and WebSocket adapter.
+ */
+
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './modules/app/app.module';
 import { ConfigService } from '@nestjs/config';
@@ -6,6 +11,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { WebSocketAuthAdapter } from './modules/sockets/socketAdapter';
 import cookieParser from 'cookie-parser';
 
+// Bootstrap the NestJS application, set up middleware, and start the server.
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);

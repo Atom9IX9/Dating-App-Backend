@@ -1,3 +1,8 @@
+/*
+ * FILE: src/modules/token/token.module.ts
+ * PURPOSE: TypeScript source file part of the application logic.
+ */
+
 import { Module } from '@nestjs/common';
 import { TokenService } from './token.service';
 import { JwtModule, JwtService } from '@nestjs/jwt';
@@ -20,6 +25,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
   providers: [TokenService],
   exports: [TokenService, JwtModule],
 })
+// NestJS class implementing TokenModule.
 export class TokenModule {}
 
 

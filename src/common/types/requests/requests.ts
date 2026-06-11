@@ -1,3 +1,8 @@
+/*
+ * FILE: src/common/types/requests/requests.ts
+ * PURPOSE: TypeScript source file part of the application logic.
+ */
+
 import { Request } from 'express';
 import { Socket } from 'socket.io';
 

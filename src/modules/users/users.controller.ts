@@ -1,3 +1,8 @@
+/*
+ * FILE: src/modules/users/users.controller.ts
+ * PURPOSE: TypeScript source file part of the application logic.
+ */
+
 import {
   Body,
   Controller,
@@ -29,8 +34,10 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { FileValidationPipe } from '@/common/pipes/fileValidation.pipe';
 import { AvatarMimeType } from '@/common/storage/storage.constants';
 
+// NestJS class implementing UsersController.
 @Controller('users')
 export class UsersController {
+  // Inject required services and repositories for this class.
   constructor(private readonly usersService: UsersService) {}
 
   @ApiTags('USERS')
@@ -40,6 +47,7 @@ export class UsersController {
     description:
       'Sends all users who are not "matched" with the authenticated user.',
   })
+  // Retrieve users and return the requested data.
   @ApiBearerAuth()
   @UseGuards(AccessAuthGuard)
   @Get()
@@ -53,6 +61,7 @@ export class UsersController {
     type: UpdateUserResponse,
     description: 'Updates the profile of the authenticated user.',
   })
+  // Apply updates to user and return the result.
   @ApiBearerAuth()
   @UseGuards(AccessAuthGuard)
   @Patch()
@@ -84,6 +93,7 @@ export class UsersController {
       required: ['file', 'posX', 'posY', 'scale'],
     },
   })
+  // Save avatar and return the persisted metadata.
   @ApiBearerAuth()
   @ApiConsumes('multipart/form-data')
   @Post('avatar')

@@ -1,3 +1,8 @@
+/*
+ * FILE: src/modules/matches/matches.controller.ts
+ * PURPOSE: TypeScript source file part of the application logic.
+ */
+
 import { MatchesService } from './matches.service';
 import {
   Body,
@@ -15,8 +20,10 @@ import { AccessAuthGuard, ProfileGuard } from '@/guards';
 import { MatchResponse, GetIsMatchedResponse } from './response';
 import { ReceiveMatchDTO } from './dto';
 
+// NestJS class implementing MatchesController.
 @Controller('matches')
 export class MatchesController {
+  // Inject required services and repositories for this class.
   constructor(private readonly matchesService: MatchesService) {}
 
   @ApiTags('MATCHES')
@@ -26,6 +33,7 @@ export class MatchesController {
     status: 201,
     description: 'Creates a match.',
   })
+  // Create match and save it to the data store.
   @UseGuards(AccessAuthGuard, ProfileGuard)
   @Post(':receiverId')
   createMatch(
@@ -66,6 +74,7 @@ export class MatchesController {
     status: 200,
     description: 'Checks if the user is matched with another user.',
   })
+  // Retrieve is matched and return the requested data.
   @Get(':secondUserId')
   getIsMatched(
     @Req() request: AuthPayloadRequest,

@@ -1,3 +1,8 @@
+/*
+ * FILE: src/modules/app/app.module.ts
+ * PURPOSE: TypeScript source file part of the application logic.
+ */
+
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -54,4 +59,5 @@ import { join } from 'path';
   controllers: [AppController],
   providers: [AppService],
 })
+// NestJS class implementing AppModule.
 export class AppModule {}

@@ -1,3 +1,8 @@
+/*
+ * FILE: src/modules/matches/types/index.ts
+ * PURPOSE: Barrel file re-exporting module members for easier imports.
+ */
+
 export type TGetMatchesWhereObj = {
   receiverId?: string;
   userId?: string;

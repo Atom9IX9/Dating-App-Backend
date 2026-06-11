@@ -1,3 +1,8 @@
+/*
+ * FILE: src/modules/users/dto/index.ts
+ * PURPOSE: Barrel file re-exporting module members for easier imports.
+ */
+
 import { ApiProperty } from '@nestjs/swagger';
 import {
   ArrayMaxSize,
@@ -11,6 +16,7 @@ import {
 } from 'class-validator';
 import { Genders } from '../types';
 
+// NestJS class implementing CreateUserDTO.
 export class CreateUserDTO {
   @ApiProperty()
   @IsString()
@@ -34,6 +40,7 @@ export class CreateUserDTO {
   genderInfo?: string;
 }
 
+// NestJS class implementing UpdateUserDTO.
 export class UpdateUserDTO {
   @ApiProperty({ required: false })
   @IsString()
@@ -61,6 +68,7 @@ export class UpdateUserDTO {
   location?: string;
 }
 
+// NestJS class implementing UserDescriptionDTO.
 export class UserDescriptionDTO {
   @ApiProperty({ maxLength: 300 })
   @IsString()
@@ -81,6 +89,7 @@ export class UserDescriptionDTO {
   hobbies: string[];
 }
 
+// NestJS class implementing UserAvatarDTO.
 export class UserAvatarDTO {
   @ApiProperty()
   @IsString()

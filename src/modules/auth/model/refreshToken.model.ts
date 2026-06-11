@@ -1,3 +1,8 @@
+/*
+ * FILE: src/modules/auth/model/refreshToken.model.ts
+ * PURPOSE: TypeScript source file part of the application logic.
+ */
+
 import { ApiProperty } from '@nestjs/swagger';
 import { DataTypes } from 'sequelize';
 import {
@@ -10,6 +15,7 @@ import {
 } from 'sequelize-typescript';
 import { Auth } from '@/modules/auth/model/auth.model';
 
+// NestJS class implementing RefreshToken.
 @Table
 export class RefreshToken extends Model {
   @PrimaryKey

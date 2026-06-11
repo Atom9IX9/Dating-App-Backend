@@ -1,3 +1,8 @@
+/*
+ * FILE: src/modules/auth/auth.module.ts
+ * PURPOSE: TypeScript source file part of the application logic.
+ */
+
 import { Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
@@ -20,4 +25,5 @@ import { JwtModule } from '@nestjs/jwt';
   providers: [AuthService, AccessTokenStrategy, RefreshTokenStrategy],
   controllers: [AuthController],
 })
+// NestJS class implementing AuthModule.
 export class AuthModule {}

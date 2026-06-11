@@ -1,3 +1,8 @@
+/*
+ * FILE: src/strategy/accessTokenStrategy.ts
+ * PURPOSE: TypeScript source file part of the application logic.
+ */
+
 import {
   ForbiddenException,
   Injectable,
@@ -11,11 +16,13 @@ import { JwtPayload } from '@/common/types/requests/requests';
 import { Auth } from '@/modules/auth/model/auth.model';
 import { User } from '@/modules/users/models/user.model';
 
+// NestJS class implementing AccessTokenStrategy.
 @Injectable()
 export class AccessTokenStrategy extends PassportStrategy(
   Strategy,
   'jwt-access',
 ) {
+  // Inject required services and repositories for this class.
   constructor(
     private readonly configService: ConfigService,
     @InjectModel(Auth) private readonly authRepository: typeof Auth,
@@ -27,6 +34,7 @@ export class AccessTokenStrategy extends PassportStrategy(
     });
   }
 
+  // Validate the JWT payload and return the authenticated user's identity.
   async validate(payload: JwtPayload) {
     const auth = await this.authRepository.findOne({
       where: { authId: payload.authId },

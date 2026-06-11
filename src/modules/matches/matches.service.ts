@@ -1,3 +1,8 @@
+/*
+ * FILE: src/modules/matches/matches.service.ts
+ * PURPOSE: TypeScript source file part of the application logic.
+ */
+
 import { InjectModel } from '@nestjs/sequelize';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { Match } from './models/match.model';
@@ -9,16 +14,20 @@ import {
 } from './response';
 import { UserReceives, UserTypeEnum } from './types';
 
+// NestJS class implementing MatchesService.
 @Injectable()
 export class MatchesService {
+  // Inject required services and repositories for this class.
   constructor(@InjectModel(Match) private readonly matchesRepo: typeof Match) {}
 
+  // Create match and save it to the data store.
   async createMatch(dto: MatchDTO): Promise<MatchResponse> {
     const match = await this.matchesRepo.create({ ...dto, status: 'pending' });
 
     return match;
   }
 
+  // Retrieve matches and return the requested data.
   async getMatches(dto: GetMatchesDTO): Promise<GetMatchesResponse> {
     let matches: GetMatchesResponse;
     switch (dto.userType) {
@@ -58,6 +67,7 @@ export class MatchesService {
     return matches;
   }
 
+  // Retrieve is matched and return the requested data.
   async getIsMatched(
     userId: string,
     secondUserId: string,
@@ -76,6 +86,7 @@ export class MatchesService {
     return { status: match ? match.status : undefined, isMatched: !!match };
   }
 
+  // Confirm the receiver's response and update match status accordingly.
   async acceptMatch(
     userId: string,
     matchId: number,
@@ -87,6 +98,7 @@ export class MatchesService {
       throw new BadRequestException('User is not receiver');
     }
 
+    // Confirm the receiver's response and update match status accordingly.
     match.update({ status: receive });
 
     return match;

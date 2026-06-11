@@ -1,3 +1,8 @@
+/*
+ * FILE: src/modules/sockets/socketAdapter.ts
+ * PURPOSE: Custom adapter for WebSocket setup and authentication integration.
+ */
+
 import { INestApplication, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
@@ -11,10 +16,12 @@ import {
 // todo: fix sockets
 
 export class WebSocketAuthAdapter extends IoAdapter {
+  // Inject required services and repositories for this class.
   constructor(private app: INestApplication) {
     super(app);
   }
 
+  // Create ioserver and save it to the data store.
   createIOServer(port: number, options?: any) {
     const server: Server = super.createIOServer(port, {
       ...options,

@@ -1,3 +1,8 @@
+/*
+ * FILE: src/modules/users/models/avatar.model.ts
+ * PURPOSE: Module file with defined behavior.
+ */
+
 import {
   Table,
   Column,
@@ -10,6 +15,7 @@ import { User } from './user.model';
 import { ApiProperty } from '@nestjs/swagger';
 import { DataTypes } from 'sequelize';
 
+// NestJS class implementing Avatar.
 @Table
 export class Avatar extends Model {
   @PrimaryKey

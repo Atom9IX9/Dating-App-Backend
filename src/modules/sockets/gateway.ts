@@ -1,3 +1,8 @@
+/*
+ * FILE: src/modules/sockets/gateway.ts
+ * PURPOSE: TypeScript source file part of the application logic.
+ */
+
 import {
   ConnectedSocket,
   MessageBody,
@@ -16,8 +21,10 @@ import { MessagesService } from '../messages/messages.service';
 import { CreateSocketMessage } from './dto';
 import { UserActivityService } from '../usersActivity/usersActivity.service';
 
+// NestJS class implementing Gateway.
 @WebSocketGateway({ transports: 'websocket' })
 export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
+  // Inject required services and repositories for this class.
   constructor(
     private readonly chatsService: ChatsService,
     private readonly messagesService: MessagesService,
@@ -26,6 +33,7 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   server: Server;
 
+  // Handle an incoming event or request and execute the business logic.
   async handleConnection(client: AuthSocket) {
     await processClientChatRooms(
       client.data.user.uid,
@@ -42,6 +50,7 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
     );
   }
 
+  // Handle an incoming event or request and execute the business logic.
   async handleDisconnect(client: AuthSocket) {
     await processClientChatRooms(
       client.data.user.uid,
@@ -60,6 +69,7 @@ export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
     );
   }
 
+  // Create message handler and save it to the data store.
   @SubscribeMessage('createMessage')
   async createMessageHandler(
     @MessageBody() body: CreateSocketMessage,

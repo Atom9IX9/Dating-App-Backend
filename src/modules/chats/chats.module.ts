@@ -1,3 +1,8 @@
+/*
+ * FILE: src/modules/chats/chats.module.ts
+ * PURPOSE: TypeScript source file part of the application logic.
+ */
+
 import { Module } from '@nestjs/common';
 import { ChatsService } from './chats.service';
 import { SequelizeModule } from '@nestjs/sequelize';
@@ -11,4 +16,5 @@ import { ChatsController } from './chats.controller';
   controllers: [ChatsController],
   exports: [ChatsService],
 })
+// NestJS class implementing ChatsModule.
 export class ChatsModule {}

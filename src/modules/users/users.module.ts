@@ -1,3 +1,8 @@
+/*
+ * FILE: src/modules/users/users.module.ts
+ * PURPOSE: TypeScript source file part of the application logic.
+ */
+
 import { Module } from '@nestjs/common';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
@@ -23,4 +28,5 @@ import { Avatar } from './models/avatar.model';
   providers: [UsersService],
   exports: [UsersService],
 })
+// NestJS class implementing UserModule.
 export class UserModule {}

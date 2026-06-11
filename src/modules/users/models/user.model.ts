@@ -1,3 +1,8 @@
+/*
+ * FILE: src/modules/users/models/user.model.ts
+ * PURPOSE: Module file with defined behavior.
+ */
+
 import { ApiProperty } from '@nestjs/swagger';
 import {
   Column,
@@ -34,6 +39,7 @@ import { Avatar } from './avatar.model';
 @Scopes(() => ({
   login: () => ({ attributes: { exclude: ['createdAt', 'updatedAt'] } }),
 }))
+// NestJS class implementing User.
 export class User extends Model {
   @ApiProperty()
   @PrimaryKey

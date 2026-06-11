@@ -1,3 +1,8 @@
+/*
+ * FILE: src/modules/hobbies/models/hobby.model.ts
+ * PURPOSE: Module file with defined behavior.
+ */
+
 import { User } from '@/modules/users/models/user.model';
 import { UserHobby } from '@/modules/users/models/userHobby.model';
 import { ApiProperty } from '@nestjs/swagger';
@@ -11,6 +16,7 @@ import {
   HasMany,
 } from 'sequelize-typescript';
 
+// NestJS class implementing Hobby.
 @Table
 export class Hobby extends Model {
   @ApiProperty()

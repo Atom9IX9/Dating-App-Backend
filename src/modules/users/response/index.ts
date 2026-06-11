@@ -1,3 +1,8 @@
+/*
+ * FILE: src/modules/users/response/index.ts
+ * PURPOSE: Barrel file re-exporting module members for easier imports.
+ */
+
 import { ApiProperty } from '@nestjs/swagger';
 import {
   IsArray,
@@ -16,6 +21,7 @@ import { UserActivityResponse } from '@/modules/usersActivity/respoonse';
 import { Hobby } from '@/modules/hobbies/models/hobby.model';
 import { StorageFolder } from '@/common/storage/storage.constants';
 
+// NestJS class implementing PublicUser.
 export class PublicUser {
   @ApiProperty()
   @IsString()
@@ -61,6 +67,7 @@ export class PublicUser {
   activity: UserActivityResponse;
 }
 
+// NestJS class implementing UserResponse.
 export class UserResponse {
   @ApiProperty()
   @IsString()
@@ -101,6 +108,7 @@ export class UserResponse {
   description?: string;
 }
 
+// NestJS class implementing GetUsersResponse.
 export class GetUsersResponse {
   @ApiProperty({ isArray: true, type: PublicUser })
   @IsArray()
@@ -111,6 +119,7 @@ export class GetUsersResponse {
   count: number;
 }
 
+// NestJS class implementing UpdateUserResponse.
 export class UpdateUserResponse {
   @ApiProperty()
   @IsString()
@@ -142,12 +151,14 @@ export class UpdateUserResponse {
   location?: string;
 }
 
+// NestJS class implementing DeleteUserResponse.
 export class DeleteUserResponse {
   @ApiProperty()
   @IsString()
   uid: string;
 }
 
+// NestJS class implementing UserDescriptionResponse.
 export class UserDescriptionResponse {
   @ApiProperty()
   @IsString()
@@ -160,6 +171,7 @@ export class UserDescriptionResponse {
   hobbies: string[];
 }
 
+// NestJS class implementing UserAvatarResponse.
 export class UserAvatarResponse {
   @ApiProperty({
     example: StorageFolder.AVATARS + '/avatar123.jpg',

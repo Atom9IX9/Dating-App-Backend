@@ -1,11 +1,18 @@
+/*
+ * FILE: src/modules/token/token.service.ts
+ * PURPOSE: TypeScript source file part of the application logic.
+ */
+
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { randomUUID } from 'crypto';
 import { JwtPayload } from '@/common/types/requests/requests';
 
+// NestJS class implementing TokenService.
 @Injectable()
 export class TokenService {
+  // Inject required services and repositories for this class.
   constructor(
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,

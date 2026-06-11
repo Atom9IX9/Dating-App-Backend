@@ -1,3 +1,8 @@
+/*
+ * FILE: src/modules/auth/response/index.ts
+ * PURPOSE: Barrel file re-exporting module members for easier imports.
+ */
+
 import { ApiProperty } from '@nestjs/swagger';
 import {
   IsEnum,
@@ -18,6 +23,7 @@ export enum OnboardingStep {
   USER_INFO = 2
 }
 
+// NestJS class implementing AuthCredentials.
 export class AuthCredentials {
   @ApiProperty()
   @IsNumber()
@@ -28,6 +34,7 @@ export class AuthCredentials {
   email: string;
 }
 
+// NestJS class implementing AuthResponse.
 export class AuthResponse {
   @ApiProperty()
   @IsObject()
@@ -38,6 +45,7 @@ export class AuthResponse {
   token: string;
 }
 
+// NestJS class implementing CheckAuthUserAvatar.
 export class CheckAuthUserAvatar {
   @ApiProperty()
   @IsInt()
@@ -56,6 +64,7 @@ export class CheckAuthUserAvatar {
   url: string;
 }
 
+// NestJS class implementing CheckAuthUser.
 export class CheckAuthUser {
   @ApiProperty()
   @IsString()
@@ -75,6 +84,7 @@ export class CheckAuthUser {
   avatar: CheckAuthUserAvatar;
 }
 
+// NestJS class implementing CheckAuthCredentials.
 export class CheckAuthCredentials {
   @ApiProperty()
   @IsInt()
@@ -85,6 +95,7 @@ export class CheckAuthCredentials {
   email: string;
 }
 
+// NestJS class implementing CheckAuthResponse.
 export class CheckAuthResponse {
   @ApiProperty({ type: CheckAuthUser, nullable: true })
   @ValidateNested()
@@ -103,12 +114,14 @@ export class CheckAuthResponse {
   onboardingStep: OnboardingStep;
 }
 
+// NestJS class implementing LoginResponse.
 export class LoginResponse extends CheckAuthResponse {
   @ApiProperty()
   @IsString()
   accessToken: string;
 }
 
+// NestJS class implementing RefreshedTokens.
 export class RefreshedTokens {
   @ApiProperty()
   @IsString()
@@ -119,12 +132,14 @@ export class RefreshedTokens {
   refreshToken: string;
 }
 
+// NestJS class implementing RefreshTokensResponse.
 export class RefreshTokensResponse {
   @ApiProperty()
   @IsString()
   accessToken: string;
 }
 
+// NestJS class implementing RegisterAuthCredentialsResponse.
 export class RegisterAuthCredentialsResponse {
   @ApiProperty()
   @IsString()
