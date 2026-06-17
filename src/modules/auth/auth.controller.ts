@@ -74,7 +74,7 @@ export class AuthController {
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
       secure: true,
-      sameSite: 'strict',
+      sameSite: 'lax',
     });
 
     return { accessToken };
@@ -98,7 +98,7 @@ export class AuthController {
     res.cookie('refreshToken', credentials.refreshToken, {
       httpOnly: true,
       secure: true,
-      sameSite: 'strict',
+      sameSite: 'lax',
     });
 
     return {
@@ -162,7 +162,7 @@ export class AuthController {
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
       secure: true,
-      sameSite: 'strict',
+      sameSite: 'lax',
     });
     res.status(200);
 
