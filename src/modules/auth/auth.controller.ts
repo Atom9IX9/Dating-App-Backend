@@ -25,6 +25,7 @@ import {
 } from '@nestjs/swagger';
 import {
   CheckAuthResponse,
+  FetchOnboardingResponse,
   LoginResponse,
   RefreshTokensResponse,
   RegisterAuthCredentialsResponse,
@@ -181,6 +182,20 @@ export class AuthController {
   @ApiBearerAuth()
   checkAuth(@Req() req: AuthPayloadRequest) {
     return this.authService.checkAuth(req.user.authId);
+  }
+
+  @Get("onboarding")
+  @UseGuards(AccessAuthGuard, ProfileGuard)
+  @ApiTags('AUTHORIZATION')
+  @ApiResponse({
+    status: 200,
+    type: FetchOnboardingResponse,
+    description: 'Check onboarding step of user',
+  })
+  // Validate auth and return whether the condition holds.
+  @ApiBearerAuth()
+  fetchOnboardingStep(@Req() req: AuthPayloadRequest) {
+    return this.authService.fetchOnboardingStep(req.user.authId);
   }
 
   // todo: logout
