@@ -82,7 +82,6 @@ export class UsersService {
       dto.hobbies,
     );
     const user = await this.usersRepo.findOne({ where: { uid: userId } });
-    console.log(sinhronizedHobbies, userId);
 
     await user.$set(
       'hobbies',
@@ -103,8 +102,6 @@ export class UsersService {
     avatar: Express.Multer.File,
   ): Promise<UserAvatarResponse> {
     const saved = this.storageService.saveFile(avatar, StorageFolder.AVATARS);
-
-    console.log(avatar);
 
     const createdAvatar = await this.avatarsRepo.create({
       userId,

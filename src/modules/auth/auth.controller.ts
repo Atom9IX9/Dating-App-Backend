@@ -42,6 +42,7 @@ import {
   RefreshAuthPayloadRequest,
 } from '@/common/types/requests/requests';
 import { Response } from 'express';
+import { ConfigService } from '@nestjs/config';
 
 // NestJS class implementing AuthController.
 @Controller('auth')
@@ -50,6 +51,7 @@ export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private readonly usersService: UsersService,
+    private readonly configService: ConfigService,
   ) {}
 
   @Post('refresh')
@@ -76,6 +78,7 @@ export class AuthController {
       httpOnly: true,
       secure: true,
       sameSite: 'lax',
+      maxAge: this.configService.get('refreshTokenExpire'),
     });
 
     return { accessToken };
@@ -100,6 +103,7 @@ export class AuthController {
       httpOnly: true,
       secure: true,
       sameSite: 'lax',
+      maxAge: this.configService.get('refreshTokenExpire'),
     });
 
     return {
@@ -164,6 +168,7 @@ export class AuthController {
       httpOnly: true,
       secure: true,
       sameSite: 'lax',
+      maxAge: this.configService.get('refreshTokenExpire'),
     });
     res.status(200);
 
@@ -184,7 +189,7 @@ export class AuthController {
     return this.authService.checkAuth(req.user.authId);
   }
 
-  @Get("onboarding")
+  @Get('onboarding')
   @UseGuards(AccessAuthGuard, ProfileGuard)
   @ApiTags('AUTHORIZATION')
   @ApiResponse({
