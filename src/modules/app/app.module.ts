@@ -43,7 +43,7 @@ import { join } from 'path';
         password: configService.get('db.password'),
         database: configService.get('db.name'),
         synchronize: true, //after development, use migrations instead of sync / on dev - true to auto create tables based on models, on prod - false to avoid data loss
-        //sync: { force: true }, //force: true - drop tables and recreate them on every app restart (use only for development)
+        // sync: { force: true }, //force: true - drop tables and recreate them on every app restart (use only for development)
         autoLoadModels: true,
       }),
     }),

@@ -114,6 +114,12 @@ export class CheckAuthResponse {
   onboardingStep: OnboardingStep;
 }
 
+export class FetchOnboardingResponse {
+  @ApiProperty({ enum: OnboardingStep })
+  @IsEnum(OnboardingStep)
+  onboardingStep: OnboardingStep;
+}
+
 // NestJS class implementing LoginResponse.
 export class LoginResponse extends CheckAuthResponse {
   @ApiProperty()

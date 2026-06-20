@@ -14,6 +14,7 @@ import * as bcrypt from 'bcrypt';
 import {
   AuthCredentials,
   CheckAuthResponse,
+  FetchOnboardingResponse,
   LoginResponse,
   OnboardingStep,
   RefreshedTokens,
@@ -215,6 +216,26 @@ export class AuthService {
       accessToken,
       refreshToken,
     };
+  }
+
+  public async fetchOnboardingStep(authId: number): Promise<FetchOnboardingResponse> {
+    const auth = await this.authRepo.findOne({
+      where: { authId },
+      include: [
+        {
+          model: User,
+          include: [Avatar],
+          attributes: ['uid', 'firstName', 'lastName', 'description'],
+        },
+      ],
+    });
+
+    const onboardingStep = this.getOnboardingStep(
+      auth.user,
+      auth.user ? auth.user.avatar : null,
+    );
+
+    return { onboardingStep }
   }
 
   // Retrieve onboarding step and return the requested data.

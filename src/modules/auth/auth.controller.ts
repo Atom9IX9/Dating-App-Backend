@@ -25,6 +25,7 @@ import {
 } from '@nestjs/swagger';
 import {
   CheckAuthResponse,
+  FetchOnboardingResponse,
   LoginResponse,
   RefreshTokensResponse,
   RegisterAuthCredentialsResponse,
@@ -41,6 +42,7 @@ import {
   RefreshAuthPayloadRequest,
 } from '@/common/types/requests/requests';
 import { Response } from 'express';
+import { ConfigService } from '@nestjs/config';
 
 // NestJS class implementing AuthController.
 @Controller('auth')
@@ -49,6 +51,7 @@ export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private readonly usersService: UsersService,
+    private readonly configService: ConfigService,
   ) {}
 
   @Post('refresh')
@@ -74,7 +77,8 @@ export class AuthController {
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
       secure: true,
-      sameSite: 'strict',
+      sameSite: 'lax',
+      maxAge: this.configService.get('refreshTokenExpire'),
     });
 
     return { accessToken };
@@ -98,7 +102,8 @@ export class AuthController {
     res.cookie('refreshToken', credentials.refreshToken, {
       httpOnly: true,
       secure: true,
-      sameSite: 'strict',
+      sameSite: 'lax',
+      maxAge: this.configService.get('refreshTokenExpire'),
     });
 
     return {
@@ -162,7 +167,8 @@ export class AuthController {
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
       secure: true,
-      sameSite: 'strict',
+      sameSite: 'lax',
+      maxAge: this.configService.get('refreshTokenExpire'),
     });
     res.status(200);
 
@@ -181,6 +187,20 @@ export class AuthController {
   @ApiBearerAuth()
   checkAuth(@Req() req: AuthPayloadRequest) {
     return this.authService.checkAuth(req.user.authId);
+  }
+
+  @Get('onboarding')
+  @UseGuards(AccessAuthGuard, ProfileGuard)
+  @ApiTags('AUTHORIZATION')
+  @ApiResponse({
+    status: 200,
+    type: FetchOnboardingResponse,
+    description: 'Check onboarding step of user',
+  })
+  // Validate auth and return whether the condition holds.
+  @ApiBearerAuth()
+  fetchOnboardingStep(@Req() req: AuthPayloadRequest) {
+    return this.authService.fetchOnboardingStep(req.user.authId);
   }
 
   // todo: logout
