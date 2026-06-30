@@ -3,7 +3,7 @@
  * PURPOSE: TypeScript source file part of the application logic.
  */
 
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Hobby } from './models/hobby.model';
 import { Op } from 'sequelize';

@@ -57,7 +57,7 @@ export class AuthService {
       'refresh',
     );
 
-    const newDBRefreshToken = await this.refreshTokensRepo.update(
+    await this.refreshTokensRepo.update(
       { jti: newRefreshToken.jti },
       { where: { authId } },
     );
@@ -94,7 +94,7 @@ export class AuthService {
       'refresh',
     );
 
-    const newDBToken = await this.refreshTokensRepo.create({
+    await this.refreshTokensRepo.create({
       authId: authCredentials.authId,
       jti: refreshToken.jti,
     });

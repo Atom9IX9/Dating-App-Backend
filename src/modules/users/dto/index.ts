@@ -8,8 +8,6 @@ import {
   ArrayMaxSize,
   IsArray,
   IsDateString,
-  IsEmail,
-  IsNumber,
   IsOptional,
   IsString,
   MaxLength,
