@@ -20,14 +20,12 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
         },
       }),
     }),
-    
   ],
   providers: [TokenService],
   exports: [TokenService, JwtModule],
 })
 // NestJS class implementing TokenModule.
 export class TokenModule {}
-
 
 // // Refresh JWT
 //     JwtModule.registerAsync({

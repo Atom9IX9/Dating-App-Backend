@@ -173,7 +173,14 @@ export class AuthService {
       include: [
         {
           model: User,
-          include: [{ model: Avatar, attributes: { exclude: ["userId", "id", "createdAt", "updatedAt"] } }],
+          include: [
+            {
+              model: Avatar,
+              attributes: {
+                exclude: ['userId', 'id', 'createdAt', 'updatedAt'],
+              },
+            },
+          ],
         },
         { model: RefreshToken },
       ],
@@ -218,7 +225,9 @@ export class AuthService {
     };
   }
 
-  public async fetchOnboardingStep(authId: number): Promise<FetchOnboardingResponse> {
+  public async fetchOnboardingStep(
+    authId: number,
+  ): Promise<FetchOnboardingResponse> {
     const auth = await this.authRepo.findOne({
       where: { authId },
       include: [
@@ -235,7 +244,7 @@ export class AuthService {
       auth.user ? auth.user.avatar : null,
     );
 
-    return { onboardingStep }
+    return { onboardingStep };
   }
 
   // Retrieve onboarding step and return the requested data.

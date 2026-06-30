@@ -8,10 +8,7 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { IoAdapter } from '@nestjs/platform-socket.io';
 import { Server } from 'socket.io';
-import {
-  AuthPayload,
-  AuthSocket,
-} from '@/common/types/requests/requests';
+import { AuthPayload, AuthSocket } from '@/common/types/requests/requests';
 
 // todo: fix sockets
 
@@ -30,7 +27,7 @@ export class WebSocketAuthAdapter extends IoAdapter {
 
     const jwtService = this.app.get(JwtService);
     const config = this.app.get(ConfigService);
-    const secret = config.get('accessTokenSecret'); 
+    const secret = config.get('accessTokenSecret');
 
     server.use(tockenMiddleware(jwtService, secret));
 
@@ -39,8 +36,7 @@ export class WebSocketAuthAdapter extends IoAdapter {
 }
 
 const tockenMiddleware =
-  (jwtService: JwtService, secret: string) =>
-  (client: AuthSocket, next) => {
+  (jwtService: JwtService, secret: string) => (client: AuthSocket, next) => {
     const token = client.handshake.headers.authorization?.split(' ')[1];
 
     try {
