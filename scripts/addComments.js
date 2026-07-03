@@ -1,22 +1,28 @@
-const fs = require('fs');
-const path = require('path');
-const glob = require('glob');
+import { readFileSync, writeFileSync } from 'fs';
+import { resolve, basename, relative } from 'path';
+import { sync } from 'glob';
 
-const root = path.resolve(process.cwd());
+const root = resolve(process.cwd());
 const patterns = ['src/**/*.ts', 'test/**/*.ts'];
 
 const descriptionByType = {
-  controller: 'HTTP controller defining request handlers and routes for the feature.',
-  service: 'Business logic provider encapsulating operations and persistence for the feature.',
-  module: 'NestJS module that groups controllers, providers, and imports for the feature.',
+  controller:
+    'HTTP controller defining request handlers and routes for the feature.',
+  service:
+    'Business logic provider encapsulating operations and persistence for the feature.',
+  module:
+    'NestJS module that groups controllers, providers, and imports for the feature.',
   model: 'Sequelize model mapping the entity to the database table.',
   dto: 'Data transfer object definitions used for request validation and payload shape.',
   response: 'Response DTO definitions shaping API output payloads.',
-  strategy: 'Passport strategy implementation for authentication using JWT tokens.',
-  guard: 'Authorization logic ensuring requests are valid and users are authenticated.',
+  strategy:
+    'Passport strategy implementation for authentication using JWT tokens.',
+  guard:
+    'Authorization logic ensuring requests are valid and users are authenticated.',
   pipe: 'NestJS pipe for request-level validation or transformation.',
   helper: 'Utility helper functions used across the module.',
-  constant: 'Collection of constants used in configuration or request processing.',
+  constant:
+    'Collection of constants used in configuration or request processing.',
   config: 'Application configuration loader and environment settings.',
   adapter: 'Custom adapter for WebSocket setup and authentication integration.',
   error: 'Application-specific error type used for domain validation.',
@@ -31,13 +37,25 @@ function getDescription(relativePath) {
   const parts = normalized.split('/');
   const file = parts.pop();
   const parent = parts[parts.length - 1] || '';
-  const name = path.basename(file, '.ts');
+  const name = basename(file, '.ts');
   const kind = name === 'index' ? 'index' : name.toLowerCase();
   if (descriptionByType[kind]) {
     return descriptionByType[kind];
   }
-  if (parent === 'dto' || parent === 'response' || parent === 'models' || parent === 'guards' || parent === 'helpers' || parent === 'errors' || parent === 'types') {
-    return descriptionByType[parent] || descriptionByType[kind] || 'Module file with defined behavior.';
+  if (
+    parent === 'dto' ||
+    parent === 'response' ||
+    parent === 'models' ||
+    parent === 'guards' ||
+    parent === 'helpers' ||
+    parent === 'errors' ||
+    parent === 'types'
+  ) {
+    return (
+      descriptionByType[parent] ||
+      descriptionByType[kind] ||
+      'Module file with defined behavior.'
+    );
   }
   if (normalized.includes('/modules/')) {
     if (name.endsWith('Module')) return descriptionByType.module;
@@ -152,7 +170,8 @@ function getMethodComment(methodName) {
 function removeFalseInlineComments(content) {
   const lines = content.split(/\r?\n/);
   const result = [];
-  const keywordPattern = /^(for|if|while|switch|catch|do|else|return|throw|try|case|break|continue)\b/;
+  const keywordPattern =
+    /^(for|if|while|switch|catch|do|else|return|throw|try|case|break|continue)\b/;
 
   for (let i = 0; i < lines.length; i += 1) {
     const line = lines[i];
@@ -179,15 +198,28 @@ function insertInlineComments(content) {
     const line = lines[i];
     const classMatch = /^\s*export\s+class\s+(\w+)/.exec(line);
     const constructorMatch = /^\s*constructor\s*\(/.exec(line);
-    const methodMatch = /^\s*(public|protected|private)?\s*(static\s+)?(async\s+)?([A-Za-z_$][A-Za-z0-9_$]*)\s*\(/.exec(line);
-    const functionMatch = /^\s*(?:export\s+)?(?:async\s+)?function\s+([A-Za-z_$][A-Za-z0-9_$]*)\s*\(/.exec(line);
-    const arrowFunctionMatch = /^\s*(?:export\s+)?const\s+([A-Za-z_$][A-Za-z0-9_$]*)\s*=\s*\(/.exec(line);
+    const methodMatch =
+      /^\s*(public|protected|private)?\s*(static\s+)?(async\s+)?([A-Za-z_$][A-Za-z0-9_$]*)\s*\(/.exec(
+        line,
+      );
+    const functionMatch =
+      /^\s*(?:export\s+)?(?:async\s+)?function\s+([A-Za-z_$][A-Za-z0-9_$]*)\s*\(/.exec(
+        line,
+      );
+    const arrowFunctionMatch =
+      /^\s*(?:export\s+)?const\s+([A-Za-z_$][A-Za-z0-9_$]*)\s*=\s*\(/.exec(
+        line,
+      );
 
     if (classMatch) {
       const insertIndex = getInsertIndex(result, result.length);
       if (!hasCommentAbove(result, insertIndex)) {
         const indent = line.match(/^\s*/)[0];
-        result.splice(insertIndex, 0, `${indent}// NestJS class implementing ${classMatch[1]}.`);
+        result.splice(
+          insertIndex,
+          0,
+          `${indent}// NestJS class implementing ${classMatch[1]}.`,
+        );
       }
     }
 
@@ -195,7 +227,11 @@ function insertInlineComments(content) {
       const insertIndex = getInsertIndex(result, result.length);
       if (!hasCommentAbove(result, insertIndex)) {
         const indent = line.match(/^\s*/)[0];
-        result.splice(insertIndex, 0, `${indent}// Inject required services and repositories for this class.`);
+        result.splice(
+          insertIndex,
+          0,
+          `${indent}// Inject required services and repositories for this class.`,
+        );
       }
     }
 
@@ -203,15 +239,31 @@ function insertInlineComments(content) {
       methodMatch &&
       methodMatch[4] !== 'constructor' &&
       (methodMatch[1] || methodMatch[3]) &&
-      !['if', 'for', 'while', 'switch', 'catch', 'do', 'else', 'return', 'throw', 'try', 'case', 'break', 'continue'].includes(
-        methodMatch[4],
-      )
+      ![
+        'if',
+        'for',
+        'while',
+        'switch',
+        'catch',
+        'do',
+        'else',
+        'return',
+        'throw',
+        'try',
+        'case',
+        'break',
+        'continue',
+      ].includes(methodMatch[4])
     ) {
       const methodName = methodMatch[4];
       const insertIndex = getInsertIndex(result, result.length);
       if (!hasCommentAbove(result, insertIndex)) {
         const indent = line.match(/^\s*/)[0];
-        result.splice(insertIndex, 0, `${indent}// ${getMethodComment(methodName)}`);
+        result.splice(
+          insertIndex,
+          0,
+          `${indent}// ${getMethodComment(methodName)}`,
+        );
       }
     }
 
@@ -220,7 +272,11 @@ function insertInlineComments(content) {
       const insertIndex = getInsertIndex(result, result.length);
       if (!hasCommentAbove(result, insertIndex)) {
         const indent = line.match(/^\s*/)[0];
-        result.splice(insertIndex, 0, `${indent}// ${getMethodComment(functionName)}`);
+        result.splice(
+          insertIndex,
+          0,
+          `${indent}// ${getMethodComment(functionName)}`,
+        );
       }
     }
 
@@ -229,7 +285,11 @@ function insertInlineComments(content) {
       const insertIndex = getInsertIndex(result, result.length);
       if (!hasCommentAbove(result, insertIndex)) {
         const indent = line.match(/^\s*/)[0];
-        result.splice(insertIndex, 0, `${indent}// ${getMethodComment(functionName)}`);
+        result.splice(
+          insertIndex,
+          0,
+          `${indent}// ${getMethodComment(functionName)}`,
+        );
       }
     }
 
@@ -241,11 +301,11 @@ function insertInlineComments(content) {
 
 let count = 0;
 
-patterns.forEach(pattern => {
-  const files = glob.sync(pattern, { cwd: root, absolute: true });
-  files.forEach(filePath => {
-    let content = fs.readFileSync(filePath, 'utf8');
-    const rel = path.relative(root, filePath).replace(/\\/g, '/');
+patterns.forEach((pattern) => {
+  const files = sync(pattern, { cwd: root, absolute: true });
+  files.forEach((filePath) => {
+    let content = readFileSync(filePath, 'utf8');
+    const rel = relative(root, filePath).replace(/\\/g, '/');
     const description = getDescription(rel);
 
     if (shouldInsertComment(content)) {
@@ -257,7 +317,7 @@ patterns.forEach(pattern => {
     const updatedContent = insertInlineComments(content);
     const cleanedContent = removeFalseInlineComments(updatedContent);
     if (cleanedContent !== content) {
-      fs.writeFileSync(filePath, cleanedContent, 'utf8');
+      writeFileSync(filePath, cleanedContent, 'utf8');
     }
   });
 });
