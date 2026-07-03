@@ -72,7 +72,7 @@ export class AuthController {
       httpOnly: true,
       secure: true,
       sameSite: 'lax',
-      maxAge: this.configService.get('refreshTokenExpire'),
+      maxAge: this.configService.get('refreshTokenExpire') * 1000,
     });
 
     return { accessToken };
@@ -97,7 +97,7 @@ export class AuthController {
       httpOnly: true,
       secure: true,
       sameSite: 'lax',
-      maxAge: this.configService.get('refreshTokenExpire'),
+      maxAge: this.configService.get('refreshTokenExpire') * 1000,
     });
 
     return {
@@ -162,7 +162,7 @@ export class AuthController {
       httpOnly: true,
       secure: true,
       sameSite: 'lax',
-      maxAge: this.configService.get('refreshTokenExpire'),
+      maxAge: this.configService.get('refreshTokenExpire') * 1000,
     });
     res.status(200);
 
