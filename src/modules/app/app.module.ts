@@ -49,11 +49,11 @@ import { join } from 'path';
           match: [
             /SequelizeConnectionError/,
             /SequelizeConnectionRefusedError/,
-            /Connection timed out/
+            /Connection timed out/,
           ],
-          max: 5, 
-          backoffBase: 2000, 
-          backoffExponent: 1.5, 
+          max: 5,
+          backoffBase: 2000,
+          backoffExponent: 1.5,
         },
       }),
     }),
