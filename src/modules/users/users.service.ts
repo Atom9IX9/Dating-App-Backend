@@ -3,7 +3,7 @@
  * PURPOSE: TypeScript source file part of the application logic.
  */
 
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { User } from './models/user.model';
 import {
@@ -49,7 +49,7 @@ export class UsersService {
     authId: number,
   ): Promise<UserResponse> {
     const id = nanoid();
-    const user = await this.usersRepo.create({
+    await this.usersRepo.create({
       uid: id,
       dateOfBD: dto.dateOfBD,
       firstName: dto.firstName,
@@ -59,7 +59,7 @@ export class UsersService {
       authId: authId,
     });
 
-    const activity = this.activitiesService.createActivity(id);
+    await this.activitiesService.createActivity(id);
 
     return {
       uid: id,
@@ -103,7 +103,7 @@ export class UsersService {
   ): Promise<UserAvatarResponse> {
     const saved = this.storageService.saveFile(avatar, StorageFolder.AVATARS);
 
-    const createdAvatar = await this.avatarsRepo.create({
+    await this.avatarsRepo.create({
       userId,
       url: saved.url,
       posX: Math.round(Number(dto.posX)),

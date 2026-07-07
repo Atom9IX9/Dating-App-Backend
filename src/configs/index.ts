@@ -7,8 +7,8 @@ export default () => ({
   port: process.env.PORT,
   accessTokenSecret: process.env.ACCESS_TOKEN_SECRET,
   refreshTokenSecret: process.env.REFRESH_TOKEN_SECRET,
-  accessTokenExpire: process.env.ACCESS_TOKEN_EXPIRE,
-  refreshTokenExpire: process.env.REFRESH_TOKEN_EXPIRE,
+  accessTokenExpire: +process.env.ACCESS_TOKEN_EXPIRE,
+  refreshTokenExpire: +process.env.REFRESH_TOKEN_EXPIRE,
   frontendURL: process.env.FRONTEND_URL,
   db: {
     port: +process.env.POSTGRES_PORT,

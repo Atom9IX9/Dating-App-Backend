@@ -3,11 +3,7 @@
  * PURPOSE: TypeScript source file part of the application logic.
  */
 
-import {
-  PipeTransform,
-  Injectable,
-  BadRequestException,
-} from '@nestjs/common';
+import { PipeTransform, Injectable, BadRequestException } from '@nestjs/common';
 
 // NestJS class implementing FileValidationPipe.
 @Injectable()

@@ -20,7 +20,7 @@ export enum OnboardingStep {
   REGISTERED = 'registered',
   DESCRIPTION = 3,
   AVATAR = 4,
-  USER_INFO = 2
+  USER_INFO = 2,
 }
 
 // NestJS class implementing AuthCredentials.

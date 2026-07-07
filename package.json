@@ -6,19 +6,25 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
+    "setup": "node scripts/setup.js",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
-    "start:dev": "cross-env NODE_ENV=development nest start --watch",
+    "start:dev": "cross-env NODE_ENV=development nest start --watch --webpack",
+    "dev:docker": "docker compose -f docker-compose.dev.yml up --build",
+    "dev:docker:down": "docker compose -f docker-compose.dev.yml down",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
-    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
+    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\"",
+    "lint:fix": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "clean": "taskkill /F /IM node.exe && rimraf node_modules dist package-lock.json"
+    "clean": "taskkill /F /IM node.exe && rimraf node_modules dist package-lock.json",
+    "type-check": "tsc --noEmit",
+    "format:check": "prettier --check \"{src,test}/**/*.ts\""
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",

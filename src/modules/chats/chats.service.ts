@@ -7,11 +7,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { ChatUser } from './models/chatUser.model';
 import { Chat } from './models/chat.model';
-import {
-  ChatResponse,
-  ChatUserResponse,
-  GetUserChatsResponse,
-} from './response';
+import { ChatResponse, GetUserChatsResponse } from './response';
 import { nanoid } from 'nanoid';
 import { User } from '../users/models/user.model';
 import { Op } from 'sequelize';

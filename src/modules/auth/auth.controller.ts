@@ -6,7 +6,6 @@
 import {
   Body,
   Controller,
-  Delete,
   Get,
   Post,
   Req,
@@ -18,7 +17,6 @@ import { CreateUserDTO, UserDescriptionDTO } from '../users/dto';
 import { LoginDTO, RegisterAuthCredentialsDTO } from './dto';
 import {
   ApiBearerAuth,
-  ApiBody,
   ApiCookieAuth,
   ApiResponse,
   ApiTags,
@@ -31,11 +29,7 @@ import {
   RegisterAuthCredentialsResponse,
 } from './response';
 import { AccessAuthGuard, ProfileGuard, RefreshAuthGuard } from '@/guards';
-import {
-  DeleteUserResponse,
-  UserDescriptionResponse,
-  UserResponse,
-} from '../users/response';
+import { UserDescriptionResponse, UserResponse } from '../users/response';
 import { UsersService } from '../users/users.service';
 import {
   AuthPayloadRequest,
@@ -78,7 +72,7 @@ export class AuthController {
       httpOnly: true,
       secure: true,
       sameSite: 'lax',
-      maxAge: this.configService.get('refreshTokenExpire'),
+      maxAge: this.configService.get('refreshTokenExpire') * 1000,
     });
 
     return { accessToken };
@@ -103,7 +97,7 @@ export class AuthController {
       httpOnly: true,
       secure: true,
       sameSite: 'lax',
-      maxAge: this.configService.get('refreshTokenExpire'),
+      maxAge: this.configService.get('refreshTokenExpire') * 1000,
     });
 
     return {
@@ -168,7 +162,7 @@ export class AuthController {
       httpOnly: true,
       secure: true,
       sameSite: 'lax',
-      maxAge: this.configService.get('refreshTokenExpire'),
+      maxAge: this.configService.get('refreshTokenExpire') * 1000,
     });
     res.status(200);
 

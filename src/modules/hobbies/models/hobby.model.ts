@@ -13,7 +13,6 @@ import {
   Table,
   Model,
   DataType,
-  HasMany,
 } from 'sequelize-typescript';
 
 // NestJS class implementing Hobby.

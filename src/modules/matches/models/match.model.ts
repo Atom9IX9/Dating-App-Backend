@@ -13,6 +13,7 @@ import {
   AutoIncrement,
   AllowNull,
   BelongsTo,
+  DataType,
 } from 'sequelize-typescript';
 import { User } from '@/modules/users/models/user.model';
 import { ReceivedStatuses } from '../types';
@@ -40,7 +41,7 @@ export class Match extends Model {
 
   @ApiProperty({ enum: ReceivedStatuses })
   @AllowNull(false)
-  @Column
+  @Column(DataType.ENUM(...Object.values(ReceivedStatuses)))
   status: ReceivedStatuses;
 
   @BelongsTo(() => User)

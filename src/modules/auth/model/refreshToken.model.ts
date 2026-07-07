@@ -3,7 +3,6 @@
  * PURPOSE: TypeScript source file part of the application logic.
  */
 
-import { ApiProperty } from '@nestjs/swagger';
 import { DataTypes } from 'sequelize';
 import {
   BelongsTo,
