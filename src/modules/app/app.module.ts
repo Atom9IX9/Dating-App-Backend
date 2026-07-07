@@ -45,6 +45,16 @@ import { join } from 'path';
         synchronize: true, //after development, use migrations instead of sync / on dev - true to auto create tables based on models, on prod - false to avoid data loss
         // sync: { force: true }, //force: true - drop tables and recreate them on every app restart (use only for development)
         autoLoadModels: true,
+        retry: {
+          match: [
+            /SequelizeConnectionError/,
+            /SequelizeConnectionRefusedError/,
+            /Connection timed out/
+          ],
+          max: 5, 
+          backoffBase: 2000, 
+          backoffExponent: 1.5, 
+        },
       }),
     }),
     UserModule,
